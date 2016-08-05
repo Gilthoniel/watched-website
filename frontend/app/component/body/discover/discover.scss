@@ -1,0 +1,11 @@
+
+.body-discover {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  .body-discover-card {
+    flex: 1;
+    margin: 20px;
+  }
+}

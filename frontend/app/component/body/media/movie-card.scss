@@ -1,0 +1,98 @@
+
+$cardWidth: 342px;
+$cardHeight: 513px;
+
+.movie-card {
+  position: relative;
+  width: $cardWidth;
+  height: $cardHeight;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  overflow: hidden;
+
+  &.movie-card--in {
+    .movie-card-body .movie-card-wrapper {
+      max-height: $cardHeight;
+    }
+  }
+
+  .movie-card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $cardWidth;
+    height: $cardHeight;
+    cursor: pointer;
+
+    img {
+      height: 100%;
+      -webkit-filter: grayscale(50%);
+      filter: grayscale(50%);
+    }
+
+    &:hover {
+      img {
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
+      }
+    }
+  }
+
+  .movie-card-body {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    position: absolute;
+    width: $cardWidth;
+    bottom: 0;
+    left: 0;
+
+    background: rgba(0,0,0,0.8);
+    color: white;
+
+    .movie-card-title {
+      flex: 1;
+      margin: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      text-align: left;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .movie-card-btn {
+      width: 30px;
+      cursor: pointer;
+      text-align: center;
+
+      &:hover {
+        background: #1c1c1c;
+      }
+
+      span {
+        display: block;
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+        font-size: 16px;
+      }
+    }
+
+    .movie-card-wrapper {
+      flex: none;
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+
+      transition: all 500ms ease-in-out;
+
+      .movie-card-overview {
+        padding: 0 20px 20px 20px;
+        text-align: justify;
+        font-size: 12px;
+      }
+    }
+  }
+}
