@@ -1,79 +1,95 @@
 package ch.grim.controllers;
 
+import ch.grim.models.Account;
+import ch.grim.models.MovieBookmark;
 import ch.grim.models.User;
-import ch.grim.models.UserPreference;
-import ch.grim.repositories.UserPreferenceRepository;
-import com.stormpath.sdk.servlet.account.AccountResolver;
+import ch.grim.models.json.MovieJson;
+import ch.grim.repositories.AccountRepository;
+import ch.grim.repositories.MovieBookmarkRepository;
+import ch.grim.services.MovieDBService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletRequest;
+import javax.security.auth.login.AccountNotFoundException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Gaylor on 31.07.2016.
- *
  */
 @RequestMapping("${spring.data.rest.base-path}/users")
 @RestController
 public class SessionController {
 
-    private UserPreferenceRepository repository;
+    private static final Logger LOG = LoggerFactory.getLogger(SessionController.class);
+
+    private MovieDBService service;
+
+    private AccountRepository accountsJpa;
+
+    private MovieBookmarkRepository bookmarksJpa;
 
     @Autowired
-    public SessionController(UserPreferenceRepository repository) {
-        this.repository = repository;
+    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks) {
+        this.accountsJpa = accounts;
+        this.bookmarksJpa = bookmarks;
     }
+
 
     @RequestMapping("/me")
-    public User me(ServletRequest request) {
+    public User me(@AuthenticationPrincipal User user) {
 
-        if (AccountResolver.INSTANCE.hasAccount(request)) {
-            return new User(AccountResolver.INSTANCE.getRequiredAccount(request));
-        } else {
-            throw new ResourceNotFoundException("Cannot find the user");
-        }
+        Account account = accountsJpa.findOne(user.getId());
+        return new User(account);
     }
 
-    @RequestMapping("/me/preference")
-    public UserPreference preference(ServletRequest request) {
-        if (AccountResolver.INSTANCE.hasAccount(request)) {
-            User user = new User(AccountResolver.INSTANCE.getRequiredAccount(request));
-            UserPreference preference = repository.findOne(user.getId());
+    @RequestMapping(value = "/me/movies")
+    public List<MovieJson> getMovies(@AuthenticationPrincipal User user) {
 
-            if (preference == null) {
-                preference = new UserPreference(user);
-                repository.save(preference);
-            }
-
-            return preference;
-        } else {
-            throw new ResourceNotFoundException("Cannot find the user");
-        }
+        return user.getBookmarks()
+                .stream()
+                .map(bm -> new MovieJson(service.getMovie(bm.getMovieId(), "en")))
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/me/movie/{id}", method = RequestMethod.GET)
-    public ResponseEntity<String> addMovie(ServletRequest request, @PathVariable int id) {
+    @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> addMovie(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
 
-        if (AccountResolver.INSTANCE.hasAccount(request)) {
-            User user = new User(AccountResolver.INSTANCE.getRequiredAccount(request));
-            UserPreference preference = repository.findOne(user.getId());
-
-            if (preference == null) {
-                preference = new UserPreference(user);
-                repository.save(preference);
-            }
-
-            if (!preference.getMovies().contains(id)) {
-                preference.getMovies().add(id);
-                repository.save(preference);
-            }
-
-            return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+        Account account = accountsJpa.findOne(user.getId());
+        if (account == null) {
+            throw new AccountNotFoundException();
         }
 
-        throw new ResourceNotFoundException();
+        if (account.getBookmarks().stream().filter(bm -> bm.getMovieId().equals(id)).count() == 0) {
+            bookmarksJpa.save(new MovieBookmark(account, id));
+        }
+
+        return new ResponseEntity<>("Ok", HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> removeMovie(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
+
+        Account account = accountsJpa.findOne(user.getId());
+        if (account == null) {
+            throw new AccountNotFoundException();
+        }
+
+        Collection<MovieBookmark> bookmarks = account.getBookmarks().stream()
+                .filter(bm -> bm.getMovieId().equals(id))
+                .collect(Collectors.toList());
+
+        account.getBookmarks().removeAll(bookmarks);
+
+        LOG.info(bookmarks.size() + " bookmarks found for user " + user.getUsername());
+        bookmarksJpa.delete(bookmarks);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import MovieCard from '../media/movie-card.jsx';
 
-import * as ApiService from '../../../service/api-service';
+import ApiService from '../../../service/api-service';
 
 require('./discover.scss');
 
@@ -19,8 +19,11 @@ class Discover extends React.Component {
     ApiService.getDiscover().then(
       (response) => {
         this.setState({
-          movies: response.entity.results
+          movies: response.movies
         });
+      },
+      (xhr) => {
+        console.log(xhr);
       }
     )
   }

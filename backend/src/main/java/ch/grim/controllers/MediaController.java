@@ -1,12 +1,11 @@
 package ch.grim.controllers;
 
-import ch.grim.WatchedApplication;
+import ch.grim.models.json.DiscoverJson;
 import ch.grim.services.MovieDBService;
 import info.movito.themoviedbapi.TmdbDiscover;
 import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TmdbConfiguration;
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import javax.servlet.ServletRequest;
 @RequestMapping("${spring.data.rest.base-path}/media")
 public class MediaController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WatchedApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MediaController.class);
 
     private MovieDBService service;
 
@@ -42,12 +41,12 @@ public class MediaController {
     }
 
     @RequestMapping("/discover")
-    public MovieResultsPage discover(@RequestParam(defaultValue = "1") int page) {
+    public DiscoverJson discover(@RequestParam(defaultValue = "1") int page) {
         TmdbDiscover discover = service.discover();
         Discover params = new Discover();
         params.page(page);
 
-        return discover.getDiscover(params);
+        return new DiscoverJson(discover.getDiscover(params));
     }
 
     @RequestMapping("/movie/{id}")

@@ -1,6 +1,6 @@
-import * as ApiService from './api-service';
+import ApiService from './api-service';
 
-const COOKIE_NAME = 'watched-session';
+const KEY_TOKEN = 'watched-session';
 
 export class Session {
 
@@ -13,7 +13,7 @@ export class Session {
 
     this.observers = [];
 
-    const token = localStorage.getItem(COOKIE_NAME);
+    const token = localStorage.getItem(KEY_TOKEN);
     if (typeof token === 'string' && token !== "null") {
       setupSession.call(this, token);
     } else {
@@ -26,21 +26,22 @@ export class Session {
 
     return ApiService.getToken(username, password).then(
       (response) => {
-        localStorage.setItem(COOKIE_NAME, response.entity.access_token);
+        const token = response['access_token'];
+        localStorage.setItem(KEY_TOKEN, token);
 
-        setupSession.call(this, response.entity.access_token);
+        setupSession.call(this, token);
         return response;
       },
-      () => {
-        this.triggerObservers('onLoginFailure');
+      (xhr) => {
+        console.log(xhr);
       }
     )
   }
 
   logout() {
-    return ApiService.logout().then(
+    return ApiService.revokeToken().then(
       () => {
-        localStorage.removeItem(COOKIE_NAME);
+        localStorage.removeItem(KEY_TOKEN);
         ApiService.destroyToken();
 
         this.isAuthenticated = false;
@@ -75,9 +76,18 @@ function setupSession(token) {
     (response) => {
       this.isAuthenticated = true;
       this.isAuthenticating = false;
-      this.user = response.entity;
+      this.user = response;
 
       this.triggerObservers('onLoginSuccess');
+    },
+    (xhr) => {
+      if (xhr.status >= 400 && xhr.status < 500 || xhr.status === 0) {
+        localStorage.removeItem(KEY_TOKEN);
+        ApiService.destroyToken();
+
+        this.isAuthenticating = false;
+        this.triggerObservers('onLoginFailure');
+      }
     }
   )
 }

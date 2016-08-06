@@ -3,13 +3,8 @@
  *
  */
 
-const rest = require('rest');
-const mime = require('rest/interceptor/mime');
-const oauth = require('rest/interceptor/oAuth');
-let client = rest.wrap(mime);
-
+const $ = require('jquery');
 const namespace = 'http://localhost:9000/api';
-
 const cache = {
   data: {},
 
@@ -28,105 +23,122 @@ const cache = {
 
 /* Session */
 
-export function setupToken(token) {
-  client = rest.wrap(mime).wrap(oauth, {
-    token: 'Bearer ' + token
-  });
-}
+class ApiService {
+  constructor() {
 
-export function destroyToken() {
-  client = rest.wrap(mime);
-}
-
-export function getToken(username, password) {
-
-  return client({
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    path: 'http://localhost:9000/oauth/token',
-    entity: {
-      username: username,
-      password: password,
-      grant_type: 'password'
-    }
-  })
-}
-
-export function logout() {
-  return client({
-    method: 'get',
-    path: 'http://localhost:9000/logout',
-    mixin: {
-      withCredentials: true
-    }
-  });
-}
-
-export function getUser() {
-  return client({
-    path: namespace + '/users/me',
-    mixin: {
-      withCredentials: true
-    }
-  })
-}
-
-export function getPreference() {
-  return client({
-    path: namespace + '/users/me/preference',
-    mixin: {
-      withCredentials: true
-    }
-  });
-}
-
-/* TheMovieDB */
-
-export function getConfiguration() {
-  const key = 'media-configuration';
-
-  if (this.containsKey(key)) {
-    return this.getObject(key);
+    this.token = null;
   }
 
-  const promise = client({
-    path: namespace + '/media/configuration',
-    mixin: {
-      withCredentials: true
-    }
-  });
-
-  this.pushObject(key, promise);
-  return promise;
-}
-getConfiguration = getConfiguration.bind(cache);
-
-export function getDiscover() {
-  const key = 'discover';
-
-  if (this.containsKey(key)) {
-    return this.getObject(key);
+  setupToken(token) {
+    this.token = token;
   }
 
-  const promise = client({
-    path: namespace + '/media/discover',
-    mixin: {
-      withCredentials: true
-    }
-  });
+  destroyToken() {
+    this.token = null;
+  }
 
-  this.pushObject(key, promise);
-  return promise;
-}
-getDiscover = getDiscover.bind(cache);
+  getToken(username, password) {
+    return $.ajax({
+      method: 'post',
+      url: 'http://localhost:9000/oauth/token',
+      contentType: 'application/x-www-form-urlencoded',
+      headers: {
+        Authorization: 'Basic ' + btoa('watched-website:secret')
+      },
+      data: $.param({
+        username: username,
+        password: password,
+        client_id: 'watched-website',
+        grant_type: 'password'
+      })
+    });
+  }
 
-export function getMovie(id) {
-  return client({
-    path: namespace + '/media/movie/' + id,
-    mixin: {
-      withCredentials: true
+  revokeToken() {
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: 'http://localhost:9000/logout'
+    }));
+  }
+
+  //-- SESSION
+
+  getUser() {
+    const key = 'session.user';
+    if (!cache.containsKey(key)) {
+      cache.pushObject(key, $.ajax(this.generateCredentials({
+        method: 'get',
+        url: namespace + '/users/me'
+      })));
     }
-  });
+
+    return cache.getObject(key);
+  }
+
+  addMovie(id) {
+    return $.ajax(this.generateCredentials({
+      method: 'post',
+      url: namespace + '/users/me/movies/' + id
+    }));
+  }
+
+  removeMovie(id) {
+    return $.ajax(this.generateCredentials({
+      method: 'delete',
+      url: namespace + '/users/me/movies/' + id
+    }));
+  }
+
+  //-- MEDIA
+
+  getDiscover() {
+    const key = 'media.discover';
+    if (!cache.containsKey(key)) {
+      cache.pushObject(key, $.ajax(this.generateCredentials({
+        method: 'get',
+        url: namespace + '/media/discover'
+      })));
+    }
+
+    return cache.getObject(key);
+  }
+
+  getMovie(id) {
+    const key = `media.movie.${id}`;
+    if (!cache.containsKey(key)) {
+      cache.pushObject(key, $.ajax(this.generateCredentials({
+        method: 'get',
+        url: namespace + '/media/movie/' + id
+      })));
+    }
+  }
+
+  getConfiguration() {
+    const key = 'media.configuration';
+    if (!cache.containsKey(key)) {
+      cache.pushObject(key, $.ajax(this.generateCredentials({
+        method: 'get',
+        url: namespace + '/media/configuration'
+      })));
+    }
+
+    return cache.getObject(key);
+  }
+
+  //-- private
+
+  generateCredentials(object) {
+    if (this.token) {
+      object.xhrFields = {
+        withCredentials: true
+      };
+      object.headers = {
+        'Authorization': 'Bearer ' + this.token
+      };
+    }
+
+    return object;
+  }
 }
+
+export default new ApiService();

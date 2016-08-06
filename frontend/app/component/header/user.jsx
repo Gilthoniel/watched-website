@@ -88,7 +88,7 @@ class User extends React.Component {
         <div className="header__user__picture">
           <img src={gravatar}/>
         </div>
-        <div className="header__user__name" onClick={this.handleLogout}>{user.fullName}</div>
+        <div className="header__user__name" onClick={this.handleLogout}>{user.email}</div>
       </div>
     );
   }

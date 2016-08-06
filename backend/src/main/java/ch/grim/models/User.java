@@ -1,67 +1,49 @@
 package ch.grim.models;
 
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.directory.CustomData;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
- * Created by Gaylor on 31.07.2016.
- * User model for the web app
+ * Created by gaylo on 8/6/2016.
+ *
  */
-public class User {
+public class User implements UserDetails {
 
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String fullName;
+    private Long id;
+    private String username;
     private String email;
     private String hash;
+    private Set<MovieBookmark> bookmarks;
 
-    private User() {}
+    @JsonIgnore
+    private String password;
 
     public User(Account account) {
-        id = account.getHref().substring(account.getHref().lastIndexOf("/") + 1);
-        firstName = account.getGivenName();
-        lastName = account.getSurname();
-        fullName = account.getFullName();
+        id = account.getId();
+        username = account.getUsername();
         email = account.getEmail();
 
         try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(email.getBytes());
-            byte[] byteData = digest.digest();
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(email.getBytes(), 0, email.length());
+            hash = new BigInteger(1, m.digest()).toString(16);
+        } catch (NoSuchAlgorithmException ignored) {}
 
-            StringBuilder sb = new StringBuilder();
-            for (byte aByteData : byteData) {
-                sb.append(Integer.toString((aByteData & 0xff) + 0x100, 16).substring(1));
-            }
-
-            hash = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            hash = "";
-        }
+        password = account.getPassword();
+        bookmarks = account.getBookmarks();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
     public String getEmail() {
@@ -70,5 +52,44 @@ public class User {
 
     public String getHash() {
         return hash;
+    }
+
+    public Set<MovieBookmark> getBookmarks() {
+        return bookmarks;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("USER"));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

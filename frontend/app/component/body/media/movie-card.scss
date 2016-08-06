@@ -17,6 +17,46 @@ $cardHeight: 513px;
     }
   }
 
+  .movie-card-actions {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: right;
+
+    $checkBoxWidth: 30px;
+    $checkBoxColor: rgba(83, 197, 83, 0.6);
+    .btn-select {
+      display: inline-block;
+      width: $checkBoxWidth;
+      height: $checkBoxWidth;
+      margin: 10px;
+
+      .movie-card-checkbox {
+        display: table-cell;
+        vertical-align: middle;
+        width: $checkBoxWidth;
+        height: $checkBoxWidth;
+        border-radius: $checkBoxWidth;
+        border: 2px solid $checkBoxColor;
+        text-align: center;
+        cursor: pointer;
+
+        span {
+          display: none;
+          vertical-align: middle;
+          width: $checkBoxWidth - 10px;
+          height: $checkBoxWidth - 10px;
+          border-radius: $checkBoxWidth;
+          background: $checkBoxColor;
+        }
+
+        &.active span { display: inline-block; }
+      }
+    }
+  }
+
   .movie-card-bg {
     position: absolute;
     top: 0;
