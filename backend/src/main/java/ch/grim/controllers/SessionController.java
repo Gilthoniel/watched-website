@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by Gaylor on 31.07.2016.
+ *
  */
 @RequestMapping("${spring.data.rest.base-path}/users")
 @RestController
@@ -67,7 +68,7 @@ public class SessionController {
         }
 
         if (account.getBookmarks().stream().filter(bm -> bm.getMovieId().equals(id)).count() == 0) {
-            bookmarksJpa.save(new MovieBookmark(account, id));
+            account.getBookmarks().add(bookmarksJpa.save(new MovieBookmark(account, id)));
         }
 
         return new ResponseEntity<>("Ok", HttpStatus.CREATED);
@@ -87,7 +88,7 @@ public class SessionController {
 
         account.getBookmarks().removeAll(bookmarks);
 
-        LOG.info(bookmarks.size() + " bookmarks found for user " + user.getUsername());
+        LOG.debug(bookmarks.size() + " bookmarks found for user " + user.getUsername());
         bookmarksJpa.delete(bookmarks);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
