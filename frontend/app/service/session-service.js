@@ -14,7 +14,7 @@ export class Session {
     this.observers = [];
 
     const token = localStorage.getItem(KEY_TOKEN);
-    if (typeof token === 'string' && token !== "null") {
+    if (typeof token === 'string' && token !== '') {
       setupSession.call(this, token);
     } else {
       this.isAuthenticating = false;
@@ -34,22 +34,21 @@ export class Session {
       },
       (xhr) => {
         console.log(xhr);
+
+        this.isAuthenticating = false;
+        this.triggerObservers('onLoginFailure');
       }
     )
   }
 
   logout() {
-    return ApiService.revokeToken().then(
-      () => {
-        localStorage.removeItem(KEY_TOKEN);
-        ApiService.destroyToken();
+    localStorage.removeItem(KEY_TOKEN);
+    ApiService.destroyToken();
 
-        this.isAuthenticated = false;
-        this.user = null;
+    this.isAuthenticated = false;
+    this.user = null;
 
-        this.triggerObservers('onLogoutSuccess');
-      }
-    )
+    this.triggerObservers('onLogoutSuccess');
   }
 
   subscribe(component) {
@@ -81,11 +80,12 @@ function setupSession(token) {
       this.triggerObservers('onLoginSuccess');
     },
     (xhr) => {
-      if (xhr.status >= 400 && xhr.status < 500 || xhr.status === 0) {
+      if (xhr.status === 401) {
         localStorage.removeItem(KEY_TOKEN);
         ApiService.destroyToken();
 
         this.isAuthenticating = false;
+        this.isAuthenticated = false;
         this.triggerObservers('onLoginFailure');
       }
     }

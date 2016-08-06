@@ -17,7 +17,17 @@ const cache = {
   },
 
   pushObject(key, promise) {
-    this.data[key] = promise;
+    // Remove from cache if the request fails
+    $.when(promise).fail(() => cache.removeKey(key));
+    this.data[key] = promise
+  },
+
+  removeKey(key) {
+    delete this.data[key];
+  },
+
+  clear() {
+    this.data = {};
   }
 };
 
@@ -26,7 +36,7 @@ const cache = {
 class ApiService {
   constructor() {
 
-    this.token = null;
+    this.token = '';
   }
 
   setupToken(token) {
@@ -34,7 +44,7 @@ class ApiService {
   }
 
   destroyToken() {
-    this.token = null;
+    this.token = '';
   }
 
   getToken(username, password) {
@@ -52,13 +62,6 @@ class ApiService {
         grant_type: 'password'
       })
     });
-  }
-
-  revokeToken() {
-    return $.ajax(this.generateCredentials({
-      method: 'get',
-      url: 'http://localhost:9000/logout'
-    }));
   }
 
   //-- SESSION
@@ -94,10 +97,10 @@ class ApiService {
   getDiscover() {
     const key = 'media.discover';
     if (!cache.containsKey(key)) {
-      cache.pushObject(key, $.ajax(this.generateCredentials({
+      cache.pushObject(key, $.ajax({
         method: 'get',
         url: namespace + '/media/discover'
-      })));
+      }));
     }
 
     return cache.getObject(key);
@@ -106,20 +109,20 @@ class ApiService {
   getMovie(id) {
     const key = `media.movie.${id}`;
     if (!cache.containsKey(key)) {
-      cache.pushObject(key, $.ajax(this.generateCredentials({
+      cache.pushObject(key, $.ajax({
         method: 'get',
         url: namespace + '/media/movie/' + id
-      })));
+      }));
     }
   }
 
   getConfiguration() {
     const key = 'media.configuration';
     if (!cache.containsKey(key)) {
-      cache.pushObject(key, $.ajax(this.generateCredentials({
+      cache.pushObject(key, $.ajax({
         method: 'get',
         url: namespace + '/media/configuration'
-      })));
+      }));
     }
 
     return cache.getObject(key);
@@ -129,9 +132,6 @@ class ApiService {
 
   generateCredentials(object) {
     if (this.token) {
-      object.xhrFields = {
-        withCredentials: true
-      };
       object.headers = {
         'Authorization': 'Bearer ' + this.token
       };
