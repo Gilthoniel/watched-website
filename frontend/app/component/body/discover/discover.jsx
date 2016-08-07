@@ -19,29 +19,15 @@ class Discover extends React.Component {
   }
 
   onLoginSuccess() {
-    ApiService.getDiscover().then(
-      (response) => {
-        this.setState({
-          movies: response.results
-        });
-      },
-      (xhr) => {
-        console.log(xhr);
-      }
-    )
+    this.loadData();
+  }
+
+  onLogoutSuccess() {
+    this.loadData();
   }
 
   componentWillMount() {
-    ApiService.getDiscover().then(
-      (response) => {
-        this.setState({
-          movies: response.results
-        });
-      },
-      (xhr) => {
-        console.log(xhr);
-      }
-    )
+    this.loadData();
   }
 
   render() {
@@ -49,7 +35,7 @@ class Discover extends React.Component {
     const movies = [];
     this.state.movies.forEach(function(movie) {
       movies.push(
-        <div key={`${movie.id}:${movie.bookmark ? movie.bookmark.id : ''}`} className="body-discover-card">
+        <div key={movie.id} className="body-discover-card">
           <MovieCard movie={movie} />
         </div>
       );
@@ -59,6 +45,19 @@ class Discover extends React.Component {
       <div className="body-discover">
         {movies}
       </div>
+    );
+  }
+
+  loadData() {
+    ApiService.getDiscover().then(
+      (response) => {
+        this.setState({
+          movies: response.results
+        });
+      },
+      (xhr) => {
+        console.log('Cannot get Discover', xhr);
+      }
     );
   }
 }

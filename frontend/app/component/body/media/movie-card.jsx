@@ -1,10 +1,13 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
+import Toastr from 'toastr';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
+import Session from '../../../service/session-service';
 
 require('./movie-card.scss');
+require('../../../style/bookmark.scss');
 
 class MovieCard extends React.Component {
 
@@ -12,7 +15,7 @@ class MovieCard extends React.Component {
     super(props);
 
     this.state = {
-      configuration: undefined,
+      configuration: null,
       active: false,
       selected: props.movie.bookmark !== null
     };
@@ -37,24 +40,16 @@ class MovieCard extends React.Component {
   }
 
   handleSelect() {
-    const id = this.props.movie.id;
+    if (!Session.isAuthenticated) {
+      Toastr.info('Create an account or sign in to have access to this functionality.', 'Session required');
+      return;
+    }
 
+    const id = this.props.movie.id;
     if (this.state.selected) {
-      ApiService.removeMovie(id).then(
-        () => {
-          this.setState({
-            selected: false
-          })
-        }
-      );
+      this.removeBookmark(id);
     } else {
-      ApiService.addMovie(id).then(
-        () => {
-          this.setState({
-            selected: true
-          })
-        }
-      );
+      this.addBookmark(id);
     }
   }
 
@@ -70,29 +65,28 @@ class MovieCard extends React.Component {
         this.setState({
           configuration: response
         });
+      },
+      () => {
+        Toastr.error('The server is overloaded. Please try later...');
       }
     )
   }
 
+  componentWillUpdate(nextProps) {
+    this.state.selected = nextProps.movie.bookmark !== null;
+  }
+
   render() {
     const movie = this.props.movie;
+    const poster = MediaApi.poster(movie, this.state.configuration);
 
-    let poster = MediaApi.poster(movie, this.state.configuration);
+    const bookmark = "bookmark-pin" + (this.state.selected ? " active" : "");
+    const overviewBtn = 'movie-card-btn' + (this.state.active ? ' active' : '');
 
     return (
       <div className={(() => 'movie-card ' + (this.state.active ? 'movie-card--in' : ''))()}
            key={movie.id}
            onMouseLeave={this.handleMouseLeave}>
-
-        {/* Actions panel */}
-        <div className="movie-card-actions">
-          <div className="btn-select">
-            <div className={(() => "movie-card-checkbox" + (this.state.selected ? ' active' : ''))()}
-                 onClick={this.handleSelect}>
-              <span/>
-            </div>
-          </div>
-        </div>
 
         {/* Background */}
         <div className="movie-card-bg" onClick={this.handleCardClick}>
@@ -101,9 +95,12 @@ class MovieCard extends React.Component {
 
         {/* Information panel */}
         <div className="movie-card-body">
+          <div className="movie-card-select" onClick={this.handleSelect}>
+            <div className={bookmark}/>
+          </div>
           <div className="movie-card-title">{movie.title}</div>
-          <div className="movie-card-btn" onClick={this.handleClick}>
-            <span>{(() => this.state.active ? '❭' : '❬')()}</span>
+          <div className={overviewBtn} onClick={this.handleClick}>
+            <span className="glyphicon glyphicon-chevron-up"/>
           </div>
 
           <div className="movie-card-wrapper">
@@ -113,6 +110,20 @@ class MovieCard extends React.Component {
           </div>
         </div>
       </div>
+    );
+  }
+
+  addBookmark(movieId) {
+    ApiService.addBookmark(movieId).then(
+      () => this.setState({ selected: true }),
+      () => Toastr.error('The server is overloaded. Please try later...')
+    );
+  }
+
+  removeBookmark(movieId) {
+    ApiService.removeBookmark(movieId).then(
+      () => this.setState({ selected: false }),
+      () => Toastr.error('The server is overloaded. Please try later...')
     );
   }
 }

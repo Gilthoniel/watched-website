@@ -37,6 +37,11 @@ module.exports = {
       },
 
       {
+        test: /\.css/,
+        loaders: ['style', 'css']
+      },
+
+      {
         test: /\.(jpg|png|svg)$/,
         loader: 'file?name=[path][name].[hash].[ext]'
       },
@@ -51,7 +56,11 @@ module.exports = {
 
       // mCustomScrollbar
       { test: /jquery-mousewheel[\/\\]/, loader: "imports?define=>false&this=>window" },
-      { test: /malihu-custom-scrollbar-plugin[\/\\]/, loader: "imports?define=>false&this=>window" }
+      {
+        test: /malihu-custom-scrollbar-plugin[\/\\]/,
+        loader: "imports?define=>false&this=>window",
+        exclude: /\.css/
+      }
     ]
   },
 

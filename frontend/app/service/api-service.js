@@ -78,14 +78,14 @@ class ApiService {
     return cache.getObject(key);
   }
 
-  addMovie(id) {
+  addBookmark(id) {
     return $.ajax(this.generateCredentials({
       method: 'post',
       url: namespace + '/users/me/movies/' + id
     }));
   }
 
-  removeMovie(id) {
+  removeBookmark(id) {
     return $.ajax(this.generateCredentials({
       method: 'delete',
       url: namespace + '/users/me/movies/' + id
