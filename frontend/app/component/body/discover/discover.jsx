@@ -2,6 +2,7 @@ import React from 'react';
 import MovieCard from '../media/movie-card.jsx';
 
 import ApiService from '../../../service/api-service';
+import Session from '../../../service/session-service';
 
 require('./discover.scss');
 
@@ -13,6 +14,21 @@ class Discover extends React.Component {
     this.state = {
       movies: []
     };
+
+    Session.subscribe(this);
+  }
+
+  onLoginSuccess() {
+    ApiService.getDiscover().then(
+      (response) => {
+        this.setState({
+          movies: response.results
+        });
+      },
+      (xhr) => {
+        console.log(xhr);
+      }
+    )
   }
 
   componentWillMount() {
@@ -33,7 +49,7 @@ class Discover extends React.Component {
     const movies = [];
     this.state.movies.forEach(function(movie) {
       movies.push(
-        <div key={movie.id} className="body-discover-card">
+        <div key={`${movie.id}:${movie.bookmark ? movie.bookmark.id : ''}`} className="body-discover-card">
           <MovieCard movie={movie} />
         </div>
       );

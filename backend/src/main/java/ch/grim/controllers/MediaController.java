@@ -1,6 +1,7 @@
 package ch.grim.controllers;
 
 import ch.grim.models.DiscoverResultPage;
+import ch.grim.models.Movie;
 import ch.grim.models.MovieBookmark;
 import ch.grim.models.User;
 import ch.grim.repositories.MovieBookmarkRepository;
@@ -22,10 +23,10 @@ import javax.servlet.ServletRequest;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Created by Gaylor on 31.07.2016.
- *
  */
 @RestController
 @RequestMapping("${spring.data.rest.base-path}/media")
@@ -50,10 +51,9 @@ public class MediaController {
 
     @RequestMapping("/discover")
     public DiscoverResultPage discover(
-            Principal principal,
             @AuthenticationPrincipal User user,
-            @RequestParam(defaultValue = "1") int page)
-    {
+            @RequestParam(defaultValue = "1") int page) {
+
         TmdbDiscover discover = service.discover();
         Discover params = new Discover();
         params.page(page);
@@ -70,7 +70,20 @@ public class MediaController {
     }
 
     @RequestMapping("/movie/{id}")
-    public MovieDb movie(ServletRequest request, @PathVariable int id) {
-        return service.getMovie(id, request.getLocale().getISO3Language());
+    public Movie movie(ServletRequest request,
+                         @AuthenticationPrincipal User user,
+                         @PathVariable int id) {
+
+        MovieDb movie = service.getMovie(id, request.getLocale().getISO3Language());
+
+        MovieBookmark bookmark = null;
+        if (user != null) {
+            Optional<MovieBookmark> option = bookmarksJpa.findByAccountUsernameAndMovieId(user.getUsername(), id);
+            if (option.isPresent()) {
+                bookmark = option.get();
+            }
+        }
+
+        return new Movie(movie, bookmark);
     }
 }
