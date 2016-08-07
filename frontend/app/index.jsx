@@ -8,6 +8,7 @@ import Body from './component/body/body.jsx';
 import Header from './component/header/header.jsx';
 import Discover from './component/body/discover/discover.jsx';
 import MovieDetails from './component/body/movie-details/movie-details.jsx';
+import MyList from './component/body/my-list/my-list.jsx';
 
 require('./style/app.scss');
 require("jquery-mousewheel")($);
@@ -49,6 +50,7 @@ render((
       <Route path="/" component={Discover}/>
       <Route path="/discover" component={Discover}/>
       <Route path="/movie/:id" component={MovieDetails}/>
+      <Route path="/my-list" component={MyList}/>
     </Route>
   </Router>
 ), document.getElementById('app'));

@@ -9,3 +9,14 @@ export function poster(media, conf) {
 
   return poster;
 }
+
+export function backdrop(media, conf) {
+  let backdrop = '';
+  if (conf) {
+    backdrop = conf.base_url;
+    backdrop += conf.backdrop_sizes[3];
+    backdrop += media.backdrop;
+  }
+
+  return backdrop;
+}

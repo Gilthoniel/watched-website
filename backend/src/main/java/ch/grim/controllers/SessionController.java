@@ -1,6 +1,7 @@
 package ch.grim.controllers;
 
 import ch.grim.models.Account;
+import ch.grim.models.Movie;
 import ch.grim.models.MovieBookmark;
 import ch.grim.models.User;
 import ch.grim.repositories.AccountRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.AccountNotFoundException;
+import javax.servlet.ServletRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @RequestMapping("${spring.data.rest.base-path}/users")
 @RestController
-public class SessionController {
+class SessionController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SessionController.class);
 
@@ -40,9 +42,10 @@ public class SessionController {
     private MovieBookmarkRepository bookmarksJpa;
 
     @Autowired
-    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks) {
+    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks, MovieDBService service) {
         this.accountsJpa = accounts;
         this.bookmarksJpa = bookmarks;
+        this.service = service;
     }
 
 
@@ -54,11 +57,13 @@ public class SessionController {
     }
 
     @RequestMapping(value = "/me/movies")
-    public List<MovieDb> getMovies(@AuthenticationPrincipal User user) {
+    public List<Movie> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
 
-        return user.getBookmarks()
+        Collection<MovieBookmark> bookmarks = bookmarksJpa.findByAccountUsername(user.getUsername());
+
+        return bookmarks
                 .stream()
-                .map(bm -> service.getMovie(bm.getMovieId(), "en"))
+                .map(bm -> new Movie(service.getMovie(bm.getMovieId(), request.getLocale().getLanguage()), bm))
                 .collect(Collectors.toList());
     }
 

@@ -27,6 +27,7 @@ import java.util.Optional;
 
 /**
  * Created by Gaylor on 31.07.2016.
+ *
  */
 @RestController
 @RequestMapping("${spring.data.rest.base-path}/media")
@@ -74,7 +75,7 @@ public class MediaController {
                          @AuthenticationPrincipal User user,
                          @PathVariable int id) {
 
-        MovieDb movie = service.getMovie(id, request.getLocale().getISO3Language());
+        MovieDb movie = service.getMovie(id, request.getLocale().getLanguage());
 
         MovieBookmark bookmark = null;
         if (user != null) {

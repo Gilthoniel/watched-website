@@ -29,8 +29,19 @@ public class MovieSerializer extends JsonSerializer<Movie> {
         json.writeStringField("overview", movie.getOverview());
         json.writeStringField("release_date", movie.getReleaseDate());
         json.writeStringField("poster", movie.getPosterPath());
+        json.writeStringField("backdrop", movie.getBackdropPath());
         json.writeNumberField("score_average", movie.getVoteAverage());
         json.writeNumberField("score_total", movie.getVoteCount());
+
+        if (movie.getKeywords() != null) {
+            json.writeArrayFieldStart("keywords");
+            movie.getKeywords().forEach(keyword -> {
+                try {
+                    json.writeString(keyword.getName());
+                } catch (IOException ignored) {}
+            });
+            json.writeEndArray();
+        }
 
         json.writeEndObject();
     }
