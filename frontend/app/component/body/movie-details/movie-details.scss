@@ -1,0 +1,33 @@
+
+.body-movie-details {
+
+  padding: 20px;
+
+  .movie-details {
+    display: flex;
+
+    .poster {
+      width: 300px;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .information {
+      flex: 1;
+      padding: 0 20px;
+
+      color: #f8f8f8;
+
+      .information-title {
+        font-size: 30px;
+        font-weight: bold;
+      }
+
+      .information-overview {
+        font-size: 14px;
+      }
+    }
+  }
+}

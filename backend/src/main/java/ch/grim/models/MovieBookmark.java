@@ -23,12 +23,14 @@ public class MovieBookmark {
     private Long id;
 
     private Integer movieId;
+    private Boolean watched;
 
     MovieBookmark() {}
 
     public MovieBookmark(Account account, int movieId) {
         this.account = account;
         this.movieId = movieId;
+        this.watched = false;
     }
 
     public Long getId() {
@@ -41,6 +43,10 @@ public class MovieBookmark {
 
     public Integer getMovieId() {
         return movieId;
+    }
+
+    public Boolean isWatched() {
+        return watched;
     }
 
     @Override

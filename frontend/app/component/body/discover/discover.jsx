@@ -19,7 +19,7 @@ class Discover extends React.Component {
     ApiService.getDiscover().then(
       (response) => {
         this.setState({
-          movies: response.movies
+          movies: response.results
         });
       },
       (xhr) => {

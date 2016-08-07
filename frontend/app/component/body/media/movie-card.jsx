@@ -1,6 +1,7 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
 
+import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
 
 require('./movie-card.scss');
@@ -13,7 +14,7 @@ class MovieCard extends React.Component {
     this.state = {
       configuration: undefined,
       active: false,
-      selected: false
+      selected: props.movie.bookmark !== null
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -35,7 +36,7 @@ class MovieCard extends React.Component {
     browserHistory.push('/movie/' + id);
   }
 
-  handleSelect() {$
+  handleSelect() {
     const id = this.props.movie.id;
 
     if (this.state.selected) {
@@ -76,12 +77,7 @@ class MovieCard extends React.Component {
   render() {
     const movie = this.props.movie;
 
-    let poster = '';
-    if (this.state.configuration) {
-      poster = this.state.configuration.base_url;
-      poster += this.state.configuration.poster_sizes[3];
-      poster += movie.poster;
-    }
+    let poster = MediaApi.poster(movie, this.state.configuration);
 
     return (
       <div className={(() => 'movie-card ' + (this.state.active ? 'movie-card--in' : ''))()}

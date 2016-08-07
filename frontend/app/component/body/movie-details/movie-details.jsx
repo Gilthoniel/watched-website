@@ -1,6 +1,9 @@
 import React from 'react';
 
-import * as ApiService from '../../../service/api-service';
+import * as MediaApi from '../../../utils/media';
+import ApiService from '../../../service/api-service';
+
+require('./movie-details.scss');
 
 class MovieDetails extends React.Component {
 
@@ -8,16 +11,22 @@ class MovieDetails extends React.Component {
     super(props);
 
     this.state = {
-      movie: undefined
+      movie: undefined,
+      configuration: undefined
     }
   }
 
   componentWillMount() {
     ApiService.getMovie(this.props.params.id).then(
-      (response) => {
-        this.setState({
-          movie: response.entity
-        })
+      (movie) => {
+        ApiService.getConfiguration().then(
+          (conf) => {
+            this.setState({
+              movie: movie,
+              configuration: conf
+            });
+          }
+        );
       }
     )
   }
@@ -25,6 +34,7 @@ class MovieDetails extends React.Component {
   render() {
 
     const movie = this.state.movie;
+    const poster = MediaApi.poster(movie, this.state.configuration);
 
     if (!movie) {
       return <div>LOADING...</div>;
@@ -32,7 +42,15 @@ class MovieDetails extends React.Component {
 
     return (
       <div className="body-movie-details">
-        <h1>{movie.title}</h1>
+        <div className="movie-details">
+          <div className="poster">
+            <img src={poster} alt="Poster" />
+          </div>
+          <div className="information">
+            <div className="information-title">{movie.title}</div>
+            <div className="information-overview">{movie.overview}</div>
+          </div>
+        </div>
       </div>
     );
   }

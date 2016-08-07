@@ -95,15 +95,10 @@ class ApiService {
   //-- MEDIA
 
   getDiscover() {
-    const key = 'media.discover';
-    if (!cache.containsKey(key)) {
-      cache.pushObject(key, $.ajax({
-        method: 'get',
-        url: namespace + '/media/discover'
-      }));
-    }
-
-    return cache.getObject(key);
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: namespace + '/media/discover'
+    }));
   }
 
   getMovie(id) {
@@ -114,6 +109,8 @@ class ApiService {
         url: namespace + '/media/movie/' + id
       }));
     }
+
+    return cache.getObject(key);
   }
 
   getConfiguration() {

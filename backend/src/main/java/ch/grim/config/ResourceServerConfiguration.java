@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 
 /**
  * Created by gaylor on 8/6/2016.
- *
+ * Controller authorizations
  */
 @Configuration
 @EnableResourceServer
@@ -16,8 +16,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/h2-console", "/h2-console/**", "/api/media/**").permitAll()
-                .antMatchers("/**").fullyAuthenticated()
+                .antMatchers("/h2-console", "/h2-console/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/media/**").access("isAnonymous() or isAuthenticated()")
+                .and()
+                .authorizeRequests()
+                .antMatchers("/**").authenticated()
                 .and()
                 .headers().frameOptions().sameOrigin();
     }

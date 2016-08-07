@@ -3,17 +3,20 @@ package ch.grim.controllers;
 import ch.grim.models.Account;
 import ch.grim.models.MovieBookmark;
 import ch.grim.models.User;
-import ch.grim.models.json.MovieJson;
 import ch.grim.repositories.AccountRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.services.MovieDBService;
+import info.movito.themoviedbapi.model.MovieDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.Collection;
@@ -51,11 +54,11 @@ public class SessionController {
     }
 
     @RequestMapping(value = "/me/movies")
-    public List<MovieJson> getMovies(@AuthenticationPrincipal User user) {
+    public List<MovieDb> getMovies(@AuthenticationPrincipal User user) {
 
         return user.getBookmarks()
                 .stream()
-                .map(bm -> new MovieJson(service.getMovie(bm.getMovieId(), "en")))
+                .map(bm -> service.getMovie(bm.getMovieId(), "en"))
                 .collect(Collectors.toList());
     }
 
