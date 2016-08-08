@@ -38,9 +38,15 @@
           img { width: 100%; }
         }
 
+        .h-select {
+          width: 40px;
+          height: 40px;
+          margin: 10px 0 10px 20px;
+        }
+
         .h-title {
           flex: 1;
-          padding: 10px 30px;
+          padding: 10px 20px;
           font-size: 30px;
           font-weight: bold;
         }

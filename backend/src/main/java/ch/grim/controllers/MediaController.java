@@ -10,17 +10,13 @@ import info.movito.themoviedbapi.TmdbDiscover;
 import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TmdbConfiguration;
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.CollectionTable;
 import javax.servlet.ServletRequest;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -61,7 +57,7 @@ public class MediaController {
 
         Collection<MovieBookmark> bookmarks;
         if (user != null) {
-            bookmarks = bookmarksJpa.findByAccountUsername(user.getUsername());
+            bookmarks = bookmarksJpa.findByAccountId(user.getId());
             LOG.info(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
         } else {
             bookmarks = Collections.emptyList();
@@ -79,7 +75,7 @@ public class MediaController {
 
         MovieBookmark bookmark = null;
         if (user != null) {
-            Optional<MovieBookmark> option = bookmarksJpa.findByAccountUsernameAndMovieId(user.getUsername(), id);
+            Optional<MovieBookmark> option = bookmarksJpa.findByAccountIdAndMovieId(user.getId(), id);
             if (option.isPresent()) {
                 bookmark = option.get();
             }

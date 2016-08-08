@@ -85,10 +85,13 @@ class ApiService {
     }));
   }
 
-  addBookmark(id) {
+  setBookmark(id, watched) {
     return $.ajax(this.generateCredentials({
       method: 'post',
-      url: namespace + '/users/me/movies/' + id
+      url: namespace + '/users/me/movies/' + id,
+      data: {
+        watched: watched
+      }
     }));
   }
 

@@ -39,5 +39,30 @@ $backgroundColor: rgba(255, 255, 255, 0.78);
       margin-top: $centerPadding;
       background: $backgroundColorActive;
     }
+
+    &:before {
+      color: white;
+      position: absolute;
+      top: 50%;
+      margin-top: -8px;
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  &.watched {
+    border: 0;
+    font-family: 'Glyphicons Halflings', sans-serif;
+
+    &:after {
+      width: 100%;
+      height: 100%;
+      margin-top: 0;
+      background: #3a893c;
+    }
+
+    &:before {
+      content: '\e013';
+    }
   }
 }

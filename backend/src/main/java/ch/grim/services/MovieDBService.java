@@ -17,6 +17,7 @@ public class MovieDBService {
 
     private static final TmdbApi api = new TmdbApi("206f79eda0e7499536358bbfd3e47743");
 
+    @Cacheable(cacheNames = "moviedb-discover")
     public TmdbDiscover discover() {
         return api.getDiscover();
     }

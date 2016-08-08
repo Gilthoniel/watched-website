@@ -2,9 +2,10 @@ import React from 'react';
 import {browserHistory} from 'react-router';
 import Toastr from 'toastr';
 
+import BookmarkPin from './bookmark-pin.jsx';
+
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
-import Session from '../../../service/session-service';
 
 require('./movie-card.scss');
 require('../../../style/bookmark.scss');
@@ -16,13 +17,11 @@ class MovieCard extends React.Component {
 
     this.state = {
       configuration: null,
-      active: false,
-      selected: props.movie.bookmark !== null
+      active: false
     };
 
     this.handleClick = this.handleClick.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
   }
 
@@ -39,24 +38,12 @@ class MovieCard extends React.Component {
     browserHistory.push('/movie/' + id);
   }
 
-  handleSelect() {
-    if (!Session.isAuthenticated) {
-      Toastr.info('Create an account or sign in to have access to this functionality.', 'Session required');
-      return;
-    }
-
-    const id = this.props.movie.id;
-    if (this.state.selected) {
-      this.removeBookmark(id);
-    } else {
-      this.addBookmark(id);
-    }
-  }
-
   handleMouseLeave() {
-    this.setState({
-      active: false
-    });
+    if (this.state.active) {
+      this.setState({
+        active: false
+      });
+    }
   }
 
   componentWillMount() {
@@ -72,15 +59,9 @@ class MovieCard extends React.Component {
     )
   }
 
-  componentWillUpdate(nextProps) {
-    this.state.selected = nextProps.movie.bookmark !== null;
-  }
-
   render() {
     const movie = this.props.movie;
     const poster = MediaApi.poster(movie, this.state.configuration);
-
-    const bookmark = "bookmark-pin" + (this.state.selected ? " active" : "");
     const overviewBtn = 'movie-card-btn' + (this.state.active ? ' active' : '');
 
     return (
@@ -95,10 +76,10 @@ class MovieCard extends React.Component {
 
         {/* Information panel */}
         <div className="movie-card-body">
-          <div className="movie-card-select" onClick={this.handleSelect}>
-            <div className={bookmark}/>
-          </div>
+          <BookmarkPin movie={movie} blockClassName="movie-card-select"/>
+
           <div className="movie-card-title">{movie.title}</div>
+
           <div className={overviewBtn} onClick={this.handleClick}>
             <span className="glyphicon glyphicon-chevron-up"/>
           </div>
@@ -110,20 +91,6 @@ class MovieCard extends React.Component {
           </div>
         </div>
       </div>
-    );
-  }
-
-  addBookmark(movieId) {
-    ApiService.addBookmark(movieId).then(
-      () => this.setState({ selected: true }),
-      () => Toastr.error('The server is overloaded. Please try later...')
-    );
-  }
-
-  removeBookmark(movieId) {
-    ApiService.removeBookmark(movieId).then(
-      () => this.setState({ selected: false }),
-      () => Toastr.error('The server is overloaded. Please try later...')
     );
   }
 }

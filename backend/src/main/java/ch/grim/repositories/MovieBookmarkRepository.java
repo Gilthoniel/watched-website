@@ -2,6 +2,9 @@ package ch.grim.repositories;
 
 import ch.grim.models.MovieBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -11,7 +14,12 @@ import java.util.Optional;
  *
  */
 public interface MovieBookmarkRepository extends JpaRepository<MovieBookmark, Long> {
-    Collection<MovieBookmark> findByAccountUsername(String username);
+    Collection<MovieBookmark> findByAccountId(long id);
 
-    Optional<MovieBookmark> findByAccountUsernameAndMovieId(String username, Integer movieId);
+    Optional<MovieBookmark> findByAccountIdAndMovieId(long id, Integer movieId);
+
+    @Modifying
+    @Transactional
+    @Query("update MovieBookmark bm set bm.watched = ?3 where bm.account.id = ?1 and bm.movieId = ?2")
+    void setWatchedByAccountIdAndMovieId(long userId, int movieId, boolean watched);
 }

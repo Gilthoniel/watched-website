@@ -1,6 +1,8 @@
 package ch.grim.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sun.istack.internal.Nullable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovieBookmark {
 
     @JsonIgnore
@@ -33,6 +36,11 @@ public class MovieBookmark {
         this.watched = false;
     }
 
+    public MovieBookmark(Account account, int movieId, @Nullable Boolean watched) {
+        this(account, movieId);
+        this.watched = watched;
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,6 +55,10 @@ public class MovieBookmark {
 
     public Boolean isWatched() {
         return watched;
+    }
+
+    public void setWatched(Boolean watched) {
+        this.watched = watched;
     }
 
     @Override

@@ -1,7 +1,11 @@
 import React from 'react';
+import Toastr from 'toastr';
+
+import BookmarkPin from '../media/bookmark-pin.jsx';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
+import Session from '../../../service/session-service';
 
 require('./movie-details.scss');
 
@@ -12,23 +16,22 @@ export default class MovieDetails extends React.Component {
 
     this.state = {
       movie: undefined,
-      configuration: undefined
-    }
+      configuration: undefined,
+    };
+
+    Session.subscribe(this);
+  }
+
+  onLoginSuccess() {
+    this.loadData();
+  }
+
+  onLogoutSuccess() {
+    this.loadData();
   }
 
   componentWillMount() {
-    ApiService.getMovie(this.props.params.id).then(
-      (movie) => {
-        ApiService.getConfiguration().then(
-          (conf) => {
-            this.setState({
-              movie: movie,
-              configuration: conf
-            });
-          }
-        );
-      }
-    )
+    this.loadData();
   }
 
   render() {
@@ -41,7 +44,7 @@ export default class MovieDetails extends React.Component {
 
     const backdrop = MediaApi.backdrop(movie, this.state.configuration);
     const poster = MediaApi.poster(movie, this.state.configuration);
-    const keywords = movie.keywords.map(function(keyword) {
+    const keywords = movie.keywords.map(function (keyword) {
       return (
         <span key={keyword} className="b-keyword">{keyword}</span>
       );
@@ -58,6 +61,9 @@ export default class MovieDetails extends React.Component {
               <div className="h-poster">
                 <img src={poster} alt=""/>
               </div>
+
+              <BookmarkPin movie={movie} blockClassName="h-select"/>
+
               <div className="h-title">{movie.title}</div>
             </div>
 
@@ -78,6 +84,26 @@ export default class MovieDetails extends React.Component {
           </div>
         </div>
       </div>
+    );
+  }
+
+  loadData() {
+    ApiService.getMovie(this.props.params.id).then(
+      (movie) => {
+        if (!this.state.conf) {
+          ApiService.getConfiguration().then((conf) => this.setState({
+            movie: movie,
+            configuration: conf
+          }));
+        } else {
+          this.setState({
+            movie: movie
+          });
+        }
+      },
+      () => {
+        Toastr.error('error');
+      }
     );
   }
 }

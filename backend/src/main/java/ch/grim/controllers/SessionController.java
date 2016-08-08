@@ -7,22 +7,19 @@ import ch.grim.models.User;
 import ch.grim.repositories.AccountRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.services.MovieDBService;
-import info.movito.themoviedbapi.model.MovieDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.ServletRequest;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -59,7 +56,7 @@ class SessionController {
     @RequestMapping(value = "/me/movies")
     public List<Movie> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
 
-        Collection<MovieBookmark> bookmarks = bookmarksJpa.findByAccountUsername(user.getUsername());
+        Collection<MovieBookmark> bookmarks = bookmarksJpa.findByAccountId(user.getId());
 
         return bookmarks
                 .stream()
@@ -68,22 +65,31 @@ class SessionController {
     }
 
     @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.POST)
-    public ResponseEntity<String> addMovie(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
+    @ResponseStatus(HttpStatus.CREATED)
+    public MovieBookmark setMovieBookmark(
+            ServletRequest request,
+            @AuthenticationPrincipal User user,
+            @PathVariable int id) throws Exception {
 
-        Account account = accountsJpa.findOne(user.getId());
-        if (account == null) {
-            throw new AccountNotFoundException();
+        Boolean watched = Boolean.parseBoolean(request.getParameter("watched"));
+
+        Optional<MovieBookmark> bookmark = bookmarksJpa.findByAccountIdAndMovieId(user.getId(), id);
+        if (!bookmark.isPresent()) {
+            Account account = accountsJpa.findOne(user.getId());
+            if (account == null) {
+                throw new AccountNotFoundException();
+            }
+
+            return bookmarksJpa.save(new MovieBookmark(account, id, watched));
+        } else {
+            bookmarksJpa.setWatchedByAccountIdAndMovieId(user.getId(), id, watched);
+            bookmark.get().setWatched(watched);
+            return bookmark.get();
         }
-
-        if (account.getBookmarks().stream().filter(bm -> bm.getMovieId().equals(id)).count() == 0) {
-            account.getBookmarks().add(bookmarksJpa.save(new MovieBookmark(account, id)));
-        }
-
-        return new ResponseEntity<>("Ok", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> removeMovie(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
+    public ResponseEntity<String> removeMovieBookmark(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
 
         Account account = accountsJpa.findOne(user.getId());
         if (account == null) {
