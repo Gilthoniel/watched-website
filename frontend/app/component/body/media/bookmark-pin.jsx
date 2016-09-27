@@ -9,11 +9,11 @@ export default class BookmarkPin extends React.Component {
   constructor(props) {
     super(props);
 
-    if (!props.movie) {
+    if (!props.movie && !props.series) {
       return;
     }
 
-    const bookmark = props.movie.bookmark;
+    const bookmark = (props.movie || props.series).bookmark;
     this.state = {
       selected: bookmark !== null,
       watched: bookmark ? bookmark.watched : false
@@ -28,7 +28,7 @@ export default class BookmarkPin extends React.Component {
       return;
     }
 
-    const id = this.props.movie.id;
+    const id = (this.props.movie || this.props.series).id;
     if (this.state.selected && this.state.watched) {
       this.removeBookmark(id);
     } else if (this.state.selected && !this.state.watched) {
@@ -39,9 +39,9 @@ export default class BookmarkPin extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    const movie = nextProps.movie;
-    this.state.selected = movie.bookmark !== null;
-    this.state.watched = movie.bookmark ? movie.bookmark.watched : false;
+    const media = nextProps.movie || nextProps.series;
+    this.state.selected = media.bookmark !== null;
+    this.state.watched = media.bookmark ? media.bookmark.watched : false;
   }
 
   render() {

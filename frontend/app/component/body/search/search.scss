@@ -1,0 +1,36 @@
+@import "../../../style/variables";
+
+.body-search {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  .body-search-card {
+    flex: 1;
+    margin: 20px;
+  }
+
+  .body-search-menu {
+    display: flex;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    left: 400px;
+    right: 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 30px;
+
+    .search-menu-item {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+
+      &:hover,
+      &.active {
+        text-decoration: underline;
+      }
+    }
+  }
+}

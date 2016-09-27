@@ -1,11 +1,9 @@
 package ch.grim.controllers;
 
-import ch.grim.models.Account;
-import ch.grim.models.Movie;
-import ch.grim.models.MovieBookmark;
-import ch.grim.models.User;
+import ch.grim.models.*;
 import ch.grim.repositories.AccountRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
+import ch.grim.repositories.SeriesBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +34,14 @@ class SessionController {
 
     private AccountRepository accountsJpa;
 
-    private MovieBookmarkRepository bookmarksJpa;
+    private MovieBookmarkRepository moviesBmJpa;
+    private SeriesBookmarkRepository seriesBmJpa;
 
     @Autowired
-    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks, MovieDBService service) {
+    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks, SeriesBookmarkRepository repo, MovieDBService service) {
         this.accountsJpa = accounts;
-        this.bookmarksJpa = bookmarks;
+        this.moviesBmJpa = bookmarks;
+        this.seriesBmJpa = repo;
         this.service = service;
     }
 
@@ -56,7 +56,7 @@ class SessionController {
     @RequestMapping(value = "/me/movies")
     public List<Movie> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
 
-        Collection<MovieBookmark> bookmarks = bookmarksJpa.findByAccountId(user.getId());
+        Collection<MovieBookmark> bookmarks = moviesBmJpa.findByAccountId(user.getId());
 
         return bookmarks
                 .stream()
@@ -73,16 +73,16 @@ class SessionController {
 
         Boolean watched = Boolean.parseBoolean(request.getParameter("watched"));
 
-        Optional<MovieBookmark> bookmark = bookmarksJpa.findByAccountIdAndMovieId(user.getId(), id);
+        Optional<MovieBookmark> bookmark = moviesBmJpa.findByAccountIdAndMovieId(user.getId(), id);
         if (!bookmark.isPresent()) {
             Account account = accountsJpa.findOne(user.getId());
             if (account == null) {
                 throw new AccountNotFoundException();
             }
 
-            return bookmarksJpa.save(new MovieBookmark(account, id, watched));
+            return moviesBmJpa.save(new MovieBookmark(account, id, watched));
         } else {
-            bookmarksJpa.setWatchedByAccountIdAndMovieId(user.getId(), id, watched);
+            moviesBmJpa.setWatchedByAccountIdAndMovieId(user.getId(), id, watched);
             bookmark.get().setWatched(watched);
             return bookmark.get();
         }
@@ -103,8 +103,18 @@ class SessionController {
         account.getBookmarks().removeAll(bookmarks);
 
         LOG.debug(bookmarks.size() + " bookmarks found for user " + user.getUsername());
-        bookmarksJpa.delete(bookmarks);
+        moviesBmJpa.delete(bookmarks);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping("/me/series")
+    public List<Series> getSeries(ServletRequest request, @AuthenticationPrincipal User user) {
+
+        Collection<SeriesBookmark> bookmarks = seriesBmJpa.findByAccountId(user.getId());
+
+        return bookmarks.stream()
+                .map(bm -> new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm))
+                .collect(Collectors.toList());
     }
 }

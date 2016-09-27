@@ -104,6 +104,26 @@ class ApiService {
 
   //-- MEDIA
 
+  searchMovie(query) {
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: namespace + '/media/search/movie',
+      data: {
+        query: query
+      }
+    }));
+  }
+
+  searchTv(query) {
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: namespace + '/media/search/tv',
+      data: {
+        query: query
+      }
+    }));
+  }
+
   getDiscover() {
     return $.ajax(this.generateCredentials({
       method: 'get',
@@ -115,6 +135,13 @@ class ApiService {
     return $.ajax(this.generateCredentials({
       method: 'get',
       url: namespace + '/media/movie/' + id
+    }));
+  }
+
+  getSeries(id) {
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: namespace + '/media/series/' + id
     }));
   }
 

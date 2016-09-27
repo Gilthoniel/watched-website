@@ -1,7 +1,7 @@
 
 export function poster(media, conf) {
   let poster = '';
-  if (conf) {
+  if (conf && media.poster) {
     poster = conf.base_url;
     poster += conf.poster_sizes[3];
     poster += media.poster;
@@ -12,7 +12,7 @@ export function poster(media, conf) {
 
 export function backdrop(media, conf) {
   let backdrop = '';
-  if (conf) {
+  if (conf && media.backdrop) {
     backdrop = conf.base_url;
     backdrop += conf.backdrop_sizes[3];
     backdrop += media.backdrop;

@@ -4,22 +4,21 @@
 import React from 'react';
 import User from './user.jsx';
 import Menu from './menu.jsx';
-
-import * as ApiService from '../../service/api-service';
+import Search from './search.jsx';
 
 require('./header.scss');
 
-class Header extends React.Component {
+export default class Header extends React.Component {
 
   render() {
     return (
       <div id="header">
         <User/>
 
+        <Search/>
+
         <Menu/>
       </div>
     );
   }
 }
-
-export default Header;

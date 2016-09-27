@@ -1,15 +1,16 @@
 package ch.grim.controllers;
 
-import ch.grim.models.DiscoverResultPage;
-import ch.grim.models.Movie;
-import ch.grim.models.MovieBookmark;
-import ch.grim.models.User;
+import ch.grim.models.*;
 import ch.grim.repositories.MovieBookmarkRepository;
+import ch.grim.repositories.SeriesBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import info.movito.themoviedbapi.TmdbDiscover;
+import info.movito.themoviedbapi.TvResultsPage;
 import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TmdbConfiguration;
+import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +34,51 @@ public class MediaController {
 
     private MovieDBService service;
 
-    private MovieBookmarkRepository bookmarksJpa;
+    private MovieBookmarkRepository movieBmJpa;
+    private SeriesBookmarkRepository seriesBmJpa;
 
     @Autowired
-    public MediaController(MovieDBService service, MovieBookmarkRepository repo) {
+    public MediaController(MovieDBService service, MovieBookmarkRepository repo, SeriesBookmarkRepository repo2) {
         this.service = service;
-        this.bookmarksJpa = repo;
+        this.movieBmJpa = repo;
+        this.seriesBmJpa = repo2;
     }
 
     @RequestMapping("/configuration")
     public TmdbConfiguration getConfiguration() {
         return service.getConfiguration();
+    }
+
+    @RequestMapping("/search/movie")
+    public DiscoverResultPage searchMovie(
+            ServletRequest request,
+            @AuthenticationPrincipal User user,
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page) {
+
+        MovieResultsPage results = service.search(query, request.getLocale().getLanguage(), page);
+
+        Collection<MovieBookmark> bookmarks;
+        if (user != null) {
+            bookmarks = movieBmJpa.findByAccountId(user.getId());
+            LOG.info(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
+        } else {
+            bookmarks = Collections.emptyList();
+        }
+
+        return new DiscoverResultPage(results, bookmarks);
+    }
+
+    @RequestMapping("/search/tv")
+    public SeriesSearchResults searchTv(
+            ServletRequest request,
+            @AuthenticationPrincipal User user,
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page) {
+
+        TvResultsPage results = service.searchTv(query, request.getLocale().getLanguage(), page);
+
+        return new SeriesSearchResults(results, user);
     }
 
     @RequestMapping("/discover")
@@ -57,7 +92,7 @@ public class MediaController {
 
         Collection<MovieBookmark> bookmarks;
         if (user != null) {
-            bookmarks = bookmarksJpa.findByAccountId(user.getId());
+            bookmarks = movieBmJpa.findByAccountId(user.getId());
             LOG.info(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
         } else {
             bookmarks = Collections.emptyList();
@@ -75,12 +110,33 @@ public class MediaController {
 
         MovieBookmark bookmark = null;
         if (user != null) {
-            Optional<MovieBookmark> option = bookmarksJpa.findByAccountIdAndMovieId(user.getId(), id);
+            Optional<MovieBookmark> option = movieBmJpa.findByAccountIdAndMovieId(user.getId(), id);
             if (option.isPresent()) {
                 bookmark = option.get();
             }
         }
 
         return new Movie(movie, bookmark);
+    }
+
+    @RequestMapping("/series/{id}")
+    public Series tvShow(ServletRequest request,
+                         @AuthenticationPrincipal User user,
+                         @PathVariable int id) {
+
+        TvSeries series = service.getTvShow(id, request.getLocale().getLanguage());
+
+        SeriesBookmark bookmark = null;
+        if (user != null) {
+            Optional<SeriesBookmark> option = seriesBmJpa.findByAccountIdAndSeriesId(user.getId(), id);
+            if (option.isPresent()) {
+                bookmark = option.get();
+            }
+        }
+
+        Series response = new Series(series, bookmark);
+        response.loadEpisodes(service, request.getLocale().getLanguage());
+
+        return response;
     }
 }
