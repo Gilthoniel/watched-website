@@ -9,12 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 /**
- * Created by Gaylor on 27.09.2016.
- *
+ * Created by Gaylor on 28.09.2016.
+ * Represent a bookmark for an episode of a TV Show
  */
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SeriesBookmark {
+public class EpisodeBookmark {
 
     @JsonIgnore
     @ManyToOne
@@ -24,20 +24,30 @@ public class SeriesBookmark {
     @GeneratedValue
     private Long id;
 
-    private int seriesId;
+    private int serieId;
+    private int episodeId;
 
-    SeriesBookmark() {}
+    EpisodeBookmark() {}
 
-    public SeriesBookmark(Account account, int seriesId) {
+    public EpisodeBookmark(Account account, int serieId, int episodeId) {
         this.account = account;
-        this.seriesId = seriesId;
+        this.serieId = serieId;
+        this.episodeId = episodeId;
+    }
+
+    public Account getAccount() {
+        return account;
     }
 
     public Long getId() {
         return id;
     }
 
-    public int getSeriesId() {
-        return seriesId;
+    public int getSerieId() {
+        return serieId;
+    }
+
+    public int getEpisodeId() {
+        return episodeId;
     }
 }

@@ -78,27 +78,33 @@ class ApiService {
     return cache.getObject(key);
   }
 
-  getBookmarks() {
+  getBookmarks(type) {
+    type = type || 'movies';
+
     return $.ajax(this.generateCredentials({
       method: 'get',
-      url: namespace + '/users/me/movies'
+      url: namespace + '/users/me/' + type
     }));
   }
 
-  setBookmark(id, watched) {
+  setBookmark(id, type, watched) {
+    type = type || 'movies';
+
     return $.ajax(this.generateCredentials({
       method: 'post',
-      url: namespace + '/users/me/movies/' + id,
+      url: namespace + '/users/me/' + type + '/' + id,
       data: {
         watched: watched
       }
     }));
   }
 
-  removeBookmark(id) {
+  removeBookmark(id, type) {
+    type = type || 'movies';
+
     return $.ajax(this.generateCredentials({
       method: 'delete',
-      url: namespace + '/users/me/movies/' + id
+      url: namespace + '/users/me/' + type + '/' + id
     }));
   }
 

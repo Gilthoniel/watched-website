@@ -22,7 +22,7 @@ public class SeriesSerializer extends JsonSerializer<Series> {
 
         json.writeStartObject();
 
-        json.writeObjectField("bookmark", null);
+        json.writeObjectField("bookmark", tv.getBookmark());
         json.writeObjectField("seasons", tv.getSeasons());
 
         json.writeNumberField("id", series.getId());

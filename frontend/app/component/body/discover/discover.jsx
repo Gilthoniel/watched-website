@@ -27,6 +27,8 @@ class Discover extends React.Component {
   }
 
   componentWillMount() {
+    $('.body-discover').mCustomScrollbar();
+
     this.loadData();
   }
 

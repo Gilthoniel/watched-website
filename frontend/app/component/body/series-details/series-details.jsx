@@ -1,7 +1,8 @@
 import React from 'react';
 import Toastr from 'toastr';
 
-import BookmarkPin from '../media/bookmark-pin.jsx';
+import SeriesBookmarkPin from '../media/series-bookmark-pin.jsx';
+import EpisodesBox from './episodes-box.jsx';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
@@ -31,7 +32,17 @@ export default class SeriesDetails extends React.Component {
   }
 
   componentWillMount() {
+    $('.body-series-details').mCustomScrollbar();
+
     this.loadData();
+  }
+
+  componentDidMount() {
+    $('.body-series-details').mCustomScrollbar();
+  }
+
+  componentDidUpdate() {
+    $('.body-series-details').mCustomScrollbar();
   }
 
   render() {
@@ -51,13 +62,14 @@ export default class SeriesDetails extends React.Component {
           <div className="backdrop">
             <img src={backdrop} alt="Backdrop"/>
           </div>
+
           <div className="information">
             <div className="information-header">
               <div className="h-poster">
                 <img src={poster} alt=""/>
               </div>
 
-              <BookmarkPin series={series} blockClassName="h-select"/>
+              <SeriesBookmarkPin series={series} blockClassName="h-select"/>
 
               <div className="h-title">{series.title}</div>
             </div>
@@ -72,6 +84,7 @@ export default class SeriesDetails extends React.Component {
               <BBox title="Score">
                 {series.score_average} ({series.score_total})
               </BBox>
+              <EpisodesBox seasons={series.seasons}/>
             </div>
           </div>
         </div>
@@ -109,7 +122,7 @@ class BBox extends React.Component {
 
     return (
       <div className={(() => 'b-box' + ` b-${this.props.suffix}`)()} style={style}>
-        <h6>{this.props.title}</h6>
+        <h5>{this.props.title}</h5>
         <p>
           {this.props.children}
         </p>

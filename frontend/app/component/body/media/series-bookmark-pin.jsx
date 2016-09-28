@@ -4,19 +4,18 @@ import Toastr from 'toastr';
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 
-export default class BookmarkPin extends React.Component {
+export default class SeriesBookmarkPin extends React.Component {
 
   constructor(props) {
     super(props);
 
-    if (!props.movie) {
+    if (!props.series) {
       return;
     }
 
-    const bookmark = props.movie.bookmark;
+    const bookmark = props.series.bookmark;
     this.state = {
-      selected: bookmark !== null,
-      watched: bookmark ? bookmark.watched : false
+      selected: bookmark !== null
     };
 
     this.handleSelect = this.handleSelect.bind(this);
@@ -28,29 +27,26 @@ export default class BookmarkPin extends React.Component {
       return;
     }
 
-    const id = this.props.movie.id;
-    if (this.state.selected && this.state.watched) {
+    const id = this.props.series.id;
+    if (this.state.selected) {
       this.removeBookmark(id);
-    } else if (this.state.selected && !this.state.watched) {
-      this.addBookmark(this.props.movie, true);
     } else {
-      this.addBookmark(this.props.movie, false);
+      this.addBookmark(this.props.series);
     }
   }
 
   componentWillUpdate(nextProps) {
-    const media = nextProps.movie;
+    const media = nextProps.series;
     this.state.selected = media.bookmark !== null;
-    this.state.watched = media.bookmark ? media.bookmark.watched : false;
   }
 
   render() {
 
-    if (!this.props.movie) {
+    if (!this.props.series) {
       return <div className={this.props.blockClassName}><div className="bookmark-pin"/></div>;
     }
 
-    const pinClassName = 'bookmark-pin' + (this.state.selected ? ' active': '') + (this.state.watched ? ' watched' : '');
+    const pinClassName = 'bookmark-pin' + (this.state.selected ? ' active': '');
 
     return (
       <div className={this.props.blockClassName} onClick={this.handleSelect}>
@@ -59,24 +55,22 @@ export default class BookmarkPin extends React.Component {
     );
   }
 
-  addBookmark(movie, watched) {
-    ApiService.setBookmark(movie.id, 'movies', watched).then(
+  addBookmark(series) {
+    ApiService.setBookmark(series.id, 'series').then(
       (bookmark) => {
-        movie.bookmark = bookmark;
+        series.bookmark = bookmark;
         this.setState({
-          selected: true,
-          watched: watched
+          selected: true
         })
       },
       () => Toastr.error('The server is overloaded. Please try later...')
     );
   }
 
-  removeBookmark(movieId) {
-    ApiService.removeBookmark(movieId, 'movies').then(
+  removeBookmark(seriesId) {
+    ApiService.removeBookmark(seriesId, 'series').then(
       () => this.setState({
-        selected: false,
-        watched: false
+        selected: false
       }),
       () => Toastr.error('The server is overloaded. Please try later...')
     );

@@ -1,5 +1,14 @@
 
 .body-series-details {
+  height: 100%;
+
+  .mCSB_container {
+    margin: 0 !important;
+  }
+
+  .mCSB_scrollTools {
+    z-index: 50;
+  }
 
   .series-details {
 
@@ -54,12 +63,13 @@
 
       .information-body {
         display: flex;
+        flex-wrap: wrap;
 
         .b-box {
           flex: 1;
           margin: 0 20px;
 
-          h6 {
+          h5 {
             padding: 5px 0;
             font-size: 16px;
             font-weight: bold;
@@ -85,6 +95,39 @@
               border-radius: 10px;
               padding: 5px 10px;
               margin: 5px;
+            }
+          }
+
+          &.b-episodes {
+            ul {
+              list-style: none;
+              padding: 0;
+              font-size: 14px;
+
+              li.episode {
+                display: flex;
+                align-items: center;
+                padding: 0;
+                margin: 0;
+
+                .episode-info {
+                  flex: 1;
+                  padding: 5px;
+
+                  &.bookmark {
+                    flex: none;
+                    width: 40px;
+                    height: 40px;
+                  }
+
+                  &.number {
+                    flex: none;
+                    width: 50px;
+                    text-align: center;
+                    font-weight: bold;
+                  }
+                }
+              }
             }
           }
         }

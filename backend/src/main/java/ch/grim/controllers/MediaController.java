@@ -1,6 +1,7 @@
 package ch.grim.controllers;
 
 import ch.grim.models.*;
+import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
 import ch.grim.services.MovieDBService;
@@ -34,14 +35,17 @@ public class MediaController {
 
     private MovieDBService service;
 
-    private MovieBookmarkRepository movieBmJpa;
-    private SeriesBookmarkRepository seriesBmJpa;
+    private final MovieBookmarkRepository movieBmJpa;
+    private final SeriesBookmarkRepository seriesBmJpa;
+    private final EpisodeBookmarkRepository episodeBmJpa;
 
     @Autowired
-    public MediaController(MovieDBService service, MovieBookmarkRepository repo, SeriesBookmarkRepository repo2) {
+    public MediaController(MovieDBService service, MovieBookmarkRepository movieBmJpa,
+                           SeriesBookmarkRepository seriesBmJpa, EpisodeBookmarkRepository episodeBmJpa) {
         this.service = service;
-        this.movieBmJpa = repo;
-        this.seriesBmJpa = repo2;
+        this.movieBmJpa = movieBmJpa;
+        this.seriesBmJpa = seriesBmJpa;
+        this.episodeBmJpa = episodeBmJpa;
     }
 
     @RequestMapping("/configuration")
@@ -136,6 +140,9 @@ public class MediaController {
 
         Series response = new Series(series, bookmark);
         response.loadEpisodes(service, request.getLocale().getLanguage());
+        if (user != null) {
+            response.loadBookmarks(episodeBmJpa, user.getId());
+        }
 
         return response;
     }

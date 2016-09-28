@@ -1,5 +1,6 @@
 package ch.grim.models;
 
+import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import com.sun.istack.internal.Nullable;
 import info.movito.themoviedbapi.model.tv.TvSeason;
@@ -7,6 +8,7 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Gaylor on 10.08.2016.
@@ -18,7 +20,7 @@ public class Series {
 
     private SeriesBookmark bookmark;
 
-    private Map<Integer, TvSeason> seasons = new HashMap<>();
+    private Map<Integer, Season> seasons = new HashMap<>();
 
     public Series(TvSeries series, @Nullable SeriesBookmark bookmark) {
         this.data = series;
@@ -30,11 +32,31 @@ public class Series {
     }
 
     /**
-     * Populate the hashmap of seasons
+     * Populate the hash map of seasons
      */
     public void loadEpisodes(MovieDBService service, String lang) {
         data.getSeasons().forEach(season -> {
-            seasons.put(season.getSeasonNumber(), service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang));
+            Season s = new Season(service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang));
+            seasons.put(season.getSeasonNumber(), s);
+        });
+    }
+
+    /**
+     * Populate the episodes with bookmark when existing
+     */
+    public void loadBookmarks(EpisodeBookmarkRepository repo, Long userId) {
+        if (seasons == null) {
+            return;
+        }
+
+        seasons.forEach((index, season) -> {
+            season.getEpisodes().forEach(episode -> {
+                Optional<EpisodeBookmark> bookmark = repo.findByAccountIdAndSerieIdAndEpisodeId(userId, season.getId(), episode.getId());
+
+                if (bookmark.isPresent()) {
+                    episode.setBookmark(bookmark.get());
+                }
+            });
         });
     }
 
@@ -46,7 +68,7 @@ public class Series {
         return bookmark;
     }
 
-    public Map<Integer, TvSeason> getSeasons() {
+    public Map<Integer, Season> getSeasons() {
         return seasons;
     }
 }

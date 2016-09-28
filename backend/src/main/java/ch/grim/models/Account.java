@@ -20,6 +20,12 @@ public class Account implements Serializable {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<MovieBookmark> bookmarks = new HashSet<>();
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<SeriesBookmark> seriesBookmarks = new HashSet<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<EpisodeBookmark> episodeBookmarks = new HashSet<>();
+
     private String username;
     private String email;
 
@@ -48,6 +54,14 @@ public class Account implements Serializable {
 
     public Set<MovieBookmark> getBookmarks() {
         return bookmarks;
+    }
+
+    public Set<SeriesBookmark> getSeriesBookmarks() {
+        return seriesBookmarks;
+    }
+
+    public Set<EpisodeBookmark> getEpisodeBookmarks() {
+        return episodeBookmarks;
     }
 
     public String getEmail() {

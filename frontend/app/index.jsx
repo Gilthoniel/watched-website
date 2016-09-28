@@ -29,18 +29,12 @@ class App extends React.Component {
     Toastr.options.positionClass = "toast-bottom-left";
   }
 
-  componentDidMount() {
-    $('#app').find('.body-scroll').mCustomScrollbar();
-  }
-
   render() {
     return (
       <div id="watched-wrapper">
         <Header/>
 
-        <div className="body-scroll">
-          <Body>{this.props.children}</Body>
-        </div>
+        <Body>{this.props.children}</Body>
       </div>
     );
   }
