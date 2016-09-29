@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.ServletRequest;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,14 +56,23 @@ class SessionController {
     }
 
     @RequestMapping(value = "/me/movies")
-    public List<Movie> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
+    public Map<String, Collection<Object>> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
 
+        Map<String, Collection<Object>> map = new HashMap<>();
+
+        // Get the movies
         Collection<MovieBookmark> bookmarks = moviesBmJpa.findByAccountId(user.getId());
-
-        return bookmarks
-                .stream()
+        map.put("movies", bookmarks.stream()
                 .map(bm -> new Movie(service.getMovie(bm.getMovieId(), request.getLocale().getLanguage()), bm))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+        // Get the Series
+        Collection<SeriesBookmark> seriesBookmarks = seriesBmJpa.findByAccountId(user.getId());
+        map.put("series", seriesBookmarks.stream()
+                .map(bm -> new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm))
+                .collect(Collectors.toList()));
+
+        return map;
     }
 
     @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.POST)

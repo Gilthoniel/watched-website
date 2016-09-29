@@ -7,8 +7,6 @@ import SeriesCard from '../media/series-card.jsx';
 
 import ApiService from '../../../service/api-service';
 
-const MENUS = ['Movies', 'TV Series'];
-
 export default class Search extends React.Component {
 
   constructor(props) {
@@ -16,11 +14,8 @@ export default class Search extends React.Component {
 
     this.state = {
       movies: [],
-      series: [],
-      menu: 0
+      series: []
     };
-
-    this.handleMenuClick = this.handleMenuClick.bind(this);
   }
 
   componentWillMount() {
@@ -33,44 +28,48 @@ export default class Search extends React.Component {
     }
   }
 
-  handleMenuClick(index) {
-    this.setState({
-      menu: index
-    });
+  componentDidMount() {
+    $('.body-search').mCustomScrollbar();
+  }
+
+  componentDidUpdate() {
+    $('.body-search').mCustomScrollbar();
   }
 
   render() {
-    let medias;
-    if (this.state.menu === 0) {
-      medias = this.state.movies.map(function(movie) {
-        return (
-          <div key={movie.id} className="body-search-card">
-            <MovieCard movie={movie} />
-          </div>
-        );
-      });
-    } else {
-      medias = this.state.series.map(function(series) {
-        return (
-          <div key={series.id} className="body-search-card">
-            <SeriesCard series={series} />
-          </div>
-        );
-      });
-    }
-
-    const menus = MENUS.map((menu, index) => {
-      const className = `search-menu-item ${index === this.state.menu ? 'active' : ''}`;
-      return <div className={className} onClick={() => this.handleMenuClick(index)} key={index}>{menu}</div>;
+    const movies = this.state.movies.map(function(movie) {
+      return (
+        <div key={movie.id} className="body-search-card">
+          <MovieCard movie={movie} />
+        </div>
+      );
+    });
+    const series = this.state.series.map(function(series) {
+      return (
+        <div key={series.id} className="body-search-card">
+          <SeriesCard series={series} />
+        </div>
+      );
     });
 
     return (
       <div className="body-search">
-        <div className="body-search-menu">
-          {menus}
-        </div>
+        <div className="body-search-columns">
+          <div className="body-search-column">
+            <h6>Movies</h6>
 
-        {medias}
+            <div className="search-container">
+              {movies}
+            </div>
+          </div>
+          <div className="body-search-column">
+            <h6>TV Shows</h6>
+
+            <div className="search-container">
+              {series}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

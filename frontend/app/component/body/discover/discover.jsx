@@ -32,6 +32,14 @@ class Discover extends React.Component {
     this.loadData();
   }
 
+  componentDidMount() {
+    $('.body-discover').mCustomScrollbar();
+  }
+
+  componentDidUpdate() {
+    $('.body-discover').mCustomScrollbar();
+  }
+
   render() {
 
     const movies = [];
@@ -45,7 +53,9 @@ class Discover extends React.Component {
 
     return (
       <div className="body-discover">
-        {movies}
+        <div className="body-discover-container">
+          {movies}
+        </div>
       </div>
     );
   }

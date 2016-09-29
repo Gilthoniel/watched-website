@@ -13,6 +13,7 @@ public class Episode {
 
     private int id;
     private String name;
+    private String overview;
     @JsonProperty(value = "episode_number")
     private int episodeNumber;
 
@@ -21,6 +22,7 @@ public class Episode {
     public Episode(TvEpisode episode) {
         id = episode.getId();
         name = episode.getName();
+        overview = episode.getOverview();
         episodeNumber = episode.getEpisodeNumber();
     }
 

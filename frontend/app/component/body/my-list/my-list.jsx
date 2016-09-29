@@ -46,6 +46,14 @@ class MyList extends React.Component {
     }
   }
 
+  componentDidMount() {
+    $('.my-list-container').mCustomScrollbar();
+  }
+
+  componentDidUpdate() {
+    $('.my-list-container').mCustomScrollbar();
+  }
+
   render() {
 
     if (!this.state.isAuthenticated) {
@@ -67,16 +75,18 @@ class MyList extends React.Component {
     });
 
     return (
-      <div className="my-list">
-        {movies}
-        {this.state.last_items} {/* Workaround for the last line alignment */}
+      <div className="my-list-container">
+        <div className="my-list">
+          {movies}
+          {this.state.last_items} {/* Workaround for the last line alignment */}
+        </div>
       </div>
     );
   }
 
   loadData() {
     ApiService.getBookmarks().then(
-      (movies) => this.setState({ movies: movies }),
+      (response) => this.setState({ movies: response.movies }),
       () => Toastr.error('The server is overloaded', 'Oops')
     );
   }
