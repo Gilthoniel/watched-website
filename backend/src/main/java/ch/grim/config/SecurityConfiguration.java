@@ -1,6 +1,5 @@
 package ch.grim.config;
 
-import ch.grim.models.Account;
 import ch.grim.models.User;
 import ch.grim.repositories.AccountRepository;
 import org.slf4j.Logger;

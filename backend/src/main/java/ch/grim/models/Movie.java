@@ -1,6 +1,5 @@
 package ch.grim.models;
 
-import com.sun.istack.internal.Nullable;
 import info.movito.themoviedbapi.model.MovieDb;
 
 /**
@@ -14,7 +13,7 @@ public class Movie {
 
     private MovieDb data;
 
-    public Movie(MovieDb movie, @Nullable MovieBookmark bookmark) {
+    public Movie(MovieDb movie, MovieBookmark bookmark) {
         data = movie;
         this.bookmark = bookmark;
     }

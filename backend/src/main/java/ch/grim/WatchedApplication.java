@@ -57,7 +57,7 @@ public class WatchedApplication implements ApplicationListener<ContextRefreshedE
     @Override
     public void run(String... strings) throws Exception {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        accounts.save(new Account("gaylor.bosson", "gaylor.bosson@gmail.com", encoder.encode("password")));
+        accounts.save(new Account("Grim", "gaylor.bosson@gmail.com", encoder.encode("NvidiaGTX970")));
     }
 
 	public static void main(String[] args) {

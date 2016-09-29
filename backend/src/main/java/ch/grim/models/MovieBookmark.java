@@ -2,7 +2,6 @@ package ch.grim.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.istack.internal.Nullable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +35,7 @@ public class MovieBookmark {
         this.watched = false;
     }
 
-    public MovieBookmark(Account account, int movieId, @Nullable Boolean watched) {
+    public MovieBookmark(Account account, int movieId, Boolean watched) {
         this(account, movieId);
         this.watched = watched;
     }

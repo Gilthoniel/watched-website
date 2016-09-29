@@ -2,8 +2,6 @@ package ch.grim.models;
 
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
-import com.sun.istack.internal.Nullable;
-import info.movito.themoviedbapi.model.tv.TvSeason;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 import java.util.HashMap;
@@ -22,7 +20,7 @@ public class Series {
 
     private Map<Integer, Season> seasons = new HashMap<>();
 
-    public Series(TvSeries series, @Nullable SeriesBookmark bookmark) {
+    public Series(TvSeries series, SeriesBookmark bookmark) {
         this.data = series;
         this.bookmark = bookmark;
     }

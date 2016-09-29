@@ -1,5 +1,5 @@
 import React from 'react';
-import {Router, Route, browserHistory} from 'react-router';
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {render} from 'react-dom';
 import Toastr from 'toastr';
 
@@ -43,7 +43,8 @@ class App extends React.Component {
 render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
-      <Route path="/" component={Discover}/>
+      <Route path="/" />
+      <IndexRoute component={Discover}/>
       <Route path="/discover" component={Discover}/>
       <Route path="/movie/:id" component={MovieDetails}/>
       <Route path="/series/:id" component={SeriesDetails}/>
