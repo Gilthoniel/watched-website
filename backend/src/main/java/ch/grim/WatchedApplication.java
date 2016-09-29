@@ -43,7 +43,9 @@ public class WatchedApplication implements ApplicationListener<ContextRefreshedE
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.addAllowedOrigin("http://localhost:8080");
+		config.addAllowedOrigin("https://137.74.45.180");
+		config.addAllowedOrigin("https://grimsoft.ch");
+        config.addAllowedOrigin("http://localhost");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		source.registerCorsConfiguration("/**", config);

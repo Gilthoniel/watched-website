@@ -4,7 +4,8 @@
  */
 
 const $ = require('jquery');
-const namespace = 'http://localhost:9000/api';
+const url = process.env.NODE_ENV === 'production' ? 'https://grimsoft.ch' : 'http://localhost:9000';
+const namespace = url + '/api';
 const cache = {
   data: {},
 
@@ -50,7 +51,7 @@ class ApiService {
   getToken(username, password) {
     return $.ajax({
       method: 'post',
-      url: 'http://localhost:9000/oauth/token',
+      url: url + '/oauth/token',
       contentType: 'application/x-www-form-urlencoded',
       headers: {
         Authorization: 'Basic ' + btoa('watched-website:secret')
