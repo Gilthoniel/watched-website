@@ -77,9 +77,15 @@ export default class SeriesDetails extends React.Component {
       (
         <div className="b-details">
           <h5>{episode.name}</h5>
-          <p>
+
+          <BBox title="Overview" flex="2">
             {episode.overview}
-          </p>
+          </BBox>
+          <BBox title="More">
+            <div>Season {episode.season_number}</div>
+            <div>Episode {episode.episode_number}</div>
+            <div>Air date {episode.air_date}</div>
+          </BBox>
         </div>
       );
     

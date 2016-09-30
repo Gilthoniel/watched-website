@@ -16,6 +16,12 @@ public class Episode {
     private String overview;
     @JsonProperty(value = "episode_number")
     private int episodeNumber;
+    @JsonProperty(value = "season_number")
+    private int seasonNumber;
+    @JsonProperty(value = "air_date")
+    private String airDate;
+    @JsonProperty(value = "still_path")
+    private String stillPath;
 
     private EpisodeBookmark bookmark;
 
@@ -24,6 +30,9 @@ public class Episode {
         name = episode.getName();
         overview = episode.getOverview();
         episodeNumber = episode.getEpisodeNumber();
+        seasonNumber = episode.getSeasonNumber();
+        airDate = episode.getAirDate();
+        stillPath = episode.getStillPath();
     }
 
     public int getId() {
@@ -34,8 +43,24 @@ public class Episode {
         return name;
     }
 
+    public String getOverview() {
+        return overview;
+    }
+
     public int getEpisodeNumber() {
         return episodeNumber;
+    }
+
+    public int getSeasonNumber() {
+        return seasonNumber;
+    }
+
+    public String getAirDate() {
+        return airDate;
+    }
+
+    public String getStillPath() {
+        return stillPath;
     }
 
     public EpisodeBookmark getBookmark() {

@@ -67,23 +67,29 @@
         display: flex;
         flex-wrap: wrap;
 
+        h5 {
+          padding: 5px 0;
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+          color: #da824f;
+        }
+
         .b-details {
           flex: 2;
           display: flex;
           flex-wrap: wrap;
+          align-items: flex-start;
+          align-content: flex-start;
+
+          h5 {
+            width: 100%;
+          }
         }
 
         .b-box {
           flex: 1;
           margin: 0 20px;
-
-          h5 {
-            padding: 5px 0;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #da824f;
-          }
 
           p {
             font-size: 14px;

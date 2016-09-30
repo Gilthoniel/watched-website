@@ -15,7 +15,7 @@ export default class EpisodesBox extends React.Component {
   }
 
   initScrollbar() {
-    const box = $('.b-episodes');
+    const box = $('.b-box-scroll');
 
     const height = window.innerHeight - box.offset().top - SCROLLBAR_MARGIN_BOTTOM;
 
@@ -62,7 +62,10 @@ export default class EpisodesBox extends React.Component {
     return (
       <div className="b-box b-episodes" style={style}>
         <h5>Episodes</h5>
-        {seasons}
+
+        <div className="b-box-scroll">
+          {seasons}
+        </div>
       </div>
     );
   }
