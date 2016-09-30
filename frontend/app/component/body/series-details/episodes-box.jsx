@@ -2,12 +2,31 @@ import React from 'react';
 
 import EpisodeBookmarkPin from './../media/episode-bookmark-pin.jsx';
 
+const SCROLLBAR_MARGIN_BOTTOM = 50;
+
 export default class EpisodesBox extends React.Component {
+
+  componentDidMount() {
+    this.initScrollbar();
+  }
+
+  componentDidUpdate() {
+    this.initScrollbar();
+  }
+
+  initScrollbar() {
+    const box = $('.b-episodes');
+
+    const height = window.innerHeight - box.offset().top - SCROLLBAR_MARGIN_BOTTOM;
+
+    box.css('max-height', height+'px');
+    box.mCustomScrollbar();
+  }
 
   render() {
 
     const style = {
-      flex: 5
+      flex: 1
     };
 
     if (!this.props.seasons || this.props.seasons.length == 0) {
@@ -26,7 +45,7 @@ export default class EpisodesBox extends React.Component {
       const season = this.props.seasons[i];
       const episodes = season.episodes.map((episode) => {
         return (
-          <EpisodeItem episode={episode} season={season} key={episode.id}/>
+          <EpisodeItem episode={episode} season={season} onover={this.props.onover} key={episode.id}/>
         );
       });
 
@@ -58,7 +77,7 @@ class EpisodeItem extends React.Component {
     }
 
     return (
-      <li className="episode">
+      <li className="episode" onMouseEnter={(() => this.props.onover(episode))} onMouseLeave={(() => this.props.onover())}>
         <div className="episode-info bookmark">
           <EpisodeBookmarkPin episode={episode} season={this.props.season}/>
         </div>

@@ -17,10 +17,13 @@ export default class SeriesDetails extends React.Component {
 
     this.state = {
       series: undefined,
+      episode: undefined,
       configuration: undefined,
     };
 
     Session.subscribe(this);
+
+    this.handleHoverEpisode = this.handleHoverEpisode.bind(this);
   }
 
   onLoginSuccess() {
@@ -37,12 +40,11 @@ export default class SeriesDetails extends React.Component {
     this.loadData();
   }
 
-  componentDidMount() {
-    $('.body-series-details').mCustomScrollbar();
-  }
-
-  componentDidUpdate() {
-    $('.body-series-details').mCustomScrollbar();
+  handleHoverEpisode(episode) {
+    console.log(episode);
+    this.setState({
+      episode: episode
+    });
   }
 
   render() {
@@ -55,6 +57,31 @@ export default class SeriesDetails extends React.Component {
     
     const backdrop = MediaApi.backdrop(series, this.state.configuration);
     const poster = MediaApi.poster(series, this.state.configuration);
+
+    const episode = this.state.episode;
+
+    const details = typeof episode === 'undefined' ?
+      (
+        <div className="b-details">
+          <BBox title="Overview" suffix="overview" flex="3">
+            {series.overview}
+          </BBox>
+          <BBox title="Release Date">
+            {series.release_date}
+          </BBox>
+          <BBox title="Score">
+            {series.score_average} ({series.score_total})
+          </BBox>
+        </div>
+      ) :
+      (
+        <div className="b-details">
+          <h5>{episode.name}</h5>
+          <p>
+            {episode.overview}
+          </p>
+        </div>
+      );
     
     return (
       <div className="body-series-details">
@@ -75,16 +102,8 @@ export default class SeriesDetails extends React.Component {
             </div>
 
             <div className="information-body">
-              <BBox title="Overview" suffix="overview" flex="3">
-                {series.overview}
-              </BBox>
-              <BBox title="Release Date">
-                {series.release_date}
-              </BBox>
-              <BBox title="Score">
-                {series.score_average} ({series.score_total})
-              </BBox>
-              <EpisodesBox seasons={series.seasons}/>
+              {details}
+              <EpisodesBox seasons={series.seasons} onover={this.handleHoverEpisode} />
             </div>
           </div>
         </div>
