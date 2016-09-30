@@ -41,7 +41,6 @@ export default class SeriesDetails extends React.Component {
   }
 
   handleHoverEpisode(episode) {
-    console.log(episode);
     this.setState({
       episode: episode
     });
@@ -109,7 +108,7 @@ export default class SeriesDetails extends React.Component {
 
             <div className="information-body">
               {details}
-              <EpisodesBox seasons={series.seasons} onover={this.handleHoverEpisode} />
+              <EpisodesBox series={series} onover={this.handleHoverEpisode} />
             </div>
           </div>
         </div>

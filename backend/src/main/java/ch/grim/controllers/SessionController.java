@@ -214,4 +214,32 @@ class SessionController {
 
     }
 
+    @RequestMapping(value = "/me/season/{serieId}/{seasonNumber}", method = RequestMethod.POST)
+    public Collection<Episode> setSeasonBookmarks(
+            ServletRequest request,
+            @AuthenticationPrincipal User user,
+            @PathVariable int serieId,
+            @PathVariable int seasonNumber) throws AccountNotFoundException {
+
+        List<Episode> episodes = new LinkedList<>();
+
+        Account account = accountsJpa.findOne(user.getId());
+        if (account == null) {
+            throw new AccountNotFoundException();
+        }
+
+        service.getSeriesSeason(serieId, seasonNumber, request.getLocale().getLanguage()).getEpisodes()
+                .forEach(episode -> {
+                    Optional<EpisodeBookmark> bm = episodesBmJpa.findByAccountIdAndSerieIdAndEpisodeId(user.getId(), serieId, episode.getId());
+                    if (!bm.isPresent()) {
+                        EpisodeBookmark bookmark = episodesBmJpa.save(new EpisodeBookmark(account, serieId, episode.getId()));
+                        episodes.add(new Episode(episode, bookmark));
+                    } else {
+                        episodes.add(new Episode(episode, bm.get()));
+                    }
+                });
+
+        return episodes;
+    }
+
 }

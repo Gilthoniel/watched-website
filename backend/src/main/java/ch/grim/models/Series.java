@@ -34,8 +34,11 @@ public class Series {
      */
     public void loadEpisodes(MovieDBService service, String lang) {
         data.getSeasons().forEach(season -> {
-            Season s = new Season(service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang));
-            seasons.put(season.getSeasonNumber(), s);
+
+            if (season.getSeasonNumber() != 0) {
+                Season s = new Season(service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang));
+                seasons.put(season.getSeasonNumber(), s);
+            }
         });
     }
 
@@ -49,7 +52,7 @@ public class Series {
 
         seasons.forEach((index, season) -> {
             season.getEpisodes().forEach(episode -> {
-                Optional<EpisodeBookmark> bookmark = repo.findByAccountIdAndSerieIdAndEpisodeId(userId, season.getId(), episode.getId());
+                Optional<EpisodeBookmark> bookmark = repo.findByAccountIdAndSerieIdAndEpisodeId(userId, data.getId(), episode.getId());
 
                 if (bookmark.isPresent()) {
                     episode.setBookmark(bookmark.get());

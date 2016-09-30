@@ -19,32 +19,46 @@ export default class EpisodeBookmarkPin extends React.Component {
 
   handleNumberClick() {
     if (this.state.watched) {
-      this.removeBookmark(this.props.season, this.props.episode);
+      this.removeBookmark(this.props.series.id, this.props.season, this.props.episode);
     } else {
-      this.addBookmark(this.props.season, this.props.episode);
+      this.addBookmark(this.props.series.id, this.props.season, this.props.episode);
     }
   }
 
-  addBookmark(season, episode) {
-    ApiService.setBookmark(`${season.id}/${episode.id}`, 'episodes').then(
+  addBookmark(seriesId, season, episode) {
+    ApiService.setBookmark(`${seriesId}/${episode.id}`, 'episodes').then(
       (bookmark) => {
         episode.bookmark = bookmark;
         this.setState({
           watched: true
         });
+
+        if (this.props.onchange) {
+          this.props.onchange(season);
+        }
       }
     );
   }
 
-  removeBookmark(season, episode) {
-    ApiService.removeBookmark(`${season.id}/${episode.id}`, 'episodes').then(
+  removeBookmark(seriesId, season, episode) {
+    ApiService.removeBookmark(`${seriesId}/${episode.id}`, 'episodes').then(
       () => {
         delete episode.bookmark;
         this.setState({
           watched: false
         });
+
+        if (this.props.onchange) {
+          this.props.onchange(season);
+        }
       }
     );
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      watched: typeof this.props.episode.bookmark !== 'undefined'
+    });
   }
 
   render() {

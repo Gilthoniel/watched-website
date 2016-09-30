@@ -35,6 +35,11 @@ public class Episode {
         stillPath = episode.getStillPath();
     }
 
+    public Episode(TvEpisode episode, EpisodeBookmark bm) {
+        this(episode);
+        bookmark = bm;
+    }
+
     public int getId() {
         return id;
     }

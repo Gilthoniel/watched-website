@@ -1,3 +1,4 @@
+@import "../../../style/variables";
 
 .body-series-details {
   height: 100%;
@@ -18,7 +19,7 @@
       max-height: 400px;
       overflow: hidden;
       box-shadow: 0 0 5px black;
-      border-bottom: 2px solid #da824f;
+      border-bottom: 2px solid $bbox-title-color1;
 
       img {
         width: 100%;
@@ -72,7 +73,7 @@
           font-size: 16px;
           font-weight: bold;
           text-transform: uppercase;
-          color: #da824f;
+          color: $bbox-title-color2;
         }
 
         .b-details {
@@ -90,6 +91,10 @@
         .b-box {
           flex: 1;
           margin: 0 20px;
+
+          h5 {
+            color: $bbox-title-color1;
+          }
 
           p {
             font-size: 14px;
@@ -113,32 +118,62 @@
           }
 
           &.b-episodes {
-            ul {
-              list-style: none;
-              padding: 0;
-              font-size: 14px;
 
-              li.episode {
-                display: flex;
-                align-items: center;
+            h5 {
+              color: $bbox-title-color2;
+            }
+
+            .season-box {
+              position: relative;
+              overflow: hidden;
+
+              transition: height 500ms ease-in-out;
+
+              .season-box-pin {
+                position: absolute;
+                top: 0;
+                right: 30px;
+                width: 30px;
+                height: 30px;
+              }
+
+              h6 {
+                font-size: 1.5em;
+                cursor: pointer;
+                color: $bbox-title-color1;
+
+                span {
+                  margin-right: 20px;
+                }
+              }
+
+              ul {
+                list-style: none;
                 padding: 0;
-                margin: 0;
+                font-size: 14px;
 
-                .episode-info {
-                  flex: 1;
-                  padding: 5px;
+                li.episode {
+                  display: flex;
+                  align-items: center;
+                  padding: 0;
+                  margin: 0;
 
-                  &.bookmark {
-                    flex: none;
-                    width: 40px;
-                    height: 40px;
-                  }
+                  .episode-info {
+                    flex: 1;
+                    padding: 5px;
 
-                  &.number {
-                    flex: none;
-                    width: 50px;
-                    text-align: center;
-                    font-weight: bold;
+                    &.bookmark {
+                      flex: none;
+                      width: 40px;
+                      height: 40px;
+                    }
+
+                    &.number {
+                      flex: none;
+                      width: 50px;
+                      text-align: center;
+                      font-weight: bold;
+                    }
                   }
                 }
               }
