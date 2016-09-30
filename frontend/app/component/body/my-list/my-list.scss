@@ -1,11 +1,46 @@
+@import "../../../style/variables";
 
-.my-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 20px;
+.my-list-container {
+  height: 100%;
 
-  .my-list-item {
-    width: 200px;
+  .mCSB_container {
+    margin: 0 !important;
+  }
+
+  .mCSB_scrollTools {
+    z-index: 50;
+  }
+
+  .my-list-menu {
+    display: flex;
+    align-items: flex-start;
+    background: rgb(185, 160, 141);
+
+    > div {
+      flex: none;
+      padding: 10px;
+      color: white;
+      font-size: 1.4em;
+    }
+  }
+
+  .my-list {
+
+    h4 {
+      color: white;
+      text-align: center;
+      font-size: 4em;
+      text-transform: capitalize;
+    }
+
+    .my-list-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .my-list-item {
+        width: 200px;
+      }
+    }
   }
 }

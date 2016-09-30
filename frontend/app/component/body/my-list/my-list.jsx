@@ -15,6 +15,7 @@ class MyList extends React.Component {
 
     this.state = {
       movies: [],
+      series: [],
       isAuthenticated: Session.isAuthenticated,
       last_items: []
     };
@@ -66,18 +67,53 @@ class MyList extends React.Component {
       );
     }
 
-    const movies = this.state.movies.map(function(movie) {
+    const medias = {};
+    const movies = this.state.movies.forEach(function mapper(media) {
+      const key = (media.title || '0').toLowerCase().charAt(0);
+
+      if (!medias.hasOwnProperty(key)) {
+        medias[key] = [];
+      }
+
+      medias[`${key}`].push(
+        <div className="my-list-item" key={media.id}>
+          <BookmarkCard movie={media}/>
+        </div>
+      );
+    });
+    const series = this.state.series.forEach(function mapper(media) {
+      const key = (media.title || '0').toLowerCase().charAt(0);
+
+      if (!medias.hasOwnProperty(key)) {
+        medias[key] = [];
+      }
+
+      medias[`${key}`].push(
+        <div className="my-list-item" key={media.id}>
+          <BookmarkCard series={media}/>
+        </div>
+      );
+    });
+
+    const templates = Object.keys(medias).sort().map(function(key) {
       return (
-        <div className="my-list-item" key={movie.id}>
-          <BookmarkCard movie={movie}/>
+        <div className="my-list-category">
+          <h4>{key}</h4>
+          <div className="my-list-flex">
+            {medias[key]}
+          </div>
         </div>
       );
     });
 
     return (
       <div className="my-list-container">
+        <div className="my-list-menu">
+          <div>Alphabetical Order</div>
+          <div>Show/Hide watched</div>
+        </div>
         <div className="my-list">
-          {movies}
+          {templates}
           {this.state.last_items} {/* Workaround for the last line alignment */}
         </div>
       </div>
@@ -86,7 +122,10 @@ class MyList extends React.Component {
 
   loadData() {
     ApiService.getBookmarks().then(
-      (response) => this.setState({ movies: response.movies }),
+      (response) => this.setState({
+        movies: response.movies,
+        series: response.series
+      }),
       () => Toastr.error('The server is overloaded', 'Oops')
     );
   }

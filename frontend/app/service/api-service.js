@@ -79,12 +79,10 @@ class ApiService {
     return cache.getObject(key);
   }
 
-  getBookmarks(type) {
-    type = type || 'movies';
-
+  getBookmarks() {
     return $.ajax(this.generateCredentials({
       method: 'get',
-      url: namespace + '/users/me/' + type
+      url: namespace + '/users/me/bookmarks'
     }));
   }
 

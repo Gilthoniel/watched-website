@@ -55,7 +55,7 @@ class SessionController {
         return new User(account);
     }
 
-    @RequestMapping(value = "/me/movies")
+    @RequestMapping(value = "/me/bookmarks")
     public Map<String, Collection<Object>> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
 
         Map<String, Collection<Object>> map = new HashMap<>();

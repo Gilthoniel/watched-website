@@ -27,20 +27,26 @@ export default class BookmarkCard extends React.Component {
   }
 
   handleCardClick() {
-    browserHistory.push('/movie/' + this.props.movie.id);
+    if (this.props.movie) {
+      browserHistory.push('/movie/' + this.props.movie.id);
+    }
+
+    if (this.props.series) {
+      browserHistory.push('/series/' + this.props.series.id);
+    }
   }
 
   render() {
 
-    const movie = this.props.movie;
-    const poster = MediaApi.poster(movie, this.state.configuration);
+    const media = this.props.movie || this.props.series;
+    const poster = MediaApi.poster(media, this.state.configuration);
 
     return (
       <div className="bookmark-card" onClick={this.handleCardClick}>
         <img src={poster} className="bookmark-bg" alt="" />
         <div className="bookmark-wrapper">
           <div className="bookmark-title">
-            {movie.title}
+            {media.title || media.name}
           </div>
         </div>
       </div>
