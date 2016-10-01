@@ -45,6 +45,7 @@ class ApiService {
 
   destroyToken() {
     this.token = '';
+    cache.clear();
   }
 
   getToken(username, password) {
