@@ -14,23 +14,10 @@
 
   .header__user {
     padding: 20px;
-    text-align: center;
-    font-size: 20px;
     color: white;
     background: rgba(255, 255, 255, 0.2);
 
-    .header__user__loading {
-      padding: 50px;
-      text-align: center;
-    }
-
-    h3 {
-      margin: 20px 0;
-      color: black;
-    }
-
     .header_login {
-      text-align: right;
 
       input {
         display: block;
@@ -38,9 +25,32 @@
         margin: 10px auto;
         padding: 10px;
         border-radius: 5px;
-        border: 1px solid #efa67b;
+        background: rgba(255, 255, 255, 0.35) !important;
+        border: none;
         font-size: 14px;
         color: black;
+      }
+
+      .h-error-msg {
+        color: darkred;
+        font-size: 12px;
+        font-style: italic;
+      }
+
+      .h-user-loading {
+
+      }
+
+      .h-user-actions {
+        > div {
+          width: 50%;
+          display: inline-block;
+        }
+
+        .btn {
+          float: right;
+          margin-left: 10px;
+        }
       }
     }
 

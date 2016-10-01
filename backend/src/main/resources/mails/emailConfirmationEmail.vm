@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <h3>Registration Processus</h3>
+
+        <p>
+            Thank you for your registration !
+
+            The last step before you start is to validate your email
+            <a href="https://grimsoft.ch/account/confirm?token=${token}">by clicking here</a>.
+
+            This will open GrimSoft Watched to allow you to sign in.
+        </p>
+    </body>
+</html>

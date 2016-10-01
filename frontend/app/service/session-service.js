@@ -33,10 +33,8 @@ export class Session {
         return response;
       },
       (xhr) => {
-        console.log(xhr);
-
         this.isAuthenticating = false;
-        this.triggerObservers('onLoginFailure');
+        this.triggerObservers('onLoginFailure', xhr);
       }
     )
   }
@@ -52,7 +50,7 @@ export class Session {
   }
 
   register(username, password) {
-    ApiService.register(username, password);
+    return ApiService.register(username, password);
   }
 
   subscribe(component) {
@@ -63,10 +61,10 @@ export class Session {
     }
   }
 
-  triggerObservers(event) {
+  triggerObservers(event, params) {
     this.observers.forEach((observer) => {
       if (typeof observer[event] === 'function') {
-        observer[event]();
+        observer[event](params);
       }
     });
   }
