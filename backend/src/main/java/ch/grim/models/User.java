@@ -21,8 +21,8 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String email;
+    private boolean enabled;
     private String hash;
-    private Set<MovieBookmark> bookmarks;
 
     @JsonIgnore
     private String password;
@@ -31,15 +31,14 @@ public class User implements UserDetails {
         id = account.getId();
         username = account.getUsername();
         email = account.getEmail();
+        enabled = account.isEnabled();
+        password = account.getPassword();
 
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.update(email.getBytes(), 0, email.length());
             hash = new BigInteger(1, m.digest()).toString(16);
         } catch (NoSuchAlgorithmException ignored) {}
-
-        password = account.getPassword();
-        bookmarks = account.getBookmarks();
     }
 
     public Long getId() {
@@ -52,10 +51,6 @@ public class User implements UserDetails {
 
     public String getHash() {
         return hash;
-    }
-
-    public Set<MovieBookmark> getBookmarks() {
-        return bookmarks;
     }
 
     @Override
@@ -90,6 +85,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

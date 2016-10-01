@@ -18,6 +18,7 @@ class User extends React.Component {
 
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.handleRegistration = this.handleRegistration.bind(this);
   }
 
   onLoginSuccess() {
@@ -53,6 +54,10 @@ class User extends React.Component {
     Session.logout();
   }
 
+  handleRegistration() {
+    Session.register(this.state.username, this.state.password);
+  }
+
   render() {
     const user = this.state.user;
 
@@ -75,6 +80,7 @@ class User extends React.Component {
             <input type="password" name="password" placeholder="Password" value={this.state.password}
                    onChange={(event) => this.setState({password: event.target.value})}/>
 
+            <button type="button" className="btn btn-default" onClick={this.handleRegistration}>Register</button>
             <button type="submit" className="btn btn-success">Login</button>
           </form>
         </div>

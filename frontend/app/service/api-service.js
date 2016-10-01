@@ -36,7 +36,6 @@ const cache = {
 
 class ApiService {
   constructor() {
-
     this.token = '';
   }
 
@@ -66,6 +65,26 @@ class ApiService {
   }
 
   //-- SESSION
+
+  register(username, password) {
+    return $.ajax({
+      method: 'post',
+      url: namespace + '/account/register',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        email: username,
+        password: password
+      })
+    })
+  }
+
+  confirm(token) {
+    return $.ajax({
+      method: 'post',
+      url: namespace + '/account/confirm',
+      data: token
+    });
+  }
 
   getUser() {
     const key = 'session.user';

@@ -51,6 +51,10 @@ export class Session {
     this.triggerObservers('onLogoutSuccess');
   }
 
+  register(username, password) {
+    ApiService.register(username, password);
+  }
+
   subscribe(component) {
     this.observers = this.observers.filter((a) => typeof a !== 'undefined');
 

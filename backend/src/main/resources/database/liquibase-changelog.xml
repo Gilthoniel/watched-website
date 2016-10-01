@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-1">
+        <createTable tableName="account">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="register_id" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-2">
+        <createTable tableName="episode_bookmark">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="episode_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="serie_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-3">
+        <createTable tableName="movie_bookmark">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="movie_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="watched" type="TINYINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-4">
+        <createTable tableName="series_bookmark">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="series_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-5">
+        <addUniqueConstraint columnNames="episode_id, serie_id, account_id" constraintName="ID_UNIQUE_KEY" tableName="episode_bookmark"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-6">
+        <addUniqueConstraint columnNames="movie_id, account_id" constraintName="ID_UNIQUE_KEY" tableName="movie_bookmark"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-7">
+        <addUniqueConstraint columnNames="email" constraintName="email_UNIQUE" tableName="account"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-8">
+        <addUniqueConstraint columnNames="series_id, account_id" constraintName="unique_sbm_acc_serie" tableName="series_bookmark"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-9">
+        <createIndex indexName="FK_ACCOUNT_ID_idx" tableName="episode_bookmark">
+            <column name="account_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-10">
+        <createIndex indexName="fk_mbm_account_id_idx" tableName="movie_bookmark">
+            <column name="account_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-11">
+        <createIndex indexName="fk_sbm_account_id_idx" tableName="series_bookmark">
+            <column name="account_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-12">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="episode_bookmark" constraintName="FK_ACCOUNT_ID" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-13">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="movie_bookmark" constraintName="fk_mbm_acc_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account"/>
+    </changeSet>
+    <changeSet author="Gaylor Bosson (generated)" id="1475318299975-14">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="series_bookmark" constraintName="fk_sbm_account_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account"/>
+    </changeSet>
+</databaseChangeLog>

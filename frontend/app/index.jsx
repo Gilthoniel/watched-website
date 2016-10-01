@@ -11,6 +11,7 @@ import MovieDetails from './component/body/movie-details/movie-details.jsx';
 import SeriesDetails from './component/body/series-details/series-details.jsx';
 import MyList from './component/body/my-list/my-list.jsx';
 import Search from './component/body/search/search.jsx';
+import AccountConfirmation from './component/body/confirm/confirm-account.jsx';
 
 require('./style/app.scss');
 require("jquery-mousewheel")($);
@@ -50,6 +51,7 @@ render((
       <Route path="/series/:id" component={SeriesDetails}/>
       <Route path="/my-list" component={MyList}/>
       <Route path="/search/:query" component={Search}/>
+      <Route path="/confirm-account" component={AccountConfirmation} />
     </Route>
   </Router>
 ), document.getElementById('app'));

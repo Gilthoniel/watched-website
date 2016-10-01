@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Created by gaylo on 8/6/2016.
+ * Created by Gaylor on 8/6/2016.
  *
  */
 @Entity
@@ -31,6 +31,8 @@ public class Account implements Serializable {
 
     @JsonIgnore
     private String password;
+    @JsonIgnore
+    private String registerId;
 
     Account() {}
 
@@ -38,6 +40,15 @@ public class Account implements Serializable {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public Account(String username, String email, String password, String registerId) {
+        this(username, email, password);
+        this.registerId = registerId;
+    }
+
+    public boolean confirm(String uuid) {
+        return uuid == null || uuid.equals(registerId);
     }
 
     public Long getId() {
@@ -50,6 +61,14 @@ public class Account implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getRegisterId() {
+        return registerId;
+    }
+
+    public boolean isEnabled() {
+        return registerId == null;
     }
 
     public Set<MovieBookmark> getBookmarks() {

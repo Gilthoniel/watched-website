@@ -17,6 +17,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/h2-console", "/h2-console/**").permitAll()
+                .antMatchers("/api/account/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/media/**").access("isAnonymous() or isAuthenticated()")
