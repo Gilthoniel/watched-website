@@ -1,7 +1,8 @@
 import React from 'react';
-import Toastr from 'toastr';
+import {browserHistory} from 'react-router';
 
 import ApiService from '../../../service/api-service';
+import Session from '../../../service/session-service';
 
 require('./confirm-account.scss');
 
@@ -9,6 +10,8 @@ export default class AccountConfirmation extends React.Component {
 
   constructor(props) {
     super(props);
+
+    Session.subscribe(this);
 
     this.state = {
       // we use a query parameter because of the length of the JWT
@@ -21,6 +24,11 @@ export default class AccountConfirmation extends React.Component {
       () => this.setState({ enabled: true }),
       () => this.setState({ error: true })
     );
+  }
+
+  // Events
+  onLoginSuccess() {
+    browserHistory.push('/');
   }
 
   render() {

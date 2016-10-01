@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Watched</title>
+
+    <script type="text/javascript">
+        var grecaptcha;
+        var onloadCallback = function() {
+            let dom = document.getElementById('reg-captcha');
+
+            if (dom) {
+                grecaptcha.render(dom, {
+                    sitekey: '6LfZJggUAAAAAO-z2cjvfRHY_XMQf2F15OPMmPZW',
+                    theme: 'light'
+                });
+            }
+        }
+    </script>
 </head>
 <body>
 <div id="app"></div>
 <script src="../assets/app-bundle.js"></script>
+<script src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit' async defer></script>
 </body>
 </html>

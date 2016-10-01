@@ -55,7 +55,9 @@ class User extends React.Component {
     Session.login(this.state.username, this.state.password);
   }
 
-  handleLogout() {
+  handleLogout(event) {
+    event.preventDefault();
+
     Session.logout();
   }
 
@@ -65,18 +67,30 @@ class User extends React.Component {
     if (!user) {
       return (
         <div className="header__user">
-          <form className="header_login" onSubmit={this.handleLogin}>
-            <input type="email" name="username" placeholder="Email" value={this.state.username}
-                   onChange={(event) => this.setState({username: event.target.value})}/>
-            <input type="password" name="password" placeholder="Password" value={this.state.password}
-                   onChange={(event) => this.setState({password: event.target.value})}/>
+          <form className="form-horizontal" onSubmit={this.handleLogin}>
+            <div className="form-group">
+              <div className="col-sm-12">
+                <input type="email" className="form-control" name="username" placeholder="Email"
+                       value={this.state.username}
+                       onChange={(event) => this.setState({username: event.target.value})}/>
+              </div>
+            </div>
+            <div className="form-group">
+              <div className="col-sm-12">
+                <input type="password" className="form-control" name="password" placeholder="Password"
+                       value={this.state.password}
+                       onChange={(event) => this.setState({password: event.target.value})}/>
+              </div>
+            </div>
 
             {
               (() => {
                 if (this.state.message) {
                   return (
-                    <div className="h-error-msg">
-                      {this.state.message}
+                    <div className="form-group has-error">
+                      <div className="col-sm-12">
+                        <span className="help-block">{this.state.message}</span>
+                      </div>
                     </div>
                   );
                 }
@@ -91,16 +105,17 @@ class User extends React.Component {
                   );
                 } else {
                   return (
-                    <div className="h-user-actions">
-                      <button type="submit" className="btn btn-success">Login</button>
-
-                      <div>
+                    <div className="form-group">
+                      <div className="col-sm-8">
                         <span>
                           <a href="">Password forgotten?</a>
                         </span><br/>
                         <span>
                           <Link to="/account/registration">Registration</Link>
                         </span>
+                      </div>
+                      <div className="col-sm-4 col-submit-btn">
+                        <button type="submit" className="btn btn-success">Login</button>
                       </div>
                     </div>
                   );
@@ -116,10 +131,20 @@ class User extends React.Component {
 
     return (
       <div className="header__user">
-        <div className="header__user__picture">
-          <img src={gravatar}/>
+        <div className="media">
+          <div className="media-left">
+            <a href="#">
+              <img className="media-object" src={gravatar} alt="..." />
+            </a>
+          </div>
+          <div className="media-body">
+            <h4 className="media-heading">{user.email}</h4>
+
+            <a href="#" onClick={this.handleLogout}>
+              Logout <span className="glyphicon glyphicon-log-out" />
+            </a>
+          </div>
         </div>
-        <div className="header__user__name" onClick={this.handleLogout}>{user.email}</div>
       </div>
     );
   }

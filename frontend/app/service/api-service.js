@@ -86,6 +86,14 @@ class ApiService {
     });
   }
 
+  captcha(token) {
+    return $.ajax({
+      method: 'post',
+      url: namespace + '/account/captcha',
+      data: token
+    })
+  }
+
   getUser() {
     const key = 'session.user';
     if (!cache.containsKey(key)) {

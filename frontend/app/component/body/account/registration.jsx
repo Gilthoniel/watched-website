@@ -2,6 +2,7 @@ import React from 'react';
 import {browserHistory} from 'react-router';
 
 import Session from '../../../service/session-service';
+import ApiService from '../../../service/api-service';
 
 require('./registration.scss');
 
@@ -25,22 +26,56 @@ export default class Registration extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const token = grecaptcha.getResponse();
 
+    // Check if both passwords are similar
     if (this.state.password2 !== this.state.password) {
+      this.setState({
+        errorMsg: 'Both passwords must be equivalent.'
+      });
       return;
     }
 
-    Session.register(this.state.email, this.state.password).then(
-      () => {
-        this.setState({
-          registered: true,
-          errorMsg: undefined
-        });
+    // Check if the captcha is filled
+    if (token.length === 0) {
+      this.setState({
+        errorMsg: 'Did you forget the Captcha ?'
+      });
+      return;
+    }
+
+    // 1. Check the captcha validity
+    ApiService.captcha(token).then(
+      (response) => {
+        const c = JSON.parse(response);
+        if (c.success) {
+          // 2. Try to register the user
+          Session.register(this.state.email, this.state.password).then(
+            () => {
+              this.setState({
+                registered: true,
+                errorMsg: undefined
+              });
+            },
+            (xhr) => {
+              grecaptcha.reset();
+              const msg = JSON.parse(xhr.responseText);
+              this.setState({
+                errorMsg: msg
+              });
+            }
+          );
+        } else {
+          grecaptcha.reset();
+          this.setState({
+            errorMsg: 'You must validate the captcha before you submit.'
+          });
+        }
       },
-      (xhr) => {
-        const msg = JSON.parse(xhr.responseText);
+      () => {
+        grecaptcha.reset();
         this.setState({
-          errorMsg: msg
+          errorMsg: 'Something goes wrong with the server. Please try later.'
         });
       }
     );
@@ -49,6 +84,15 @@ export default class Registration extends React.Component {
   // Events
   onLoginSuccess() {
     browserHistory.push('/');
+  }
+
+  componentDidMount() {
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.render('reg-captcha', {
+        sitekey: '6LfZJggUAAAAAO-z2cjvfRHY_XMQf2F15OPMmPZW',
+        theme: 'light'
+      });
+    }
   }
 
   render() {
@@ -81,22 +125,24 @@ export default class Registration extends React.Component {
 
         <form className="form-horizontal" onSubmit={this.handleSubmit}>
           <div className={error}>
-            <label htmlFor="reg_email_input" className="col-sm-4 control-label">Email</label>
-            <div className="col-sm-8">
-              <input type="email" className="form-control" id="reg_email_input" placeholder="Email" required
-                     onChange={(event) => this.setState({email: event.target.value})}/>
-            </div>
             {
               (() => {
                 if (this.state.errorMsg) {
                   return (
                     <span className="help-block col-sm-offset-4 col-sm-8">
-                      The email is already used
+                      {this.state.errorMsg}
                     </span>
                   );
                 }
               })()
             }
+          </div>
+          <div className="form-group">
+            <label htmlFor="reg_email_input" className="col-sm-4 control-label">Email</label>
+            <div className="col-sm-8">
+              <input type="email" className="form-control" id="reg_email_input" placeholder="Email" required
+                     onChange={(event) => this.setState({email: event.target.value})}/>
+            </div>
           </div>
 
           <div className={pwdState}>
@@ -111,6 +157,12 @@ export default class Registration extends React.Component {
             <div className="col-sm-8">
               <input type="password" className="form-control" id="reg_pwd_2" placeholder="Password" required
                      onChange={(event) => this.setState({password2: event.target.value})}/>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <div className="col-sm-offset-4 col-sm-8">
+              <div id="reg-captcha"></div>
             </div>
           </div>
 

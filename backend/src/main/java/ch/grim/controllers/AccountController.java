@@ -15,10 +15,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.ServletRequest;
+import javax.xml.ws.Response;
+import java.io.BufferedReader;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -109,5 +118,33 @@ public class AccountController {
         }
 
         return new ResponseEntity<>("The link is invalid.", HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/captcha", method = RequestMethod.POST)
+    public ResponseEntity<String> validateCaptcha(@RequestBody String token) throws Exception {
+        URL url = new URL("https://www.google.com/recaptcha/api/siteverify");
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+        String params = "secret=6LfZJggUAAAAALYoFFN9ubKmGnuH6bqeZtVJYhF1&response=" + token;
+
+        conn.setDoOutput(true);
+        DataOutputStream stream = new DataOutputStream(conn.getOutputStream());
+        stream.writeBytes(params);
+        stream.flush();
+        stream.close();
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
     }
 }
