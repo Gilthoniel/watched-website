@@ -1,5 +1,6 @@
 /**
  * Created by Gaylor on 31.07.2016.
+ *
  */
 import React from 'react';
 import User from './user.jsx';
@@ -18,6 +19,12 @@ export default class Header extends React.Component {
         <Search/>
 
         <Menu/>
+
+        <div className="h-attribution">
+          <a href="https://www.themoviedb.org/">
+            <img src={require('../../images/movie_db_attribution.png')} alt="TheMovieDB" />
+          </a>
+        </div>
       </div>
     );
   }

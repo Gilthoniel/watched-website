@@ -45,4 +45,15 @@
       }
     }
   }
+
+  .h-attribution {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 300px;
+
+    img {
+      width: 50%;
+    }
+  }
 }
