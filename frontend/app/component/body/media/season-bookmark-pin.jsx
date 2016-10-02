@@ -48,14 +48,17 @@ export default class SeasonBookmarkPin extends React.Component {
   }
 
   removeBookmark(season, series) {
-    ApiService.removeBookmark(`${season.id}/${series.id}`, 'season').then(
-      (episodes) => {
-
-        season.episodes = episodes;
+    ApiService.removeBookmark(`${series.id}/${season.season_number}`, 'season').then(
+      () => {
+        season.episodes.forEach((episode) => episode.bookmark = undefined);
 
         this.setState({
           watched: false
         });
+
+        if (this.props.onchange) {
+          this.props.onchange(season);
+        }
       }
     );
   }

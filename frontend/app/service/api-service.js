@@ -135,6 +135,24 @@ class ApiService {
     }));
   }
 
+  setEpisodeBookmark(episode) {
+    return $.ajax(this.generateCredentials({
+      method: 'post',
+      url: namespace + '/users/me/episodes/bookmark',
+      contentType: 'application/json',
+      data: JSON.stringify(episode)
+    }));
+  }
+
+  removeEpisodeBookmark(episode) {
+    return $.ajax(this.generateCredentials({
+      method: 'delete',
+      url: namespace + '/users/me/episodes/bookmark',
+      contentType: 'application/json',
+      data: JSON.stringify(episode)
+    }))
+  }
+
   //-- MEDIA
 
   searchMovie(query) {

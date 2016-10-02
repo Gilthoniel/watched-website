@@ -19,14 +19,14 @@ export default class EpisodeBookmarkPin extends React.Component {
 
   handleNumberClick() {
     if (this.state.watched) {
-      this.removeBookmark(this.props.series.id, this.props.season, this.props.episode);
+      this.removeBookmark(this.props.season, this.props.episode);
     } else {
-      this.addBookmark(this.props.series.id, this.props.season, this.props.episode);
+      this.addBookmark(this.props.season, this.props.episode);
     }
   }
 
-  addBookmark(seriesId, season, episode) {
-    ApiService.setBookmark(`${seriesId}/${episode.id}`, 'episodes').then(
+  addBookmark(season, episode) {
+    ApiService.setEpisodeBookmark(episode).then(
       (bookmark) => {
         episode.bookmark = bookmark;
         this.setState({
@@ -40,8 +40,8 @@ export default class EpisodeBookmarkPin extends React.Component {
     );
   }
 
-  removeBookmark(seriesId, season, episode) {
-    ApiService.removeBookmark(`${seriesId}/${episode.id}`, 'episodes').then(
+  removeBookmark(season, episode) {
+    ApiService.removeEpisodeBookmark(episode).then(
       () => {
         delete episode.bookmark;
         this.setState({

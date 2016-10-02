@@ -104,4 +104,12 @@
     <changeSet author="Gaylor Bosson (generated)" id="1475318299975-14">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="series_bookmark" constraintName="fk_sbm_account_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account"/>
     </changeSet>
+
+    <changeSet id="1475318299975-15" author="Gaylor Bosson">
+        <delete tableName="episode_bookmark"/>
+        <addColumn tableName="episode_bookmark">
+            <column name="season_number" type="INT(20)" />
+            <column name="episode_number" type="INT(20)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

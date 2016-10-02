@@ -17,16 +17,26 @@ public class Season {
     @JsonProperty(value = "season_number")
     private int seasonNumber;
 
+    @JsonProperty(value = "series_id")
+    private int seriesId;
+
     private Collection<Episode> episodes;
 
-    public Season(TvSeason season) {
+    public Season(TvSeason season, int seriesId) {
         id = season.getId();
+        this.seriesId = seriesId;
         seasonNumber = season.getSeasonNumber();
-        episodes = season.getEpisodes().stream().map(Episode::new).collect(Collectors.toList());
+        episodes = season.getEpisodes().stream()
+                .map(episode -> new Episode(episode, seriesId))
+                .collect(Collectors.toList());
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
     }
 
     public int getSeasonNumber() {

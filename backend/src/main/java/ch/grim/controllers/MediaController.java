@@ -139,7 +139,7 @@ public class MediaController {
         }
 
         Series response = new Series(series, bookmark);
-        response.loadEpisodes(service, request.getLocale().getLanguage());
+        response.loadEpisodes(service, id, request.getLocale().getLanguage());
         if (user != null) {
             response.loadBookmarks(episodeBmJpa, user.getId());
         }

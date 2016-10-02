@@ -3,6 +3,7 @@ package ch.grim.repositories;
 import ch.grim.models.EpisodeBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Optional;
  */
 public interface EpisodeBookmarkRepository extends JpaRepository<EpisodeBookmark, Long> {
 
-    Optional<EpisodeBookmark> findByAccountIdAndSerieIdAndEpisodeId(Long id, int serieId, int episodeId);
+    Optional<EpisodeBookmark> findByAccountIdAndSerieIdAndEpisodeId(long id, int serieId, int episodeId);
 
+    Collection<EpisodeBookmark> findByAccountIdAndSerieId(long id, int serieId);
 }

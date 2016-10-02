@@ -14,6 +14,8 @@ public class Episode {
     private int id;
     private String name;
     private String overview;
+    @JsonProperty(value = "series_id")
+    private int seriesId;
     @JsonProperty(value = "episode_number")
     private int episodeNumber;
     @JsonProperty(value = "season_number")
@@ -25,18 +27,21 @@ public class Episode {
 
     private EpisodeBookmark bookmark;
 
-    public Episode(TvEpisode episode) {
+    Episode() {}
+
+    public Episode(TvEpisode episode, int seriesId) {
         id = episode.getId();
         name = episode.getName();
         overview = episode.getOverview();
+        this.seriesId = seriesId;
         episodeNumber = episode.getEpisodeNumber();
         seasonNumber = episode.getSeasonNumber();
         airDate = episode.getAirDate();
         stillPath = episode.getStillPath();
     }
 
-    public Episode(TvEpisode episode, EpisodeBookmark bm) {
-        this(episode);
+    public Episode(TvEpisode episode, int seriesId, EpisodeBookmark bm) {
+        this(episode, seriesId);
         bookmark = bm;
     }
 
@@ -50,6 +55,10 @@ public class Episode {
 
     public String getOverview() {
         return overview;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
     }
 
     public int getEpisodeNumber() {

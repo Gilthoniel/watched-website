@@ -3,7 +3,10 @@ package ch.grim.models;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import info.movito.themoviedbapi.model.tv.TvSeries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,11 +35,11 @@ public class Series {
     /**
      * Populate the hash map of seasons
      */
-    public void loadEpisodes(MovieDBService service, String lang) {
+    public void loadEpisodes(MovieDBService service, int seriesId, String lang) {
         data.getSeasons().forEach(season -> {
 
             if (season.getSeasonNumber() != 0) {
-                Season s = new Season(service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang));
+                Season s = new Season(service.getSeriesSeason(data.getId(), season.getSeasonNumber(), lang), seriesId);
                 seasons.put(season.getSeasonNumber(), s);
             }
         });
@@ -50,9 +53,13 @@ public class Series {
             return;
         }
 
+        Collection<EpisodeBookmark> bookmarks = repo.findByAccountIdAndSerieId(userId, data.getId());
+
         seasons.forEach((index, season) -> {
             season.getEpisodes().forEach(episode -> {
-                Optional<EpisodeBookmark> bookmark = repo.findByAccountIdAndSerieIdAndEpisodeId(userId, data.getId(), episode.getId());
+                Optional<EpisodeBookmark> bookmark = bookmarks.stream()
+                        .filter(bm -> bm.getEpisodeId() == episode.getId())
+                        .findFirst();
 
                 if (bookmark.isPresent()) {
                     episode.setBookmark(bookmark.get());
