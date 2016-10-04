@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import Session from '../../service/session-service';
+import Messages from '../../constants/messages';
 
 class User extends React.Component {
 
@@ -30,11 +31,11 @@ class User extends React.Component {
   }
 
   onLoginFailure(xhr) {
-    const msg = JSON.parse(xhr.responseText);
+    const msg = JSON.parse(xhr.responseText || '{}');
 
     this.setState({
       isSubmitting: false,
-      message: msg.error_description
+      message: Messages(msg.error)
     });
   }
 
@@ -97,31 +98,28 @@ class User extends React.Component {
               })()
             }
 
-            {
-              (() => {
-                if (this.state.isSubmitting) {
-                  return (
-                    <div className="h-user-loading">Loading</div>
-                  );
-                } else {
-                  return (
-                    <div className="form-group">
-                      <div className="col-sm-8">
+            <div className="form-group">
+              <div className="col-sm-8">
                         <span>
                           <a href="">Password forgotten?</a>
                         </span><br/>
-                        <span>
+                <span>
                           <Link to="/account/registration">Registration</Link>
                         </span>
-                      </div>
-                      <div className="col-sm-4 col-submit-btn">
-                        <button type="submit" className="btn btn-success">Login</button>
-                      </div>
-                    </div>
-                  );
+              </div>
+              <div className="col-sm-4 col-submit-btn">
+                {
+                  (() => {
+                    if (this.state.isSubmitting) {
+                      return <button className="btn btn-default">Loading...</button>;
+                    } else {
+                      return <button type="submit" className="btn btn-success">Login</button>;
+                    }
+                  })()
                 }
-              })()
-            }
+
+              </div>
+            </div>
           </form>
         </div>
       );

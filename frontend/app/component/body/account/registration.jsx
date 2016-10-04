@@ -57,11 +57,10 @@ export default class Registration extends React.Component {
                 errorMsg: undefined
               });
             },
-            (xhr) => {
+            () => {
               grecaptcha.reset();
-              const msg = JSON.parse(xhr.responseText);
               this.setState({
-                errorMsg: msg
+                errorMsg: 'Huum, it seems that you act like a robot! Contact a administrator if it\'s not the case'
               });
             }
           );

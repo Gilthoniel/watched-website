@@ -28,7 +28,7 @@ class App extends React.Component {
     // Configure Toastr
     Toastr.options.closeButton = true;
     Toastr.options.preventDuplicates = true;
-    Toastr.options.positionClass = "toast-bottom-left";
+    Toastr.options.positionClass = "toast-bottom-right";
   }
 
   render() {

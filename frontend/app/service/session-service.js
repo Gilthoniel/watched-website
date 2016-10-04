@@ -1,4 +1,5 @@
 import ApiService from './api-service';
+import Toastr from 'toastr';
 
 const KEY_TOKEN = 'watched-session';
 
@@ -33,6 +34,10 @@ export class Session {
         return response;
       },
       (xhr) => {
+        if (xhr.status >= 500 || xhr.status === 0) {
+          Toastr.error('Oops! Something goes wrong, please try later...');
+        }
+
         this.isAuthenticating = false;
         this.triggerObservers('onLoginFailure', xhr);
       }
@@ -88,7 +93,7 @@ function setupSession(token) {
 
         this.isAuthenticating = false;
         this.isAuthenticated = false;
-        this.triggerObservers('onLoginFailure');
+        this.triggerObservers('onLoginFailure', xhr);
       }
     }
   )
