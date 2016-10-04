@@ -77,13 +77,20 @@ export default class SeriesDetails extends React.Component {
         <div className="b-details">
           <h5>{episode.name}</h5>
 
-          <BBox title="Overview" flex="2">
+          <BBox title="Overview" suffix="overview" flex="3">
             {episode.overview}
           </BBox>
-          <BBox title="More">
-            <div>Season {episode.season_number}</div>
-            <div>Episode {episode.episode_number}</div>
-            <div>Air date {episode.air_date}</div>
+          <BBox title="Air Date" oneliner={true}>
+            <span>{episode.air_date}</span>
+          </BBox>
+          <BBox title="More" oneliner={true}>
+            <span>
+              Season {episode.season_number} Episode {episode.episode_number}
+            </span>
+          </BBox>
+          <div className="b-new-line" />
+          <BBox>
+            <img src={MediaApi.backdrop(episode, this.state.configuration)} alt="" />
           </BBox>
         </div>
       );
@@ -140,8 +147,9 @@ export default class SeriesDetails extends React.Component {
 class BBox extends React.Component {
   render() {
 
-    const style = {
-      flex: this.props.flex || 1
+    let style = {
+      flex: this.props.flex || 1,
+      whiteSpace: this.props.oneliner ? 'nowrap' : 'normal'
     };
 
     return (

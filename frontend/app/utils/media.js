@@ -12,10 +12,10 @@ export function poster(media, conf) {
 
 export function backdrop(media, conf) {
   let backdrop = '';
-  if (conf && media.backdrop) {
+  if (conf && (media.backdrop || media.still_path)) {
     backdrop = conf.secure_base_url;
     backdrop += conf.backdrop_sizes[3];
-    backdrop += media.backdrop;
+    backdrop += media.backdrop || media.still_path;
   }
 
   return backdrop;

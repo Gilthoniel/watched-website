@@ -2,7 +2,7 @@ import React from 'react';
 import {browserHistory} from 'react-router';
 import Toastr from 'toastr';
 
-import BookmarkPin from './bookmark-pin.jsx';
+import SeriesBookmarkPin from './series-bookmark-pin.jsx';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
@@ -76,7 +76,7 @@ class SeriesCard extends React.Component {
 
         {/* Information panel */}
         <div className="series-card-body">
-          <BookmarkPin series={series} blockClassName="series-card-select"/>
+          <SeriesBookmarkPin series={series} blockClassName="series-card-select"/>
 
           <div className="series-card-title">{series.title}</div>
 
