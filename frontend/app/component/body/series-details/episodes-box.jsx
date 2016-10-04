@@ -2,26 +2,7 @@ import React from 'react';
 
 import SeasonBox from './season-box.jsx';
 
-const SCROLLBAR_MARGIN_BOTTOM = 50;
-
 export default class EpisodesBox extends React.Component {
-
-  componentDidMount() {
-    this.initScrollbar();
-  }
-
-  componentDidUpdate() {
-    this.initScrollbar();
-  }
-
-  initScrollbar() {
-    const box = $(this._scrollbox);
-
-    const height = window.innerHeight - box.offset().top - SCROLLBAR_MARGIN_BOTTOM;
-
-    box.css('max-height', height+'px');
-    box.mCustomScrollbar();
-  }
 
   render() {
 
@@ -53,7 +34,7 @@ export default class EpisodesBox extends React.Component {
       <div className="b-box b-episodes" style={style}>
         <h5>Episodes</h5>
 
-        <div className="b-box-scroll" ref={(c) => this._scrollbox = c}>
+        <div className="b-box-scroll">
           {seasons}
         </div>
       </div>

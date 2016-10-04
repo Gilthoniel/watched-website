@@ -1,10 +1,12 @@
 @import "../../../style/variables";
 
 .body-series-details {
-  height: 100%;
+  height: 98%;
+  overflow: hidden;
+  position: relative;
 
   .mCSB_container {
-    margin: 0 !important;
+    margin-right: 0 !important;
   }
 
   .mCSB_scrollTools {
@@ -28,11 +30,8 @@
     }
 
     .information {
-      margin: 0 auto;
+      margin: -230px auto 0;
       padding: 0 20px;
-      position: relative;
-      top: -230px;
-      z-index: 5;
 
       color: #f8f8f8;
 
@@ -76,19 +75,22 @@
           color: $bbox-title-color2;
         }
 
-        .b-details {
+        .b-wrapper {
           flex: 2;
-          display: flex;
-          flex-wrap: wrap;
-          align-items: flex-start;
-          align-content: flex-start;
 
-          h5 {
-            width: 100%;
-          }
+          .b-details {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            align-content: flex-start;
 
-          .b-new-line {
-            width: 100%;
+            h5 {
+              width: 100%;
+            }
+
+            .b-new-line {
+              width: 100%;
+            }
           }
         }
 
@@ -174,6 +176,10 @@
                   align-items: center;
                   padding: 0;
                   margin: 0;
+
+                  &:hover {
+                    background: #da824f;
+                  }
 
                   .episode-info {
                     flex: 1;

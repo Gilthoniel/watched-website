@@ -19,6 +19,7 @@ export default class SeriesDetails extends React.Component {
       series: undefined,
       episode: undefined,
       configuration: undefined,
+      detailsStyle: undefined
     };
 
     Session.subscribe(this);
@@ -35,14 +36,60 @@ export default class SeriesDetails extends React.Component {
   }
 
   componentWillMount() {
-    $('.body-series-details').mCustomScrollbar();
-
     this.loadData();
   }
 
   handleHoverEpisode(episode) {
+    if (this._image) {
+      this._image.src = '';
+    }
+
     this.setState({
       episode: episode
+    });
+  }
+
+  componentDidMount() {
+    this.initScrollbar();
+  }
+
+  componentDidUpdate() {
+    this.initScrollbar();
+  }
+
+  initScrollbar() {
+    const self = this;
+
+    let offset = 0;
+    let width = 0;
+    if (this._details) {
+      offset = $(this._details).offset();
+      width = $(this._details).width();
+    }
+
+    $('.body-series-details').mCustomScrollbar({
+      callbacks:{
+        whileScrolling() {
+          if (-this.mcs.top > offset.top) {
+            if (typeof self.state.detailsStyle === 'undefined') {
+              self.setState({
+                detailsStyle: {
+                  position: 'fixed',
+                  top: 0,
+                  left: offset.left,
+                  width: width
+                }
+              });
+            }
+          } else {
+            if (typeof self.state.detailsStyle !== 'undefined') {
+              self.setState({
+                detailsStyle: undefined
+              });
+            }
+          }
+        }
+      }
     });
   }
 
@@ -61,7 +108,7 @@ export default class SeriesDetails extends React.Component {
 
     const details = typeof episode === 'undefined' ?
       (
-        <div className="b-details">
+        <div className="b-details" style={this.state.detailsStyle} ref={(c) => this._details = c}>
           <BBox title="Overview" suffix="overview" flex="3">
             {series.overview}
           </BBox>
@@ -72,9 +119,8 @@ export default class SeriesDetails extends React.Component {
             {series.score_average} ({series.score_total})
           </BBox>
         </div>
-      ) :
-      (
-        <div className="b-details">
+      ) : (
+        <div className="b-details" style={this.state.detailsStyle} ref={(c) => this._details = c}>
           <h5>{episode.name}</h5>
 
           <BBox title="Overview" suffix="overview" flex="3">
@@ -90,7 +136,7 @@ export default class SeriesDetails extends React.Component {
           </BBox>
           <div className="b-new-line" />
           <BBox>
-            <img src={MediaApi.backdrop(episode, this.state.configuration)} alt="" />
+            <img src={MediaApi.backdrop(episode, this.state.configuration)} alt="" ref={(c) => this._image = c} />
           </BBox>
         </div>
       );
@@ -114,7 +160,10 @@ export default class SeriesDetails extends React.Component {
             </div>
 
             <div className="information-body">
-              {details}
+              <div className="b-wrapper">
+                {details}
+              </div>
+
               <EpisodesBox series={series} onover={this.handleHoverEpisode} />
             </div>
           </div>
