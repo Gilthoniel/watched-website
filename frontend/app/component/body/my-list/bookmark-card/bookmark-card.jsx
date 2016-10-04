@@ -21,7 +21,7 @@ export default class BookmarkCard extends React.Component {
 
   componentWillMount() {
     ApiService.getConfiguration().then(
-      (conf) => this.setState({ configuration: conf }),
+      (conf) => this.setState({configuration: conf}),
       () => Toastr.error('error')
     );
   }
@@ -43,11 +43,10 @@ export default class BookmarkCard extends React.Component {
 
     return (
       <div className="bookmark-card" onClick={this.handleCardClick}>
-        <img src={poster} className="bookmark-bg" alt="" />
-        <div className="bookmark-wrapper">
-          <div className="bookmark-title">
-            {media.title || media.name}
-          </div>
+        <img src={poster} className="bookmark-bg" alt=""/>
+
+        <div className="bookmark-title">
+          {media.title || media.name}
         </div>
       </div>
     );

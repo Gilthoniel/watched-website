@@ -68,7 +68,7 @@ class MyList extends React.Component {
     }
 
     const medias = {};
-    const movies = this.state.movies.forEach(function mapper(media) {
+    this.state.movies.forEach(function mapper(media) {
       const key = (media.title || '0').toLowerCase().charAt(0);
 
       if (!medias.hasOwnProperty(key)) {
@@ -81,7 +81,7 @@ class MyList extends React.Component {
         </div>
       );
     });
-    const series = this.state.series.forEach(function mapper(media) {
+    this.state.series.forEach(function mapper(media) {
       const key = (media.title || '0').toLowerCase().charAt(0);
 
       if (!medias.hasOwnProperty(key)) {

@@ -15,6 +15,7 @@
     display: flex;
     align-items: flex-start;
     background: rgb(185, 160, 141);
+    margin-bottom: 20px;
 
     > div {
       flex: none;
@@ -27,19 +28,22 @@
   .my-list {
 
     h4 {
-      color: white;
-      text-align: center;
-      font-size: 4em;
+      color: rgba(255, 255, 255, 0.2);
+      text-align: left;
+      font-size: 3em;
       text-transform: capitalize;
+
+      margin: 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .my-list-flex {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
 
       .my-list-item {
-        width: 200px;
+        width: 150px;
       }
     }
   }
