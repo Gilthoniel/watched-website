@@ -3,6 +3,7 @@ import Toastr from 'toastr';
 
 import SeriesBookmarkPin from '../media/series-bookmark-pin.jsx';
 import EpisodesBox from './episodes-box.jsx';
+import Loading from '../loading.jsx';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
@@ -97,8 +98,9 @@ export default class SeriesDetails extends React.Component {
     
     const series = this.state.series;
 
+    // Data are still loading
     if (!series) {
-      return <div>LOADING...</div>;
+      return <Loading />;
     }
     
     const backdrop = MediaApi.backdrop(series, this.state.configuration);
@@ -106,7 +108,9 @@ export default class SeriesDetails extends React.Component {
 
     const episode = this.state.episode;
 
+    // Display the series information or the episode according to the state
     const details = typeof episode === 'undefined' ?
+      // Series information
       (
         <div className="b-details" style={this.state.detailsStyle} ref={(c) => this._details = c}>
           <BBox title="Overview" suffix="overview" flex="3">
@@ -119,7 +123,7 @@ export default class SeriesDetails extends React.Component {
             {series.score_average} ({series.score_total})
           </BBox>
         </div>
-      ) : (
+      ) : ( // Episode information
         <div className="b-details" style={this.state.detailsStyle} ref={(c) => this._details = c}>
           <h5>{episode.name}</h5>
 

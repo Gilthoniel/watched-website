@@ -2,6 +2,7 @@ import React from 'react';
 import Toastr from 'toastr';
 
 import BookmarkPin from '../media/bookmark-pin.jsx';
+import Loading from '../loading.jsx';
 
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
@@ -39,7 +40,7 @@ export default class MovieDetails extends React.Component {
     const movie = this.state.movie;
 
     if (!movie) {
-      return <div>LOADING...</div>;
+      return <Loading />;
     }
 
     const backdrop = MediaApi.backdrop(movie, this.state.configuration);
@@ -108,7 +109,7 @@ export default class MovieDetails extends React.Component {
         }
       },
       () => {
-        Toastr.error('error');
+        Toastr.error('Oops! Something goes wrong...');
       }
     );
   }

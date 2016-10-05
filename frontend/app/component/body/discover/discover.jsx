@@ -4,6 +4,8 @@ import MovieCard from '../media/movie-card.jsx';
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 
+import Loading from '../loading.jsx';
+
 require('./discover.scss');
 
 class Discover extends React.Component {
@@ -12,7 +14,7 @@ class Discover extends React.Component {
     super(props);
 
     this.state = {
-      movies: []
+      movies: undefined
     };
 
     Session.subscribe(this);
@@ -41,6 +43,10 @@ class Discover extends React.Component {
   }
 
   render() {
+
+    if (!this.state.movies) {
+      return <Loading />;
+    }
 
     const movies = [];
     this.state.movies.forEach(function(movie) {

@@ -2,6 +2,7 @@ import React from 'react';
 import Toastr from 'toastr';
 
 import BookmarkCard from './bookmark-card/bookmark-card.jsx';
+import Loading from '../loading.jsx';
 
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
@@ -14,8 +15,8 @@ class MyList extends React.Component {
     super(props);
 
     this.state = {
-      movies: [],
-      series: [],
+      movies: undefined,
+      series: undefined,
       isAuthenticated: Session.isAuthenticated,
       last_items: []
     };
@@ -36,7 +37,8 @@ class MyList extends React.Component {
 
   onLogoutSuccess() {
     this.setState({
-      movies: [],
+      movies: undefined,
+      series: undefined,
       isAuthenticated: false
     });
   }
@@ -59,12 +61,18 @@ class MyList extends React.Component {
 
     if (!this.state.isAuthenticated) {
       return (
-        <div className="my-list">
-          <div className="alert alert-warning">
-            <p>Create an account or sign in to use this feature</p>
+        <div className="my-list-container">
+          <div className="my-list">
+            <div className="my-list-message">
+              Create an account or sign in to use this feature
+            </div>
           </div>
         </div>
       );
+    }
+
+    if (!this.state.movies || !this.state.series) {
+      return <Loading />;
     }
 
     const medias = {};

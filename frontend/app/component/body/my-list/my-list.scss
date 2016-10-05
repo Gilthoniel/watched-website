@@ -44,7 +44,15 @@
 
       .my-list-item {
         width: 150px;
+        min-height: 170px;
       }
+    }
+
+    .my-list-message {
+      margin: 20% 0;
+      text-align: center;
+      color: white;
+      font-size: 2em;
     }
   }
 }

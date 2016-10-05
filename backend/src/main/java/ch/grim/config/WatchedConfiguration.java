@@ -22,8 +22,6 @@ import java.util.List;
 @EnableCaching
 public class WatchedConfiguration extends WebMvcConfigurerAdapter {
 
-    private static final int MAX_NUMBER_ENTRIES = 1000000;
-
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         SimpleModule m = new SimpleModule();
