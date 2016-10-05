@@ -8,6 +8,7 @@ import Loading from '../loading.jsx';
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
+import Dates from '../../../utils/dates';
 
 require('./series-details.scss');
 
@@ -117,7 +118,7 @@ export default class SeriesDetails extends React.Component {
             {series.overview}
           </BBox>
           <BBox title="Release Date">
-            {series.release_date}
+            {Dates.format(series.release_date)}
           </BBox>
           <BBox title="Score">
             {series.score_average} ({series.score_total})
@@ -131,7 +132,7 @@ export default class SeriesDetails extends React.Component {
             {episode.overview}
           </BBox>
           <BBox title="Air Date" oneliner={true}>
-            <span>{episode.air_date}</span>
+            <span>{Dates.format(episode.air_date)}</span>
           </BBox>
           <BBox title="More" oneliner={true}>
             <span>

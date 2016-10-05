@@ -7,6 +7,7 @@ import Loading from '../loading.jsx';
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
+import Dates from '../../../utils/dates';
 
 require('./movie-details.scss');
 
@@ -82,7 +83,7 @@ export default class MovieDetails extends React.Component {
                 {keywords}
               </BBox>
               <BBox title="Release Date">
-                {movie.release_date}
+                {Dates.format(movie.release_date)}
               </BBox>
               <BBox title="Score">
                 {movie.score_average} ({movie.score_total})
