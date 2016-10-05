@@ -15,6 +15,7 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.dao.SystemWideSaltSource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +98,6 @@ public class MediaController {
         Collection<MovieBookmark> bookmarks;
         if (user != null) {
             bookmarks = movieBmJpa.findByAccountId(user.getId());
-            LOG.info(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
         } else {
             bookmarks = Collections.emptyList();
         }

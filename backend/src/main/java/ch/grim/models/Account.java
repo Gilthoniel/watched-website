@@ -17,13 +17,13 @@ public class Account implements Serializable {
     @GeneratedValue
     private long id;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<MovieBookmark> bookmarks = new HashSet<>();
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<SeriesBookmark> seriesBookmarks = new HashSet<>();
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<EpisodeBookmark> episodeBookmarks = new HashSet<>();
 
     private String username;
