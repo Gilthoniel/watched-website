@@ -49,6 +49,9 @@ export default class MovieDetails extends React.Component {
         <span key={keyword} className="b-keyword">{keyword}</span>
       );
     });
+    const genres = movie.genres.map((genre) => {
+      return <span key={genre} className="b-keyword">{genre}</span>
+    });
 
     return (
       <div className="body-movie-details">
@@ -71,7 +74,10 @@ export default class MovieDetails extends React.Component {
               <BBox title="Overview" suffix="overview" flex="3">
                 {movie.overview}
               </BBox>
-              <BBox title="Keywords" suffix="keywords" flex="3">
+              <BBox title="Genres" suffix="genres" flex="2">
+                {genres}
+              </BBox>
+              <BBox title="Keywords" suffix="keywords" flex="2">
                 {keywords}
               </BBox>
               <BBox title="Release Date">

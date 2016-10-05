@@ -97,7 +97,7 @@ class MyList extends React.Component {
 
     const templates = Object.keys(medias).sort().map(function(key) {
       return (
-        <div className="my-list-category">
+        <div className="my-list-category" key={key}>
           <h4>{key}</h4>
           <div className="my-list-flex">
             {medias[key]}

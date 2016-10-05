@@ -43,6 +43,16 @@ public class MovieSerializer extends JsonSerializer<Movie> {
             json.writeEndArray();
         }
 
+        if (movie.getGenres() != null) {
+            json.writeArrayFieldStart("genres");
+            movie.getGenres().forEach(genre -> {
+                try {
+                    json.writeString(genre.getName());
+                } catch (IOException ignored) {}
+            });
+            json.writeEndArray();
+        }
+
         json.writeEndObject();
     }
 }

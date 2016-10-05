@@ -1,5 +1,6 @@
 package ch.grim.controllers;
 
+import ch.grim.controllers.errors.BookmarkMissingException;
 import ch.grim.models.*;
 import ch.grim.repositories.AccountRepository;
 import ch.grim.repositories.EpisodeBookmarkRepository;
@@ -56,7 +57,7 @@ class SessionController {
     }
 
     @RequestMapping(value = "/me/bookmarks")
-    public Map<String, Collection<Object>> getMovies(@AuthenticationPrincipal User user, ServletRequest request) {
+    public Map<String, Collection<Object>> getBookmarks(@AuthenticationPrincipal User user, ServletRequest request) {
 
         Map<String, Collection<Object>> map = new HashMap<>();
 
@@ -102,20 +103,10 @@ class SessionController {
     @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> removeMovieBookmark(@AuthenticationPrincipal User user, @PathVariable int id) throws Exception {
 
-        Account account = accountsJpa.findOne(user.getId());
-        if (account == null) {
-            throw new AccountNotFoundException();
-        }
+        MovieBookmark bookmark = moviesBmJpa.findByAccountIdAndMovieId(user.getId(), id)
+                .orElseThrow(BookmarkMissingException::new);
 
-        Collection<MovieBookmark> bookmarks = account.getBookmarks().stream()
-                .filter(bm -> bm.getMovieId().equals(id))
-                .collect(Collectors.toList());
-
-        account.getBookmarks().removeAll(bookmarks);
-
-        LOG.debug(bookmarks.size() + " bookmarks found for user " + user.getUsername());
-        moviesBmJpa.delete(bookmarks);
-
+        moviesBmJpa.delete(bookmark);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -152,21 +143,11 @@ class SessionController {
     public ResponseEntity<String> removeSeriesBookmark(@AuthenticationPrincipal User user, @PathVariable int id)
         throws AccountNotFoundException {
 
-        Account account = accountsJpa.findOne(user.getId());
-        if (account == null) {
-            throw new AccountNotFoundException();
-        }
+        SeriesBookmark bookmark = seriesBmJpa.findByAccountIdAndSeriesId(user.getId(), id)
+                .orElseThrow(BookmarkMissingException::new);
 
-        Collection<SeriesBookmark> bookmarks = account.getSeriesBookmarks().stream()
-                .filter(bm -> bm.getSeriesId() == id)
-                .collect(Collectors.toList());
-
-        account.getSeriesBookmarks().removeAll(bookmarks);
-
-        LOG.debug(bookmarks.size() + " series bookmarks found for user " + user.getUsername());
-        seriesBmJpa.delete(bookmarks);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        seriesBmJpa.delete(bookmark);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/me/episodes/bookmark", method = RequestMethod.POST)
@@ -196,20 +177,11 @@ class SessionController {
             @AuthenticationPrincipal User user,
             @RequestBody Episode episode) throws AccountNotFoundException {
 
-        Account account = accountsJpa.findOne(user.getId());
-        if (account == null) {
-            throw new AccountNotFoundException();
-        }
+        EpisodeBookmark bookmark = episodesBmJpa
+                .findByAccountIdAndSerieIdAndEpisodeId(user.getId(), episode.getSeriesId(), episode.getId())
+                .orElseThrow(BookmarkMissingException::new);
 
-        Collection<EpisodeBookmark> bookmarks = account.getEpisodeBookmarks().stream()
-                .filter(bm -> bm.getSerieId() == episode.getSeriesId() && bm.getEpisodeId() == episode.getId())
-                .collect(Collectors.toList());
-
-        account.getEpisodeBookmarks().removeAll(bookmarks);
-
-        LOG.debug(bookmarks.size() + " episodes bookmarks found for user " + user.getUsername());
-        episodesBmJpa.delete(bookmarks);
-
+        episodesBmJpa.delete(bookmark);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
@@ -252,19 +224,12 @@ class SessionController {
             @PathVariable int seriesId,
             @PathVariable int seasonNumber) throws Exception {
 
-        Account account = accountsJpa.findOne(user.getId());
-        if (account == null) {
-            throw new AccountNotFoundException();
-        }
-
         Collection<EpisodeBookmark> bookmarks = episodesBmJpa.findByAccountIdAndSerieId(user.getId(), seriesId)
                 .stream()
                 .filter(bm -> bm.getSeasonNumber() == seasonNumber)
                 .collect(Collectors.toList());
 
-        account.getEpisodeBookmarks().removeAll(bookmarks);
         episodesBmJpa.delete(bookmarks);
-
         return new ResponseEntity(HttpStatus.OK);
     }
 
