@@ -16,7 +16,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/h2-console", "/h2-console/**").permitAll()
                 .antMatchers("/api/account/**").permitAll()
                 .and()
                 .authorizeRequests()
