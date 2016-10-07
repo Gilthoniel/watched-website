@@ -14,7 +14,8 @@ class Discover extends React.Component {
     super(props);
 
     this.state = {
-      movies: undefined
+      movies: undefined,
+      page: 1
     };
 
     Session.subscribe(this);
@@ -29,17 +30,35 @@ class Discover extends React.Component {
   }
 
   componentWillMount() {
-    $('.body-discover').mCustomScrollbar();
-
     this.loadData();
   }
 
   componentDidMount() {
-    $('.body-discover').mCustomScrollbar();
+    this.initScroll();
   }
 
   componentDidUpdate() {
-    $('.body-discover').mCustomScrollbar();
+    this.initScroll();
+  }
+
+  initScroll() {
+    if (!this._scroll) {
+      return;
+    }
+
+    let self = this;
+
+    $(this._scroll).mCustomScrollbar({
+      callbacks: {
+        onTotalScroll() {
+          if (self._loading) {
+            return;
+          }
+
+          self.loadData();
+        }
+      }
+    });
   }
 
   render() {
@@ -58,20 +77,32 @@ class Discover extends React.Component {
     });
 
     return (
-      <div className="body-discover">
+      <div className="body-discover" ref={(c) => this._scroll = c}>
         <div className="body-discover-container">
           {movies}
+        </div>
+
+        <div className="d-loading">
+          <Loading />
         </div>
       </div>
     );
   }
 
   loadData() {
-    ApiService.getDiscover().then(
+    let page = this.state.page || 1;
+    this._loading = true;
+
+    ApiService.getDiscover(page).then(
       (response) => {
+        const movies = this.state.movies || [];
+
         this.setState({
-          movies: response.results
+          movies: movies.concat(response.results),
+          page: page + 1
         });
+
+        this._loading = false;
       },
       (xhr) => {
         console.log('Cannot get Discover', xhr);

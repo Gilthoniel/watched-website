@@ -1,32 +1,25 @@
 
-$cardWidth: 342px;
-$cardHeight: 513px;
-
 .movie-card {
   position: relative;
-  width: $cardWidth;
-  height: $cardHeight;
+  width: 100%;
+  min-height: 200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0;
   background: white;
   overflow: hidden;
 
   &.movie-card--in {
     .movie-card-body .movie-card-wrapper {
-      max-height: $cardHeight;
+      max-height: 1000px;
     }
   }
 
   .movie-card-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $cardWidth;
-    height: $cardHeight;
+    width: 100%;
     cursor: pointer;
 
     img {
-      height: 100%;
+      width: 100%;
       -webkit-filter: grayscale(50%);
       filter: grayscale(50%);
     }
@@ -44,7 +37,7 @@ $cardHeight: 513px;
     align-items: stretch;
     flex-wrap: wrap;
     position: absolute;
-    width: $cardWidth;
+    width: 100%;
     bottom: 0;
     left: 0;
 

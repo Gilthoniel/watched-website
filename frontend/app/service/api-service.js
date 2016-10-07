@@ -175,10 +175,13 @@ class ApiService {
     }));
   }
 
-  getDiscover() {
+  getDiscover(page) {
     return $.ajax(this.generateCredentials({
       method: 'get',
-      url: namespace + '/media/discover'
+      url: namespace + '/media/discover',
+      data: {
+        page: page || 1
+      }
     }));
   }
 
