@@ -1,32 +1,25 @@
 
-$cardWidth: 342px;
-$cardHeight: 513px;
-
 .series-card {
   position: relative;
-  width: $cardWidth;
-  height: $cardHeight;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
-  padding: 20px;
   background: white;
   overflow: hidden;
 
   &.series-card--in {
     .series-card-body .series-card-wrapper {
-      max-height: $cardHeight;
+      max-height: 1000px;
     }
   }
 
   .series-card-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $cardWidth;
-    height: $cardHeight;
+    width: 100%;
+    min-height: 42px;
     cursor: pointer;
 
     img {
-      height: 100%;
+      width: 100%;
       -webkit-filter: grayscale(50%);
       filter: grayscale(50%);
     }
@@ -44,7 +37,7 @@ $cardHeight: 513px;
     align-items: stretch;
     flex-wrap: wrap;
     position: absolute;
-    width: $cardWidth;
+    width: 100%;
     bottom: 0;
     left: 0;
 
