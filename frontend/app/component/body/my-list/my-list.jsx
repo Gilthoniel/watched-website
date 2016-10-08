@@ -114,7 +114,7 @@ class MyList extends React.Component {
     }
 
     if (this.state.show_series) {
-      sort(medias, this.state.series, this.state.order);
+      sort(medias, this.state.series, this.state.order, true);
     }
 
     const templates = Object.keys(medias).sort().map(function (key) {

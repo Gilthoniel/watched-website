@@ -7,7 +7,7 @@ export const ORDERS = {
   SCORE: 'Score'
 };
 
-export function sort(container, medias, order) {
+export function sort(container, medias, order, isSeries) {
   medias.forEach(function(media) {
     let keys = [];
     if (order === ORDERS.ALPHANUMERIC) {
@@ -25,7 +25,13 @@ export function sort(container, medias, order) {
 
       container[`${key}`].push(
         <div className="my-list-item" key={media.id}>
-          <BookmarkCard movie={media}/>
+          {
+            (() => {
+              if (isSeries) return <BookmarkCard series={media}/>
+              else return <BookmarkCard movie={media}/>
+            })()
+          }
+
         </div>
       );
     });
