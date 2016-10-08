@@ -16,8 +16,7 @@ import java.io.IOException;
 public class MovieSerializer extends JsonSerializer<Movie> {
     @Override
     public void serialize(Movie m, JsonGenerator json, SerializerProvider serializer)
-            throws IOException, JsonProcessingException
-    {
+            throws IOException {
         MovieDb movie = m.getData();
 
         json.writeStartObject();

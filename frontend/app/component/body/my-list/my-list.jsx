@@ -1,11 +1,11 @@
 import React from 'react';
 import Toastr from 'toastr';
 
-import BookmarkCard from './bookmark-card/bookmark-card.jsx';
 import Loading from '../loading.jsx';
 
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
+import {sort, ORDERS} from '../../../utils/sorter';
 
 require('./my-list.scss');
 
@@ -18,7 +18,11 @@ class MyList extends React.Component {
       movies: undefined,
       series: undefined,
       isAuthenticated: Session.isAuthenticated,
-      last_items: []
+      last_items: [],
+      order: ORDERS.ALPHANUMERIC,
+      show_movie: true,
+      show_series: true,
+      show_watched: true
     };
 
     for (let i = 0; i < 20; i++) {
@@ -26,6 +30,35 @@ class MyList extends React.Component {
     }
 
     Session.subscribe(this);
+
+    this.handleOrderClick = this.handleOrderClick.bind(this);
+    this.handleShowMovieClick = this.handleShowMovieClick.bind(this);
+    this.handleShowSeriesClick = this.handleShowSeriesClick.bind(this);
+    this.handleShowWatchedClick = this.handleShowWatchedClick.bind(this);
+  }
+
+  handleOrderClick(order) {
+    this.setState({
+      order: order
+    });
+  }
+
+  handleShowMovieClick() {
+    this.setState({
+      show_movie: !this.state.show_movie
+    });
+  }
+
+  handleShowSeriesClick() {
+    this.setState({
+      show_series: !this.state.show_series
+    });
+  }
+
+  handleShowWatchedClick() {
+    this.setState({
+      show_watched: !this.state.show_watched
+    });
   }
 
   onLoginSuccess() {
@@ -76,34 +109,15 @@ class MyList extends React.Component {
     }
 
     const medias = {};
-    this.state.movies.forEach(function mapper(media) {
-      const key = (media.title || '0').toLowerCase().charAt(0);
+    if (this.state.show_movie) {
+      sort(medias, filterWatched(this.state.movies, this.state.show_watched), this.state.order);
+    }
 
-      if (!medias.hasOwnProperty(key)) {
-        medias[key] = [];
-      }
+    if (this.state.show_series) {
+      sort(medias, this.state.series, this.state.order);
+    }
 
-      medias[`${key}`].push(
-        <div className="my-list-item" key={media.id}>
-          <BookmarkCard movie={media}/>
-        </div>
-      );
-    });
-    this.state.series.forEach(function mapper(media) {
-      const key = (media.title || '0').toLowerCase().charAt(0);
-
-      if (!medias.hasOwnProperty(key)) {
-        medias[key] = [];
-      }
-
-      medias[`${key}`].push(
-        <div className="my-list-item" key={media.id}>
-          <BookmarkCard series={media}/>
-        </div>
-      );
-    });
-
-    const templates = Object.keys(medias).sort().map(function(key) {
+    const templates = Object.keys(medias).sort().map(function (key) {
       return (
         <div className="my-list-category" key={key}>
           <h4>{key}</h4>
@@ -114,11 +128,26 @@ class MyList extends React.Component {
       );
     });
 
+    if (this.state.order === ORDERS.SCORE) {
+      templates.reverse();
+    }
+
+    const menus = Object.keys(ORDERS).map((key) => {
+      return <div key={key} onClick={() => this.handleOrderClick(ORDERS[key])} className={(() => {
+        return this.state.order === ORDERS[key] ? 'active' : ''
+      })()}>{ORDERS[key]}</div>
+    });
+
     return (
       <div className="my-list-container">
         <div className="my-list-menu">
-          <div>Alphabetical Order</div>
-          <div>Show/Hide watched</div>
+          <div>Sort by:</div>
+          {menus}
+
+          <div className="my-list-separator"></div>
+          <div className={(() => this.state.show_movie ? 'active' : '')()} onClick={this.handleShowMovieClick}>Movies</div>
+          <div className={(() => this.state.show_series ? 'active' : '')()} onClick={this.handleShowSeriesClick}>TV Shows</div>
+          <div className={(() => this.state.show_watched ? 'active' : '')()} onClick={this.handleShowWatchedClick}>Already Watched</div>
         </div>
         <div className="my-list">
           {templates}
@@ -140,3 +169,11 @@ class MyList extends React.Component {
 }
 
 export default MyList;
+
+function filterWatched(medias, showWatched) {
+  if (showWatched) {
+    return medias;
+  }
+
+  return medias.filter((media) => typeof media.bookmark === 'undefined' || !media.bookmark.watched);
+}

@@ -22,6 +22,16 @@
       padding: 10px;
       color: white;
       font-size: 1.4em;
+
+      &.active,
+      &:hover {
+        color: #a9381d;
+        cursor: pointer;
+      }
+
+      &.my-list-separator {
+        width: 100px;
+      }
     }
   }
 
@@ -30,10 +40,11 @@
     h4 {
       color: rgba(255, 255, 255, 0.2);
       text-align: left;
-      font-size: 3em;
+      font-size: 2em;
       text-transform: capitalize;
 
       margin: 0 20px;
+      padding: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 

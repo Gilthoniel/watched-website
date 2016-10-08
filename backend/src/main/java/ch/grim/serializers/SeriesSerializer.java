@@ -16,7 +16,7 @@ import java.io.IOException;
 public class SeriesSerializer extends JsonSerializer<Series> {
     @Override
     public void serialize(Series tv, JsonGenerator json, SerializerProvider serializer)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         TvSeries series = tv.getData();
 
@@ -33,6 +33,16 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeStringField("backdrop", series.getBackdropPath());
         json.writeNumberField("score_average", series.getVoteAverage());
         json.writeNumberField("score_total", series.getVoteCount());
+
+        if (null != series.getGenres()) {
+            json.writeArrayFieldStart("genres");
+            series.getGenres().forEach(genre -> {
+                try {
+                    json.writeString(genre.getName());
+                } catch (IOException ignored) {}
+            });
+            json.writeEndArray();
+        }
 
         json.writeEndObject();
 
