@@ -83,18 +83,26 @@ class MyList extends React.Component {
   }
 
   componentDidMount() {
-    $('.my-list-container').mCustomScrollbar();
+    this.initScroll();
   }
 
   componentDidUpdate() {
-    $('.my-list-container').mCustomScrollbar();
+    this.initScroll();
+  }
+
+  initScroll() {
+    $(this._scroll).mCustomScrollbar({
+      mouseWheel: {
+        scrollAmount: 200
+      }
+    });
   }
 
   render() {
 
     if (!this.state.isAuthenticated) {
       return (
-        <div className="my-list-container">
+        <div className="my-list-container" ref={(c) => this._scroll = c}>
           <div className="my-list">
             <div className="my-list-message">
               Create an account or sign in to use this feature
@@ -139,7 +147,7 @@ class MyList extends React.Component {
     });
 
     return (
-      <div className="my-list-container">
+      <div className="my-list-container" ref={(c) => this._scroll = c}>
         <div className="my-list-menu">
           <div>Sort by:</div>
           {menus}

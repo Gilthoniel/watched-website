@@ -69,8 +69,12 @@ export default class SeriesDetails extends React.Component {
       width = $(this._details).width();
     }
 
-    $('.body-series-details').mCustomScrollbar({
-      callbacks:{
+    $(this._scroll).mCustomScrollbar({
+      mouseWheel: {
+        scrollAmount: 150
+      },
+
+      callbacks: {
         whileScrolling() {
           if (-this.mcs.top > offset.top) {
             if (typeof self.state.detailsStyle === 'undefined') {
@@ -147,7 +151,7 @@ export default class SeriesDetails extends React.Component {
       );
     
     return (
-      <div className="body-series-details">
+      <div className="body-series-details" ref={(c) => this._scroll = c}>
         <div className="series-details">
           <div className="backdrop">
             <img src={backdrop} alt="Backdrop"/>

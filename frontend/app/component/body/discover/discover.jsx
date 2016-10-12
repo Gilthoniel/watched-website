@@ -49,6 +49,10 @@ class Discover extends React.Component {
     let self = this;
 
     $(this._scroll).mCustomScrollbar({
+      mouseWheel: {
+        scrollAmount: 200
+      },
+
       callbacks: {
         onTotalScroll() {
           if (self._loading) {
