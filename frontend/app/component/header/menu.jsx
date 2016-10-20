@@ -16,7 +16,7 @@ class Menu extends React.Component {
       if (Menu.MENU_ITEMS.hasOwnProperty(prop)) {
         const [label, route] = Menu.MENU_ITEMS[prop].split(':');
         items.push(
-          <li key={route}>
+          <li key={route} onClick={this.props.closeMenu}>
             <Link to={route} className="header-menu-link" activeClassName="active">{label}</Link>
           </li>
         );

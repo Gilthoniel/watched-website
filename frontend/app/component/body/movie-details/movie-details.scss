@@ -1,3 +1,4 @@
+@import "../../../style/variables";
 
 .body-movie-details {
 
@@ -56,6 +57,7 @@
 
       .information-body {
         display: flex;
+        flex-wrap: wrap;
 
         .b-box {
           flex: 1;
@@ -74,6 +76,8 @@
           }
 
           &.b-overview {
+            min-width: 250px;
+
             p {
               text-align: justify;
             }
@@ -85,6 +89,50 @@
             border-radius: 7px;
             padding: 5px 10px;
             margin: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .body-movie-details {
+
+    .movie-details {
+
+      .backdrop {
+        min-height: 200px;
+        max-height: 200px;
+      }
+
+      .information {
+
+        margin: 0;
+        top: 0;
+
+        .information-header {
+
+          margin-bottom: 0;
+
+          .h-poster {
+            display: none;
+          }
+
+          .h-select {
+            margin: 10px 0;
+          }
+        }
+
+        .information-body {
+          .b-box {
+            margin: 0 10px 0 0;
+
+            &.b-overview {
+              p {
+                margin: 0;
+              }
+            }
           }
         }
       }
