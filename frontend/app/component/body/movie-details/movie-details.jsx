@@ -36,6 +36,22 @@ export default class MovieDetails extends React.Component {
     this.loadData();
   }
 
+  componentDidMount() {
+    this.initScrollbar();
+  }
+
+  componentDidUpdate() {
+    this.initScrollbar();
+  }
+
+  initScrollbar() {
+    $(this._scroll).mCustomScrollbar({
+      mouseWheel: {
+        scrollAmount: 150
+      }
+    });
+  }
+
   render() {
 
     const movie = this.state.movie;
@@ -56,7 +72,7 @@ export default class MovieDetails extends React.Component {
     });
 
     return (
-      <div className="body-movie-details">
+      <div className="body-movie-details" ref={(c) => this._scroll = c}>
         <div className="movie-details">
           <div className="backdrop">
             <img src={backdrop} alt="Backdrop"/>

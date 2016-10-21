@@ -10,6 +10,8 @@ import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 import Dates from '../../../utils/dates';
 
+import {SCREEN_SM} from '../../../constants';
+
 require('./series-details.scss');
 
 export default class SeriesDetails extends React.Component {
@@ -42,6 +44,10 @@ export default class SeriesDetails extends React.Component {
   }
 
   handleHoverEpisode(episode) {
+    if (window.innerWidth <= SCREEN_SM) {
+      return;
+    }
+
     if (this._image) {
       this._image.src = '';
     }
@@ -69,12 +75,14 @@ export default class SeriesDetails extends React.Component {
       width = $(this._details).width();
     }
 
-    $(this._scroll).mCustomScrollbar({
+    let params = {
       mouseWheel: {
         scrollAmount: 150
-      },
+      }
+    };
 
-      callbacks: {
+    if (window.innerWidth > SCREEN_SM) {
+      params.callbacks = {
         whileScrolling() {
           if (-this.mcs.top > offset.top) {
             if (typeof self.state.detailsStyle === 'undefined') {
@@ -96,7 +104,9 @@ export default class SeriesDetails extends React.Component {
           }
         }
       }
-    });
+    }
+
+    $(this._scroll).mCustomScrollbar(params);
   }
 
   render() {

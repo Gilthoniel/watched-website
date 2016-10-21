@@ -60,6 +60,11 @@ export default class SeasonBox extends React.Component {
     }
 
     const episodes = season.episodes.map((episode) => {
+      let key = episode.id;
+      if (typeof episode.bookmark !== 'undefined') {
+        key = episode.bookmark.id;
+      }
+
       return (
         <EpisodeItem
           episode={episode}
@@ -67,7 +72,7 @@ export default class SeasonBox extends React.Component {
           series={this.props.series}
           onchange={this.updatePins}
           onover={this.props.onover}
-          key={episode.id}/>
+          key={key}/>
       );
     });
 

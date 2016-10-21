@@ -2,6 +2,14 @@
 
 .body-movie-details {
 
+  .mCSB_container {
+    margin-right: 0 !important;
+  }
+
+  .mCSB_scrollTools {
+    z-index: 50;
+  }
+
   .movie-details {
 
     .backdrop {
@@ -129,6 +137,9 @@
             margin: 0 10px 0 0;
 
             &.b-overview {
+              flex: none !important;
+              width: 100%;
+
               p {
                 margin: 0;
               }

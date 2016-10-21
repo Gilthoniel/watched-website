@@ -242,9 +242,17 @@
             margin: 0 10px 0 0;
 
             &.b-overview {
+              flex: none !important;
+              width: 100%;
+
               p {
                 margin: 0;
               }
+            }
+
+            &.b-episodes {
+              flex: none !important;
+              width: 100%;
             }
           }
         }
