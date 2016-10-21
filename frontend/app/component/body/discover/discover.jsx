@@ -53,6 +53,8 @@ class Discover extends React.Component {
         scrollAmount: 200
       },
 
+      advanced:{ updateOnImageLoad: false },
+
       callbacks: {
         onTotalScroll() {
           if (self._loading) {

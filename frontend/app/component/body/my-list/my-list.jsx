@@ -2,6 +2,7 @@ import React from 'react';
 import Toastr from 'toastr';
 
 import Loading from '../loading.jsx';
+import SwitchButton from './switch-button.jsx';
 
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
@@ -82,6 +83,10 @@ class MyList extends React.Component {
     }
   }
 
+  componentWillUpdate() {
+    $(this._scroll).mCustomScrollbar('destroy');
+  }
+
   componentDidMount() {
     this.initScroll();
   }
@@ -142,22 +147,28 @@ class MyList extends React.Component {
 
     const menus = Object.keys(ORDERS).map((key) => {
       return <div key={key} onClick={() => this.handleOrderClick(ORDERS[key])} className={(() => {
-        return this.state.order === ORDERS[key] ? 'active' : ''
+        return 'l-menu-item ' + (this.state.order === ORDERS[key] ? 'active' : '')
       })()}>{ORDERS[key]}</div>
     });
 
     return (
-      <div className="my-list-container" ref={(c) => this._scroll = c}>
+      <div className="my-list-container">
         <div className="my-list-menu">
           <div>Sort by:</div>
           {menus}
 
           <div className="my-list-separator"></div>
-          <div className={(() => this.state.show_movie ? 'active' : '')()} onClick={this.handleShowMovieClick}>Movies</div>
-          <div className={(() => this.state.show_series ? 'active' : '')()} onClick={this.handleShowSeriesClick}>TV Shows</div>
-          <div className={(() => this.state.show_watched ? 'active' : '')()} onClick={this.handleShowWatchedClick}>Already Watched</div>
+          <div onClick={this.handleShowMovieClick}>
+            <SwitchButton active={this.state.show_movie} /> Movies
+          </div>
+          <div onClick={this.handleShowSeriesClick}>
+            <SwitchButton active={this.state.show_series}/> TV Shows
+          </div>
+          <div onClick={this.handleShowWatchedClick}>
+            <SwitchButton active={this.state.show_watched} /> Already Watched
+          </div>
         </div>
-        <div className="my-list">
+        <div className="my-list" ref={(c) => this._scroll = c}>
           {templates}
           {this.state.last_items} {/* Workaround for the last line alignment */}
         </div>

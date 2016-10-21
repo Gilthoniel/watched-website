@@ -32,12 +32,9 @@ export default class MovieDetails extends React.Component {
     this.loadData();
   }
 
-  componentWillMount() {
-    this.loadData();
-  }
-
   componentDidMount() {
     this.initScrollbar();
+    this.loadData();
   }
 
   componentDidUpdate() {

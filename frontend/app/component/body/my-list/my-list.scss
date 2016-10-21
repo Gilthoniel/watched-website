@@ -2,6 +2,7 @@
 
 .my-list-container {
   height: 100%;
+  position: relative;
 
   .mCSB_container {
     margin: 0 !important;
@@ -13,6 +14,7 @@
 
   .my-list-menu {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     background: rgb(185, 160, 141);
     margin-bottom: 20px;
@@ -23,8 +25,8 @@
       color: white;
       font-size: 1.4em;
 
-      &.active,
-      &:hover {
+      &.l-menu-item.active,
+      &.l-menu-item:hover {
         color: #a9381d;
         cursor: pointer;
       }
@@ -36,6 +38,10 @@
   }
 
   .my-list {
+    position: absolute;
+    top: 50px;
+    bottom: 5px;
+    width: 100%;
 
     h4 {
       color: rgba(255, 255, 255, 0.2);
@@ -64,6 +70,28 @@
       text-align: center;
       color: white;
       font-size: 2em;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .my-list-container {
+
+    .my-list-menu {
+
+      > div {
+        padding: 3px 10px;
+
+        &.my-list-separator {
+          flex: none;
+          width: 100%;
+          padding: 0;
+        }
+      }
+    }
+
+    .my-list {
+      top: 60px;
     }
   }
 }
