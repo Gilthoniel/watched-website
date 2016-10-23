@@ -9,6 +9,8 @@ import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 import Dates from '../../../utils/dates';
 
+import {SCREEN_SM} from '../../../constants/index';
+
 require('./movie-details.scss');
 
 export default class MovieDetails extends React.Component {
@@ -42,11 +44,19 @@ export default class MovieDetails extends React.Component {
   }
 
   initScrollbar() {
-    $(this._scroll).mCustomScrollbar({
+
+    let params = {
       mouseWheel: {
         scrollAmount: 150
       }
-    });
+    };
+
+    if (window.innerWidth > SCREEN_SM) {
+      params.scrollInertia = 0;
+      params.mouseWheel.scrollAmount = 300;
+    }
+
+    $(this._scroll).mCustomScrollbar(params);
   }
 
   render() {
@@ -58,6 +68,10 @@ export default class MovieDetails extends React.Component {
     }
 
     const backdrop = MediaApi.backdrop(movie, this.state.configuration);
+    const backdropStyle = {
+      backgroundImage: `url(${backdrop})`
+    };
+
     const poster = MediaApi.poster(movie, this.state.configuration);
     const keywords = movie.keywords.map(function (keyword) {
       return (
@@ -71,9 +85,7 @@ export default class MovieDetails extends React.Component {
     return (
       <div className="body-movie-details" ref={(c) => this._scroll = c}>
         <div className="movie-details">
-          <div className="backdrop">
-            <img src={backdrop} alt="Backdrop"/>
-          </div>
+          <div className="backdrop" style={backdropStyle}></div>
           <div className="information">
             <div className="information-header">
               <div className="h-poster">

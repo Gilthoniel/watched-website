@@ -10,7 +10,7 @@ import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 import Dates from '../../../utils/dates';
 
-import {SCREEN_SM} from '../../../constants';
+import {SCREEN_SM} from '../../../constants/index';
 
 require('./series-details.scss');
 
@@ -82,6 +82,9 @@ export default class SeriesDetails extends React.Component {
     };
 
     if (window.innerWidth > SCREEN_SM) {
+      params.scrollInertia = 0;
+      params.mouseWheel.scrollAmount = 300;
+
       params.callbacks = {
         whileScrolling() {
           if (-this.mcs.top > offset.top) {
@@ -119,6 +122,10 @@ export default class SeriesDetails extends React.Component {
     }
     
     const backdrop = MediaApi.backdrop(series, this.state.configuration);
+    const backdropStyle = {
+      backgroundImage: `url(${backdrop})`
+    };
+
     const poster = MediaApi.poster(series, this.state.configuration);
 
     const episode = this.state.episode;
@@ -163,9 +170,7 @@ export default class SeriesDetails extends React.Component {
     return (
       <div className="body-series-details" ref={(c) => this._scroll = c}>
         <div className="series-details">
-          <div className="backdrop">
-            <img src={backdrop} alt="Backdrop"/>
-          </div>
+          <div className="backdrop" style={backdropStyle}></div>
 
           <div className="information">
             <div className="information-header">
