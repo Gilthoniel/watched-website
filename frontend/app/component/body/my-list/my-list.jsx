@@ -165,7 +165,7 @@ class MyList extends React.Component {
             <SwitchButton active={this.state.show_series}/> TV Shows
           </div>
           <div onClick={this.handleShowWatchedClick}>
-            <SwitchButton active={this.state.show_watched} /> Already Watched
+            <SwitchButton active={this.state.show_watched} /> Watched
           </div>
         </div>
         <div className="my-list" ref={(c) => this._scroll = c}>
