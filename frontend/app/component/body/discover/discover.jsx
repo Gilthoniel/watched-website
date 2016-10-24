@@ -4,6 +4,8 @@ import MovieCard from '../media/movie-card.jsx';
 import ApiService from '../../../service/api-service';
 import Session from '../../../service/session-service';
 
+import {SCREEN_SM} from '../../../constants/index';
+
 import Loading from '../loading.jsx';
 
 require('./discover.scss');
@@ -48,12 +50,10 @@ class Discover extends React.Component {
 
     let self = this;
 
-    $(this._scroll).mCustomScrollbar({
+    let params = {
       mouseWheel: {
         scrollAmount: 200
       },
-
-      advanced:{ updateOnImageLoad: false },
 
       callbacks: {
         onTotalScroll() {
@@ -64,7 +64,14 @@ class Discover extends React.Component {
           self.loadData();
         }
       }
-    });
+    };
+
+    if (window.innerWidth <= SCREEN_SM) {
+      params.scrollInertia = 0;
+      params.mouseWheel.scrollAmount = 300;
+    }
+
+    $(this._scroll).mCustomScrollbar(params);
   }
 
   render() {

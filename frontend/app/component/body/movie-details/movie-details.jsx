@@ -51,7 +51,7 @@ export default class MovieDetails extends React.Component {
       }
     };
 
-    if (window.innerWidth > SCREEN_SM) {
+    if (window.innerWidth <= SCREEN_SM) {
       params.scrollInertia = 0;
       params.mouseWheel.scrollAmount = 300;
     }

@@ -81,10 +81,12 @@ export default class SeriesDetails extends React.Component {
       }
     };
 
-    if (window.innerWidth > SCREEN_SM) {
+    if (window.innerWidth <= SCREEN_SM) {
       params.scrollInertia = 0;
       params.mouseWheel.scrollAmount = 300;
+    }
 
+    if (window.innerWidth > SCREEN_SM) {
       params.callbacks = {
         whileScrolling() {
           if (-this.mcs.top > offset.top) {
