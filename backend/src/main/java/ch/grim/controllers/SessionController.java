@@ -70,7 +70,11 @@ class SessionController {
         // Get the Series
         Collection<SeriesBookmark> seriesBookmarks = seriesBmJpa.findByAccountId(user.getId());
         map.put("series", seriesBookmarks.stream()
-                .map(bm -> new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm))
+                .map(bm -> {
+                    int total = episodesBmJpa.findByAccountIdAndSerieId(user.getId(), bm.getSeriesId()).size();
+
+                    return new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm, total);
+                })
                 .collect(Collectors.toList()));
 
         return map;

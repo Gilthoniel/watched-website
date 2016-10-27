@@ -2,6 +2,7 @@ package ch.grim.models;
 
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,9 @@ public class Series {
 
     private Map<Integer, Season> seasons = new HashMap<>();
 
+    @JsonProperty("total_episodes_watched")
+    private int totalEpisodesWatched;
+
     public Series(TvSeries series, SeriesBookmark bookmark) {
         this.data = series;
         this.bookmark = bookmark;
@@ -30,6 +34,11 @@ public class Series {
 
     public Series(TvSeries series) {
         this(series, null);
+    }
+
+    public Series(TvSeries series, SeriesBookmark bookmark, int total) {
+        this(series, bookmark);
+        this.totalEpisodesWatched = total;
     }
 
     /**
@@ -78,5 +87,9 @@ public class Series {
 
     public Map<Integer, Season> getSeasons() {
         return seasons;
+    }
+
+    public int getTotalEpisodesWatched() {
+        return totalEpisodesWatched;
     }
 }

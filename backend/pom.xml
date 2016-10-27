@@ -109,9 +109,9 @@
 		</dependency>
 
         <dependency>
-            <groupId>info.movito</groupId>
+            <groupId>ch.grimsoft</groupId>
             <artifactId>themoviedbapi</artifactId>
-            <version>1.4</version>
+            <version>1.6-SNAPSHOT</version>
         </dependency>
 
 		<dependency>

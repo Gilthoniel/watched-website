@@ -123,11 +123,21 @@ class MyList extends React.Component {
 
     const medias = {};
     if (this.state.show_movie) {
-      sort(medias, filterWatched(this.state.movies, this.state.show_watched), this.state.order);
+      let movies = this.state.movies;
+      if (!this.state.show_watched) {
+        movies = filterWatchedMovies(movies);
+      }
+
+      sort(medias, movies, this.state.order);
     }
 
     if (this.state.show_series) {
-      sort(medias, this.state.series, this.state.order, true);
+      let series = this.state.series.slice();
+      if (!this.state.show_watched) {
+        series = filterWatchedSeries(series);
+      }
+
+      sort(medias, series, this.state.order, true);
     }
 
     const templates = Object.keys(medias).sort().map(function (key) {
@@ -189,10 +199,14 @@ class MyList extends React.Component {
 
 export default MyList;
 
-function filterWatched(medias, showWatched) {
-  if (showWatched) {
-    return medias;
-  }
-
+function filterWatchedMovies(medias) {
   return medias.filter((media) => typeof media.bookmark === 'undefined' || !media.bookmark.watched);
+}
+
+function filterWatchedSeries(series) {
+  return series.filter((media) => {
+    // Compare the total number of episodes minus the season 0 with the number of watched episodes
+    const total = media.resume_seasons.reduce((prev, curr) => curr.season_number !== 0 ? prev + curr.episode_count : prev, 0);
+    return media.total_episodes_watched < total;
+  });
 }

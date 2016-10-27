@@ -23,6 +23,7 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeStartObject();
 
         json.writeObjectField("bookmark", tv.getBookmark());
+        json.writeNumberField("total_episodes_watched", tv.getTotalEpisodesWatched());
         json.writeObjectField("seasons", tv.getSeasons());
 
         json.writeNumberField("id", series.getId());
@@ -33,6 +34,9 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeStringField("backdrop", series.getBackdropPath());
         json.writeNumberField("score_average", series.getVoteAverage());
         json.writeNumberField("score_total", series.getVoteCount());
+        json.writeNumberField("number_of_episodes", series.getNumberOfEpisodes());
+        json.writeNumberField("number_of_seasons", series.getNumberOfSeasons());
+        json.writeObjectField("resume_seasons", series.getSeasons());
 
         if (null != series.getGenres()) {
             json.writeArrayFieldStart("genres");
