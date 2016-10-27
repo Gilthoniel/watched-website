@@ -31,6 +31,11 @@ class Discover extends React.Component {
     this.loadData();
   }
 
+  onLoginFailure() {
+    // Reload the data, this time without the session
+    this.loadData();
+  }
+
   componentWillMount() {
     this.loadData();
   }

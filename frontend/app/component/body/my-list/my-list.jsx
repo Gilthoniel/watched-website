@@ -99,6 +99,12 @@ class MyList extends React.Component {
     });
   }
 
+  onLoginFailure() {
+    this.setState({
+      isAuthenticated: false
+    });
+  }
+
   componentWillMount() {
     if (this.state.isAuthenticated) {
       this.loadData();
@@ -131,8 +137,8 @@ class MyList extends React.Component {
 
     if (!this.state.isAuthenticated) {
       return (
-        <div className="my-list-container" ref={(c) => this._scroll = c}>
-          <div className="my-list">
+        <div className="my-list-container">
+          <div className="my-list" ref={(c) => this._scroll = c}>
             <div className="my-list-message">
               Create an account or sign in to use this feature
             </div>
