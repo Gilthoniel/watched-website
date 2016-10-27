@@ -1,5 +1,6 @@
 import React from 'react';
 import Toastr from 'toastr';
+import Cookies from 'react-cookie';
 
 import Loading from '../loading.jsx';
 import SwitchButton from './switch-button.jsx';
@@ -15,15 +16,28 @@ class MyList extends React.Component {
   constructor(props) {
     super(props);
 
+    // Get the settings if existing
+    let settings;
+    try {
+      settings = JSON.parse(Cookies.select(/GSW-/)['GSW-my-list']);
+    } catch(e) {
+      console.warn('Cannot parse the cookie');
+      settings = {
+        show_movie: true,
+        show_series: true,
+        show_watched: true
+      };
+    }
+
     this.state = {
       movies: undefined,
       series: undefined,
       isAuthenticated: Session.isAuthenticated,
       last_items: [],
       order: ORDERS.ALPHANUMERIC,
-      show_movie: true,
-      show_series: true,
-      show_watched: true
+      show_movie: settings.show_movie,
+      show_series: settings.show_series,
+      show_watched: settings.show_watched
     };
 
     for (let i = 0; i < 20; i++) {
@@ -62,6 +76,14 @@ class MyList extends React.Component {
     });
   }
 
+  persistSettings() {
+    Cookies.save('GSW-my-list', JSON.stringify({
+      show_movie: this.state.show_movie,
+      show_series: this.state.show_series,
+      show_watched: this.state.show_watched
+    }));
+  }
+
   onLoginSuccess() {
     this.setState({
       isAuthenticated: true
@@ -93,6 +115,8 @@ class MyList extends React.Component {
 
   componentDidUpdate() {
     this.initScroll();
+
+    this.persistSettings();
   }
 
   initScroll() {
