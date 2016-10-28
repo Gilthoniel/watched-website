@@ -46,7 +46,7 @@ export default class Header extends React.Component {
         <div id="header">
           <User/>
 
-          <Search/>
+          <Search closeMenu={this.closeMenu}/>
 
           <Menu closeMenu={this.closeMenu} />
 

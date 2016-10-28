@@ -21,7 +21,9 @@ export default class SeriesBookmarkPin extends React.Component {
     this.handleSelect = this.handleSelect.bind(this);
   }
 
-  handleSelect() {
+  handleSelect(event) {
+    event.stopPropagation();
+
     if (!Session.isAuthenticated) {
       Toastr.info('Create an account or sign in to have access to this functionality.', 'Session required');
       return;

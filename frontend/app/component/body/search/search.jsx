@@ -2,11 +2,11 @@ import React from 'react';
 import Toastr from 'toastr';
 
 import './search.scss';
-import MovieCard from '../media/movie-card.jsx';
-import SeriesCard from '../media/series-card.jsx';
+import SearchCard from './search-card.jsx';
 
 import ApiService from '../../../service/api-service';
-import MediaType from '../../../constants/media-type';
+
+import {SCREEN_SM} from '../../../constants/index';
 
 export default class Search extends React.Component {
 
@@ -29,25 +29,40 @@ export default class Search extends React.Component {
   }
 
   componentDidMount() {
-    $('.body-search').mCustomScrollbar();
+    this.initScrollbar();
   }
 
   componentDidUpdate() {
-    $('.body-search').mCustomScrollbar();
+    this.initScrollbar()
+  }
+
+  initScrollbar() {
+
+    let params = {
+      mouseWheel: {
+        totalAmount: 300
+      }
+    };
+
+    if (window.innerWidth <= SCREEN_SM) {
+      params.scrollInertia = 0;
+      params.mouseWheel.scrollAmount = 300;
+    }
+
+    $(this._scroll).mCustomScrollbar(params);
   }
 
   render() {
     const medias = this.state.medias.map((media) => {
-      const card = media.media_type === MediaType.MOVIE ? <MovieCard movie={media}/> : <SeriesCard series={media}/>
       return (
-        <div key={media.id} className="body-search-card">
-          {card}
+        <div className="body-search-card" key={media.id}>
+          <SearchCard media={media} />
         </div>
       );
     });
 
     return (
-      <div className="body-search">
+      <div className="body-search" ref={(c) => this._scroll = c}>
         <div className="body-search-container">
           {medias}
         </div>

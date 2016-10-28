@@ -1,0 +1,47 @@
+@import "../../../style/variables";
+
+.search-card {
+  flex: none;
+  width: 100%;
+  height: 140px;
+
+  background: #353535;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 5px black;
+  }
+
+  .search-card-poster {
+    float: left;
+    width: 90px;
+    height: 100%;
+    margin-right: 10px;
+
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .search-card-body {
+    position: relative;
+    padding: 10px;
+
+    .search-card-pin {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+    }
+
+    h6 {
+      margin: 0 30px 10px 0;
+      font-weight: bold;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+
+}
