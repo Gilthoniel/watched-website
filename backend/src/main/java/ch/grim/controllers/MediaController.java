@@ -66,7 +66,7 @@ public class MediaController {
         Collection<MovieBookmark> bookmarks;
         if (user != null) {
             bookmarks = movieBmJpa.findByAccountId(user.getId());
-            LOG.info(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
+            LOG.debug(String.format("Found %d bookmarks for user: %s", bookmarks.size(), user.getUsername()));
         } else {
             bookmarks = Collections.emptyList();
         }
@@ -83,7 +83,19 @@ public class MediaController {
 
         TvResultsPage results = service.searchTv(query, request.getLocale().getLanguage(), page);
 
-        return new SeriesSearchResults(results, user);
+        Collection<SeriesBookmark> bookmarks;
+        if (user != null) {
+            bookmarks = seriesBmJpa.findByAccountId(user.getId());
+        } else {
+            bookmarks = Collections.emptyList();
+        }
+
+        SeriesSearchResults response = new SeriesSearchResults(results, bookmarks);
+        if (user != null) {
+            response.fillNumberWatchedEpisodes(service, episodeBmJpa, user.getId(), request.getLocale().getLanguage());
+        }
+
+        return response;
     }
 
     @RequestMapping("/discover")

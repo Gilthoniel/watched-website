@@ -22,7 +22,7 @@ public class Series {
 
     private SeriesBookmark bookmark;
 
-    private Map<Integer, Season> seasons = new HashMap<>();
+    private Map<Integer, Season> seasons;
 
     @JsonProperty("total_episodes_watched")
     private int totalEpisodesWatched;
@@ -30,6 +30,7 @@ public class Series {
     public Series(TvSeries series, SeriesBookmark bookmark) {
         this.data = series;
         this.bookmark = bookmark;
+        this.totalEpisodesWatched = Integer.MAX_VALUE;
     }
 
     public Series(TvSeries series) {
@@ -45,6 +46,8 @@ public class Series {
      * Populate the hash map of seasons
      */
     public void loadEpisodes(MovieDBService service, int seriesId, String lang) {
+        seasons = new HashMap<>();
+
         data.getSeasons().forEach(season -> {
 
             if (season.getSeasonNumber() != 0) {
@@ -81,6 +84,10 @@ public class Series {
         return data;
     }
 
+    public void setData(TvSeries series) {
+        data = series;
+    }
+
     public SeriesBookmark getBookmark() {
         return bookmark;
     }
@@ -91,5 +98,9 @@ public class Series {
 
     public int getTotalEpisodesWatched() {
         return totalEpisodesWatched;
+    }
+
+    public void setTotalEpisodesWatched(int total) {
+        totalEpisodesWatched = total;
     }
 }
