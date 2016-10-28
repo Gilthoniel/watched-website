@@ -24,14 +24,17 @@ class Discover extends React.Component {
   }
 
   onLoginSuccess() {
+    this.resetPage();
     this.loadData();
   }
 
   onLogoutSuccess() {
+    this.resetPage();
     this.loadData();
   }
 
   onLoginFailure() {
+    this.resetPage();
     // Reload the data, this time without the session
     this.loadData();
   }
@@ -46,6 +49,11 @@ class Discover extends React.Component {
 
   componentDidUpdate() {
     this.initScroll();
+  }
+
+  resetPage() {
+    this.state.page = 1;
+    this.state.movies = [];
   }
 
   initScroll() {
