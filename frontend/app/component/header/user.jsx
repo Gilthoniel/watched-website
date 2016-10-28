@@ -70,14 +70,14 @@ class User extends React.Component {
         <div className="header__user">
           <form className="form-horizontal" onSubmit={this.handleLogin}>
             <div className="form-group">
-              <div className="col-sm-12">
+              <div className="col-xs-12">
                 <input type="email" className="form-control" name="username" placeholder="Email"
                        value={this.state.username}
                        onChange={(event) => this.setState({username: event.target.value})}/>
               </div>
             </div>
             <div className="form-group">
-              <div className="col-sm-12">
+              <div className="col-xs-12">
                 <input type="password" className="form-control" name="password" placeholder="Password"
                        value={this.state.password}
                        onChange={(event) => this.setState({password: event.target.value})}/>
@@ -89,7 +89,7 @@ class User extends React.Component {
                 if (this.state.message) {
                   return (
                     <div className="form-group has-error">
-                      <div className="col-sm-12">
+                      <div className="col-xs-12">
                         <span className="help-block">{this.state.message}</span>
                       </div>
                     </div>
@@ -99,7 +99,7 @@ class User extends React.Component {
             }
 
             <div className="form-group">
-              <div className="col-sm-8">
+              <div className="col-xs-8">
                         <span>
                           <a href="">Password forgotten?</a>
                         </span><br/>
@@ -107,7 +107,7 @@ class User extends React.Component {
                           <Link to="/account/registration">Registration</Link>
                         </span>
               </div>
-              <div className="col-sm-4 col-submit-btn">
+              <div className="col-xs-4 col-submit-btn">
                 {
                   (() => {
                     if (this.state.isSubmitting) {

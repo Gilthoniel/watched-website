@@ -54,6 +54,8 @@ export default class Header extends React.Component {
             <a href="https://www.themoviedb.org/">
               <img src={require('../../images/movie_db_attribution.png')} alt="TheMovieDB" />
             </a>
+
+            <span>GrimSoft Watched &copy;</span>
           </div>
         </div>
       </div>
@@ -69,6 +71,9 @@ class MobileNavigation extends React.Component {
           <span className="glyphicon glyphicon-menu-hamburger"/>
         </button>
 
+        <a href="https://www.themoviedb.org/">
+          <img src={require('../../images/movie_db_attribution.png')} alt="TheMovieDB" />
+        </a>
         <span className="m-nav-title">GrimSoft Watched &copy;</span>
       </div>
     );
