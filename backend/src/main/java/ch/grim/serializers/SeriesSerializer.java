@@ -23,6 +23,7 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeStartObject();
 
         json.writeObjectField("bookmark", tv.getBookmark());
+        json.writeStringField("media_type", tv.getMediaType().name());
         json.writeNumberField("total_episodes_watched", tv.getTotalEpisodesWatched());
         if (tv.getSeasons() != null) {
             json.writeObjectField("seasons", tv.getSeasons());

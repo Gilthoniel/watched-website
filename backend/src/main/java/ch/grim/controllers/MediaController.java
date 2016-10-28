@@ -6,6 +6,7 @@ import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import info.movito.themoviedbapi.TmdbDiscover;
+import info.movito.themoviedbapi.TmdbSearch;
 import info.movito.themoviedbapi.TvResultsPage;
 import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.MovieDb;
@@ -15,10 +16,10 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.dao.SystemWideSaltSource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +55,37 @@ public class MediaController {
         return service.getConfiguration();
     }
 
+    @RequestMapping("/search")
+    public SearchPage search(
+            ServletRequest request,
+            @AuthenticationPrincipal User user,
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page) {
+        TmdbSearch.MultiListResultsPage results = service.search(query, request.getLocale().getLanguage(), page);
+
+        Collection<MovieBookmark> moviesBm;
+        if (user != null) {
+            moviesBm = movieBmJpa.findByAccountId(user.getId());
+            LOG.debug(String.format("Found %d bookmarks for user: %s", moviesBm.size(), user.getUsername()));
+        } else {
+            moviesBm = Collections.emptyList();
+        }
+
+        Collection<SeriesBookmark> seriesBm;
+        if (user != null) {
+            seriesBm = seriesBmJpa.findByAccountId(user.getId());
+        } else {
+            seriesBm = Collections.emptyList();
+        }
+
+        SearchPage response = new SearchPage(results, moviesBm, seriesBm);
+        if (user != null) {
+            response.fillNumberWatchedEpisodes(service, episodeBmJpa, user.getId(), request.getLocale().getLanguage());
+        }
+
+        return response;
+    }
+
     @RequestMapping("/search/movie")
     public DiscoverResultPage searchMovie(
             ServletRequest request,
@@ -61,7 +93,7 @@ public class MediaController {
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int page) {
 
-        MovieResultsPage results = service.search(query, request.getLocale().getLanguage(), page);
+        MovieResultsPage results = service.searchMovie(query, request.getLocale().getLanguage(), page);
 
         Collection<MovieBookmark> bookmarks;
         if (user != null) {

@@ -1,13 +1,18 @@
 package ch.grim.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.Multi;
 
 /**
  * Created by Gaylor on 8/7/2016.
  * Cannot extend the MovieDb class because we cannot set the fields
  * due to lack of constructor...
  */
-public class Movie {
+public class Movie implements Media {
+
+    @JsonProperty("media_type")
+    private Multi.MediaType mediaType = Multi.MediaType.MOVIE;
 
     private MovieBookmark bookmark;
 
@@ -28,5 +33,9 @@ public class Movie {
 
     public MovieBookmark getBookmark() {
         return bookmark;
+    }
+
+    public Multi.MediaType getMediaType() {
+        return mediaType;
     }
 }

@@ -155,6 +155,16 @@ class ApiService {
 
   //-- MEDIA
 
+  search(query) {
+    return $.ajax(this.generateCredentials({
+      method: 'get',
+      url: namespace + '/media/search',
+      data: {
+        query: query
+      }
+    }));
+  }
+
   searchMovie(query) {
     return $.ajax(this.generateCredentials({
       method: 'get',

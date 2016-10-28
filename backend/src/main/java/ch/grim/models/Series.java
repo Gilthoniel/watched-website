@@ -3,6 +3,7 @@ package ch.grim.models;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import info.movito.themoviedbapi.model.Multi;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,16 @@ import java.util.Optional;
  * Created by Gaylor on 10.08.2016.
  * Model for the bookmarks of a TV Show
  */
-public class Series {
+public class Series implements Media {
 
     private TvSeries data;
 
     private SeriesBookmark bookmark;
 
     private Map<Integer, Season> seasons;
+
+    @JsonProperty("media_type")
+    private Multi.MediaType mediaType = Multi.MediaType.TV_SERIES;
 
     @JsonProperty("total_episodes_watched")
     private int totalEpisodesWatched;
@@ -78,6 +82,10 @@ public class Series {
                 }
             });
         });
+    }
+
+    public Multi.MediaType getMediaType() {
+        return mediaType;
     }
 
     public TvSeries getData() {

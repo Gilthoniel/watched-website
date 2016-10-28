@@ -13,8 +13,7 @@ export default class Search extends React.Component {
     super(props);
 
     this.state = {
-      movies: [],
-      series: []
+      medias: []
     };
   }
 
@@ -37,64 +36,34 @@ export default class Search extends React.Component {
   }
 
   render() {
-    const movies = this.state.movies.map(function(movie) {
+    const medias = this.state.medias.map((media) => {
+      const card = media.media_type === 'MOVIES' ? <MovieCard movie={media}/> : <SeriesCard series={media}/>
       return (
-        <div key={movie.id} className="body-search-card">
-          <MovieCard movie={movie} />
-        </div>
-      );
-    });
-    const series = this.state.series.map(function(series) {
-      return (
-        <div key={series.id} className="body-search-card">
-          <SeriesCard series={series} />
+        <div key={media.id} className="body-search-card">
+          {card}
         </div>
       );
     });
 
     return (
       <div className="body-search">
-        <div className="body-search-columns">
-          <div className="body-search-column">
-            <h6>Movies</h6>
-
-            <div className="search-container">
-              {movies}
-            </div>
-          </div>
-          <div className="body-search-column">
-            <h6>TV Shows</h6>
-
-            <div className="search-container">
-              {series}
-            </div>
-          </div>
+        <div className="body-search-container">
+          {medias}
         </div>
       </div>
     );
   }
 
   loadData(query) {
-    ApiService.searchMovie(query || this.props.params.query).then(
+    ApiService.search(query || this.props.params.query).then(
       (response) => {
         this.setState({
-          movies: response.results
+          medias: response.medias
         });
       },
       () => {
-        Toastr.error('error');
+        Toastr.error('Something goes wrong when trying to search the query');
       }
     );
-
-    ApiService.searchTv(query || this.props.params.query).then(
-      (response) => {
-        this.setState({
-          series: response.results
-        });
-      },
-      () => {
-        Toastr.error('error');
-      }
-    )
   }
 }

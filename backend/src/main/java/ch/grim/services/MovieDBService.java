@@ -19,12 +19,17 @@ public class MovieDBService {
 
     private static final TmdbApi api = new TmdbApi("206f79eda0e7499536358bbfd3e47743");
 
-    @Cacheable(cacheNames = "moviedb-search-movie-#query-#lang-#page")
-    public MovieResultsPage search(String query, String lang, int page) {
+    @Cacheable(cacheNames = "moviedb-search-#query-#lang-#page")
+    public TmdbSearch.MultiListResultsPage search(String query, String lang, int page) {
+        return api.getSearch().searchMulti(query, lang, page);
+    }
+
+    @Cacheable(cacheNames = "moviedb-searchMovie-movie-#query-#lang-#page")
+    public MovieResultsPage searchMovie(String query, String lang, int page) {
         return api.getSearch().searchMovie(query, 0, lang, true, page);
     }
 
-    @Cacheable(cacheNames = "moviedb-search-tv-#query-#lang-#page")
+    @Cacheable(cacheNames = "moviedb-searchMovie-tv-#query-#lang-#page")
     public TvResultsPage searchTv(String query, String lang, int page) {
         return api.getSearch().searchTv(query, lang, page);
     }

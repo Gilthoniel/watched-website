@@ -22,6 +22,7 @@ public class MovieSerializer extends JsonSerializer<Movie> {
         json.writeStartObject();
 
         json.writeObjectField("bookmark", m.getBookmark());
+        json.writeStringField("media_type", m.getMediaType().name());
 
         json.writeNumberField("id", movie.getId());
         json.writeStringField("title", movie.getTitle());
