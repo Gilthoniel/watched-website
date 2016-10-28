@@ -21,12 +21,12 @@ public class MovieDBService {
 
     @Cacheable(cacheNames = "moviedb-search-#query-#lang-#page")
     public TmdbSearch.MultiListResultsPage search(String query, String lang, int page) {
-        return api.getSearch().searchMulti(query, lang, page);
+        return api.getSearch().searchMulti(query, lang, page, false);
     }
 
     @Cacheable(cacheNames = "moviedb-searchMovie-movie-#query-#lang-#page")
     public MovieResultsPage searchMovie(String query, String lang, int page) {
-        return api.getSearch().searchMovie(query, 0, lang, true, page);
+        return api.getSearch().searchMovie(query, 0, lang, false, page);
     }
 
     @Cacheable(cacheNames = "moviedb-searchMovie-tv-#query-#lang-#page")

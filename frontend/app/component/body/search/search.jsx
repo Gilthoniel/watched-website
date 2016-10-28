@@ -6,6 +6,7 @@ import MovieCard from '../media/movie-card.jsx';
 import SeriesCard from '../media/series-card.jsx';
 
 import ApiService from '../../../service/api-service';
+import MediaType from '../../../constants/media-type';
 
 export default class Search extends React.Component {
 
@@ -37,7 +38,7 @@ export default class Search extends React.Component {
 
   render() {
     const medias = this.state.medias.map((media) => {
-      const card = media.media_type === 'MOVIES' ? <MovieCard movie={media}/> : <SeriesCard series={media}/>
+      const card = media.media_type === MediaType.MOVIE ? <MovieCard movie={media}/> : <SeriesCard series={media}/>
       return (
         <div key={media.id} className="body-search-card">
           {card}
