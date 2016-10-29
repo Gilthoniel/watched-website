@@ -1,9 +1,14 @@
 package ch.grim.controllers;
 
+import ch.grim.controllers.errors.ResetPasswordAlreadyExisting;
+import ch.grim.controllers.errors.ResetPasswordExpired;
 import ch.grim.mail.MailManager;
 import ch.grim.models.Account;
 import ch.grim.models.Registration;
+import ch.grim.models.ResetPassword;
+import ch.grim.models.ResetPasswordConfirmation;
 import ch.grim.repositories.AccountRepository;
+import ch.grim.repositories.ResetPasswordRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,12 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.ServletRequest;
 import javax.xml.ws.Response;
 import java.io.BufferedReader;
@@ -45,11 +48,13 @@ public class AccountController {
     private final MailManager mails;
 
     private final AccountRepository accounts;
+    private final ResetPasswordRepository resets;
 
     @Autowired
-    public AccountController(MailManager mails, AccountRepository accounts) {
+    public AccountController(MailManager mails, AccountRepository accounts, ResetPasswordRepository resets) {
         this.mails = mails;
         this.accounts = accounts;
+        this.resets = resets;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -118,6 +123,60 @@ public class AccountController {
         }
 
         return new ResponseEntity<>("The link is invalid.", HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/reset", method = RequestMethod.POST)
+    public ResponseEntity<String> requestResetPassword(@RequestParam String email) throws Exception {
+
+        // 1. Check if the email is used
+        Optional<Account> account = accounts.findByUsername(email);
+        if (!account.isPresent()) {
+            throw new AccountNotFoundException();
+        }
+
+        // 2. Check if there's not already a request to avoid bot spamming
+        Optional<ResetPassword> record = resets.findByAccountId(account.get().getId());
+        if (record.isPresent()) {
+            if (record.get().getExpiration() < System.currentTimeMillis()) {
+                // Clean the DB if needed
+                resets.delete(record.get());
+            } else {
+                throw new ResetPasswordAlreadyExisting();
+            }
+        }
+
+        ResetPassword reset = new ResetPassword(account.get());
+        resets.save(reset);
+
+        // 3. Send the email
+        mails.sendResetPasswordEmail(account.get(), reset);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/confirm-reset", method = RequestMethod.POST)
+    public ResponseEntity<String> confirmResetPassword(
+            @RequestBody ResetPasswordConfirmation body) throws Exception {
+
+        Optional<ResetPassword> reset = resets.findByResetId(body.id);
+        if (!reset.isPresent()) {
+            throw new ResetPasswordExpired();
+        }
+
+        if (!reset.get().getResetId().equals(body.id)) {
+            throw new IllegalArgumentException();
+        }
+
+        Account account = reset.get().getAccount();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(body.password);
+
+        accounts.setPassword(account.getId(), hashedPassword);
+
+        // Allow only one reset
+        resets.delete(reset.get());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/captcha", method = RequestMethod.POST)

@@ -23,4 +23,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Transactional
     @Query("update Account acc set acc.registerId = ?2 where acc.id = ?1")
     void setRegisterId(long id, String registerId);
+
+    @Modifying
+    @Transactional
+    @Query("update Account acc set acc.password = ?2 where acc.id = ?1")
+    void setPassword(long id, String password);
 }

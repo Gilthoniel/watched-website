@@ -13,6 +13,8 @@ import MyList from './component/body/my-list/my-list.jsx';
 import Search from './component/body/search/search.jsx';
 import AccountConfirmation from './component/body/account/confirm-account.jsx';
 import Registration from './component/body/account/registration.jsx';
+import ResetPassword from './component/body/account/reset-password.jsx';
+import ConfirmResetPassword from './component/body/account/confirm-reset-password.jsx';
 
 require('./style/app.scss');
 require("jquery-mousewheel")($);
@@ -54,6 +56,8 @@ render((
       <Route path="/search/:query" component={Search}/>
       <Route path="/account/confirm" component={AccountConfirmation} />
       <Route path="/account/registration" component={Registration} />
+      <Route path="/account/reset" component={ResetPassword} />
+      <Route path="/account/confirm-reset" component={ConfirmResetPassword} />
     </Route>
   </Router>
 ), document.getElementById('app'));

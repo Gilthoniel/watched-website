@@ -65,4 +65,12 @@ $backgroundColor: rgba(255, 255, 255, 0.78);
       content: '\e013';
     }
   }
+
+  &:hover {
+    border-color: dodgerblue;
+
+    &:after {
+      background: dodgerblue;
+    }
+  }
 }

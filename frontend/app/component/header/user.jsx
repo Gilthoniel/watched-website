@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import {Link} from 'react-router';
 
 import Session from '../../service/session-service';
 import Messages from '../../constants/messages';
@@ -101,7 +101,7 @@ class User extends React.Component {
             <div className="form-group">
               <div className="col-xs-8">
                         <span>
-                          <a href="">Password forgotten?</a>
+                          <Link to="/account/reset">Password forgotten?</Link>
                         </span><br/>
                 <span>
                           <Link to="/account/registration">Registration</Link>
@@ -132,14 +132,14 @@ class User extends React.Component {
         <div className="media">
           <div className="media-left">
             <a href="#">
-              <img className="media-object" src={gravatar} alt="..." />
+              <img className="media-object" src={gravatar} alt="..."/>
             </a>
           </div>
           <div className="media-body">
             <h4 className="media-heading">{user.email}</h4>
 
             <a href="#" onClick={this.handleLogout}>
-              Logout <span className="glyphicon glyphicon-log-out" />
+              Logout <span className="glyphicon glyphicon-log-out"/>
             </a>
           </div>
         </div>

@@ -17,7 +17,7 @@
         <File>${USER_HOME}/logs/log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <FileNamePattern>log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${USER_HOME}/logs/log.%d{yyyy-MM-dd}.log</FileNamePattern>
 
             <!-- keep 30 days' worth of history -->
             <maxHistory>30</maxHistory>
@@ -29,13 +29,13 @@
     </appender>
 
     <logger name="ch.grim" additivity="false">
-        <level value="DEBUG" />
+        <level value="INFO" />
         <appender-ref ref="dailyRollingFileAppender"/>
         <appender-ref ref="consoleAppender" />
     </logger>
 
     <root>
-        <level value="INFO" />
+        <level value="DEBUG" />
         <appender-ref ref="consoleAppender" />
     </root>
 </configuration>

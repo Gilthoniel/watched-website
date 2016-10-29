@@ -1,6 +1,7 @@
 package ch.grim.mail;
 
 import ch.grim.models.Account;
+import ch.grim.models.ResetPassword;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -31,20 +32,36 @@ public class MailManager {
     }
 
     public void sendConfirmationMail(Account account, String token) {
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-                MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-                msg.setTo(account.getEmail());
-                msg.setFrom("registration@grimsoft.ch");
-                msg.setSubject("Grimsoft Watched Registration");
+        MimeMessagePreparator preparator = mimeMessage -> {
+            MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+            msg.setTo(account.getEmail());
+            msg.setFrom("registration@grimsoft.ch");
+            msg.setSubject("GrimSoft Watched - Registration");
 
-                Map<String,String> model = new HashMap<>();
-                model.put("token", token);
-                String text = VelocityEngineUtils.mergeTemplateIntoString(
-                        engine, "mails/emailConfirmationEmail.vm", "UTF-8", model);
-                msg.setText(text, true);
-            }
+            Map<String,String> model = new HashMap<>();
+            model.put("token", token);
+            String text = VelocityEngineUtils.mergeTemplateIntoString(
+                    engine, "mails/emailConfirmationEmail.vm", "UTF-8", model);
+            msg.setText(text, true);
+        };
+
+        sender.send(preparator);
+    }
+
+    public void sendResetPasswordEmail(Account account, ResetPassword reset) {
+        MimeMessagePreparator preparator = mimeMessage -> {
+            MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+            msg.setTo(account.getEmail());
+            msg.setFrom("registration@grimsoft.ch");
+            msg.setSubject("GrimSoft Watched - Password Reset Request");
+
+            Map<String,String> model = new HashMap<>();
+            model.put("uuid", reset.getResetId());
+            String text = VelocityEngineUtils.mergeTemplateIntoString(
+                    engine, "mails/emailResetPassword.vm", "UTF-8", model
+            );
+
+            msg.setText(text, true);
         };
 
         sender.send(preparator);
