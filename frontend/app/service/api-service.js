@@ -95,6 +95,25 @@ class ApiService {
     })
   }
 
+  resetPassword(email) {
+    return $.ajax({
+      method: 'post',
+      url: namespace + '/account/reset?' + $.param({ email: email })
+    });
+  }
+
+  confirmResetPassword(id, password) {
+    return $.ajax({
+      method: 'post',
+      url: namespace + '/account/confirm-reset',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: id,
+        password: password
+      })
+    });
+  }
+
   getUser() {
     const key = 'session.user';
     if (!cache.containsKey(key)) {
