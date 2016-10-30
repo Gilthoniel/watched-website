@@ -33,7 +33,8 @@ class Menu extends React.Component {
 
 Menu.MENU_ITEMS = {
   MENU_HOME: 'Discover:/discover',
-  MENU_ACCOUNT: 'My List:/my-list'
+  MENU_ACCOUNT: 'My List:/my-list',
+  MENU_ABOUT: 'About:/about'
 };
 
 export default Menu;

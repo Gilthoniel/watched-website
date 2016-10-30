@@ -6,6 +6,7 @@ import Toastr from 'toastr';
 
 import Body from './component/body/body.jsx';
 import Header from './component/header/header.jsx';
+import About from './component/body/about/about.jsx';
 import Discover from './component/body/discover/discover.jsx';
 import MovieDetails from './component/body/movie-details/movie-details.jsx';
 import SeriesDetails from './component/body/series-details/series-details.jsx';
@@ -49,6 +50,7 @@ render((
     <Route path="/" component={App}>
       <Route path="/" />
       <IndexRoute component={Discover}/>
+      <Route path="/about" component={About} />
       <Route path="/discover" component={Discover}/>
       <Route path="/movie/:id" component={MovieDetails}/>
       <Route path="/series/:id" component={SeriesDetails}/>

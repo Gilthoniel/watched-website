@@ -1,0 +1,30 @@
+
+.about {
+
+  padding: 10%;
+
+  p {
+    margin: 20px 5%;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+
+    &:first-child {
+      margin: 10% 5% 20px;
+    }
+  }
+
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 50px 0 0 0;
+    display: flex;
+
+    li {
+      flex: 1;
+
+      text-align: center;
+      font-size: 50px;
+    }
+  }
+}
