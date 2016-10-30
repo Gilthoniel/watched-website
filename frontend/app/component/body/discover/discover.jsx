@@ -17,7 +17,8 @@ class Discover extends React.Component {
 
     this.state = {
       movies: undefined,
-      page: 1
+      page: 1,
+      error: false
     };
 
     Session.subscribe(this);
@@ -90,7 +91,7 @@ class Discover extends React.Component {
   render() {
 
     if (!this.state.movies) {
-      return <Loading />;
+      return <Loading error={this.state.error} />;
     }
 
     const movies = [];
@@ -109,7 +110,7 @@ class Discover extends React.Component {
         </div>
 
         <div className="d-loading">
-          <Loading />
+          <Loading error={this.state.error}/>
         </div>
       </div>
     );
@@ -130,8 +131,10 @@ class Discover extends React.Component {
 
         this._loading = false;
       },
-      (xhr) => {
-        console.log('Cannot get Discover', xhr);
+      () => {
+        this.setState({
+          error: true
+        });
       }
     );
   }

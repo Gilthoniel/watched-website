@@ -37,7 +37,8 @@ class MyList extends React.Component {
       order: ORDERS.ALPHANUMERIC,
       show_movie: settings.show_movie,
       show_series: settings.show_series,
-      show_watched: settings.show_watched
+      show_watched: settings.show_watched,
+      error: false
     };
 
     for (let i = 0; i < 20; i++) {
@@ -148,7 +149,7 @@ class MyList extends React.Component {
     }
 
     if (!this.state.movies || !this.state.series) {
-      return <Loading />;
+      return <Loading error={this.state.error}/>;
     }
 
     const medias = {};
@@ -222,7 +223,12 @@ class MyList extends React.Component {
         movies: response.movies,
         series: response.series
       }),
-      () => Toastr.error('The server is overloaded', 'Oops')
+      () => {
+        this.setState({
+          error: true
+        });
+        Toastr.error('The server is overloaded', 'Oops')
+      }
     );
   }
 }
