@@ -4,14 +4,12 @@ import ch.grim.models.Account;
 import ch.grim.models.ResetPassword;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +36,7 @@ public class MailManager {
             msg.setFrom("registration@grimsoft.ch");
             msg.setSubject("GrimSoft Watched - Registration");
 
-            Map<String,String> model = new HashMap<>();
+            Map<String,Object> model = new HashMap<>();
             model.put("token", token);
             String text = VelocityEngineUtils.mergeTemplateIntoString(
                     engine, "mails/emailConfirmationEmail.vm", "UTF-8", model);
@@ -55,7 +53,7 @@ public class MailManager {
             msg.setFrom("registration@grimsoft.ch");
             msg.setSubject("GrimSoft Watched - Password Reset Request");
 
-            Map<String,String> model = new HashMap<>();
+            Map<String,Object> model = new HashMap<>();
             model.put("uuid", reset.getResetId());
             String text = VelocityEngineUtils.mergeTemplateIntoString(
                     engine, "mails/emailResetPassword.vm", "UTF-8", model

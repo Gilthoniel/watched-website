@@ -5,7 +5,10 @@ import ch.grim.models.Series;
 import ch.grim.serializers.MovieSerializer;
 import ch.grim.serializers.SeriesSerializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -31,5 +34,10 @@ public class WatchedConfiguration extends WebMvcConfigurerAdapter {
 
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().modules(m);
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new EhCacheCacheManager();
     }
 }
