@@ -23,6 +23,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IllegalFormatCodePointException;
 import java.util.Optional;
 
 /**
@@ -132,12 +133,9 @@ public class MediaController {
 
     @RequestMapping("/discover")
     public DiscoverResultPage discover(
+            ServletRequest request,
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "1") int page) {
-
-        TmdbDiscover discover = service.discover();
-        Discover params = new Discover();
-        params.page(page);
 
         Collection<MovieBookmark> bookmarks;
         if (user != null) {
@@ -146,7 +144,7 @@ public class MediaController {
             bookmarks = Collections.emptyList();
         }
 
-        return new DiscoverResultPage(discover.getDiscover(params), bookmarks);
+        return new DiscoverResultPage(service.discover(page, request.getLocale().getLanguage()), bookmarks);
     }
 
     @RequestMapping("/movie/{id}")

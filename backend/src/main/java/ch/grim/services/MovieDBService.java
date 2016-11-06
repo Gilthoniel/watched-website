@@ -1,6 +1,7 @@
 package ch.grim.services;
 
 import info.movito.themoviedbapi.*;
+import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.FindResults;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TmdbConfiguration;
@@ -34,9 +35,15 @@ public class MovieDBService {
         return api.getSearch().searchTv(query, lang, page);
     }
 
-    @Cacheable(value = "movie-db", key = "'discover'")
-    public TmdbDiscover discover() {
-        return api.getDiscover();
+    @Cacheable(value = "movie-db", key = "'discover-' + #page + #lang")
+    public MovieResultsPage discover(int page, String lang) {
+
+        TmdbDiscover discover = api.getDiscover();
+        Discover params = new Discover();
+        params.page(page);
+        params.language(lang);
+
+        return discover.getDiscover(params);
     }
 
     @Cacheable(value = "movie-db", key = "'getMovie-' + #id + #lang")

@@ -13,7 +13,6 @@ export default class Loading extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log(props);
     this.setState({
       error: props.error
     });

@@ -11,6 +11,8 @@ import {sort, ORDERS} from '../../../utils/sorter';
 
 require('./my-list.scss');
 
+const EXPIRATION = 1000 * 60 * 60 * 24 * 365;
+
 class MyList extends React.Component {
 
   constructor(props) {
@@ -82,7 +84,9 @@ class MyList extends React.Component {
       show_movie: this.state.show_movie,
       show_series: this.state.show_series,
       show_watched: this.state.show_watched
-    }));
+    }), {
+      expires: new Date(Date.now() + EXPIRATION)
+    });
   }
 
   onLoginSuccess() {
