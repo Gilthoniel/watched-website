@@ -36,7 +36,6 @@ public class BookmarkService {
                               ServletRequest request) {
 
         try {
-
             movieBm.forEach(bm -> {
                 try {
                     emitter.send(SseEmitter.event()

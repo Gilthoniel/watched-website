@@ -247,30 +247,38 @@ class MyList extends React.Component {
     );
     */
 
+    const movies = this.state.movies.slice() || [];
+    const series = this.state.series.slice() || [];
+
+    let update = debounce(() => {
+      this.setState({
+        movies: movies,
+        series: series
+      });
+    }, 1000);
+
     let sse = ApiService.getAsyncBookmarks();
+    sse.onerror = (event) => {
+      console.log(event);
+    };
 
     sse.addEventListener("movie", (event) => {
-      const movies = this.state.movies || [];
       movies.push(JSON.parse(event.data));
 
-      this.setState({
-        movies: movies
-      });
+      update();
     });
 
     sse.addEventListener("series", (event) => {
-      const series = this.state.series || [];
       series.push(JSON.parse(event.data));
 
-      this.setState({
-        series: series
-      });
+      update();
     });
 
     sse.addEventListener("EOS", () => {
       this.setState({
         loading: false
       });
+
       sse.close();
     });
   }
@@ -288,4 +296,19 @@ function filterWatchedSeries(series) {
     const total = media.resume_seasons.reduce((prev, curr) => curr.season_number !== 0 ? prev + curr.episode_count : prev, 0);
     return media.total_episodes_watched < total;
   });
+}
+
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    let context = this, args = arguments;
+    let later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    let callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
 }

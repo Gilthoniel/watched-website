@@ -90,7 +90,7 @@ class SessionController {
             ServletRequest request,
             @AuthenticationPrincipal User user) {
 
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(0L);
 
         // Get the movies
         Collection<MovieBookmark> bookmarks = moviesBmJpa.findByAccountId(user.getId());
