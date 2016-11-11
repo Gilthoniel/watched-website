@@ -1,5 +1,6 @@
 import ApiService from './api-service';
 import Toastr from 'toastr';
+import Cookies from 'react-cookie';
 
 const KEY_TOKEN = 'watched-session';
 
@@ -83,6 +84,10 @@ function setupSession(token) {
       this.isAuthenticated = true;
       this.isAuthenticating = false;
       this.user = response;
+
+      Cookies.save('access_token', token, {
+        expires: new Date(Date.now() + 100000000000)
+      });
 
       this.triggerObservers('onLoginSuccess');
     },

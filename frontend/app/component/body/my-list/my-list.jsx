@@ -32,15 +32,16 @@ class MyList extends React.Component {
     }
 
     this.state = {
-      movies: undefined,
-      series: undefined,
+      movies: [],
+      series: [],
       isAuthenticated: Session.isAuthenticated,
       last_items: [],
       order: ORDERS.ALPHANUMERIC,
       show_movie: settings.show_movie,
       show_series: settings.show_series,
       show_watched: settings.show_watched,
-      error: false
+      error: false,
+      loading: true
     };
 
     for (let i = 0; i < 20; i++) {
@@ -152,10 +153,6 @@ class MyList extends React.Component {
       );
     }
 
-    if (!this.state.movies || !this.state.series) {
-      return <Loading error={this.state.error}/>;
-    }
-
     const medias = {};
     if (this.state.show_movie) {
       let movies = this.state.movies;
@@ -213,15 +210,29 @@ class MyList extends React.Component {
             <SwitchButton active={this.state.show_watched} /> Watched
           </div>
         </div>
+
         <div className="my-list" ref={(c) => this._scroll = c}>
           {templates}
           {this.state.last_items} {/* Workaround for the last line alignment */}
         </div>
+
+        {
+          (() => {
+            if (this.state.loading) {
+              return (
+                <div className="my-list-loading">
+                  Loading ...
+                </div>
+              );
+            }
+          })()
+        }
       </div>
     );
   }
 
   loadData() {
+    /*
     ApiService.getBookmarks().then(
       (response) => this.setState({
         movies: response.movies,
@@ -234,6 +245,34 @@ class MyList extends React.Component {
         Toastr.error('The server is overloaded', 'Oops')
       }
     );
+    */
+
+    let sse = ApiService.getAsyncBookmarks();
+
+    sse.addEventListener("movie", (event) => {
+      const movies = this.state.movies || [];
+      movies.push(JSON.parse(event.data));
+
+      this.setState({
+        movies: movies
+      });
+    });
+
+    sse.addEventListener("series", (event) => {
+      const series = this.state.series || [];
+      series.push(JSON.parse(event.data));
+
+      this.setState({
+        series: series
+      });
+    });
+
+    sse.addEventListener("EOS", () => {
+      this.setState({
+        loading: false
+      });
+      sse.close();
+    });
   }
 }
 
