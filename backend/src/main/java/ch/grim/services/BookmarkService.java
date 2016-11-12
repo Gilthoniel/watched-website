@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class BookmarkService {
 
+    private static final int MAX_LOADING_IN_SECONDS = 1;
+    private static final int RECONNECT_TIME_IN_MILLIS = 1000;
+
     private MovieDBService service;
 
     private ExecutorService executor;
@@ -66,10 +69,14 @@ public class BookmarkService {
         try {
             emitter.send(SseEmitter.event().name("RESET").data("Start a new stream"));
 
+            // Send the total number of bookmarks
+            int totalBm = movieBm.size() + seriesBm.size();
+            emitter.send(SseEmitter.event().name("total").data(totalBm));
+
             Collection<Future<Movie>> fMovies = executor.invokeAll(movieBm.stream()
                             .map(bm -> (Callable<Movie>) () -> new Movie(service.getMovie(bm.getMovieId(), request.getLocale().getLanguage()), bm))
                             .collect(Collectors.toList()),
-                    1, TimeUnit.SECONDS);
+                    MAX_LOADING_IN_SECONDS, TimeUnit.SECONDS);
 
             for (Future<Movie> future : fMovies) {
                 try {
@@ -89,7 +96,7 @@ public class BookmarkService {
 
                         return new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm, total);
                     })
-                    .collect(Collectors.toList()), 1, TimeUnit.SECONDS);
+                    .collect(Collectors.toList()), MAX_LOADING_IN_SECONDS, TimeUnit.SECONDS);
 
             for (Future<Series> future : fSeries) {
                 try {
@@ -104,7 +111,7 @@ public class BookmarkService {
             }
 
             if (isNotComplete) {
-                emitter.send(SseEmitter.event().reconnectTime(5000).data("Reconnect Time Configuration"));
+                emitter.send(SseEmitter.event().reconnectTime(RECONNECT_TIME_IN_MILLIS).data("Reconnect Time Configuration"));
             } else {
                 emitter.send(SseEmitter.event().name("EOS").data("End of Stream"));
             }

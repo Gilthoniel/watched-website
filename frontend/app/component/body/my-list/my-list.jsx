@@ -41,7 +41,8 @@ class MyList extends React.Component {
       show_series: settings.show_series,
       show_watched: settings.show_watched,
       error: false,
-      loading: true
+      loading: true,
+      progress: 0
     };
 
     for (let i = 0; i < 20; i++) {
@@ -193,6 +194,10 @@ class MyList extends React.Component {
       })()}>{ORDERS[key]}</div>
     });
 
+    const progress = {
+      width: `${Math.max(Math.ceil(100 * this.state.progress), 10)}%`
+    };
+
     return (
       <div className="my-list-container">
         <div className="my-list-menu">
@@ -211,22 +216,12 @@ class MyList extends React.Component {
           </div>
         </div>
 
+        <div className="my-list-progress"><div style={progress}/></div>
+
         <div className="my-list" ref={(c) => this._scroll = c}>
           {templates}
           {this.state.last_items} {/* Workaround for the last line alignment */}
         </div>
-
-        {
-          (() => {
-            if (this.state.loading) {
-              return (
-                <div className="my-list-loading">
-                  Loading ...
-                </div>
-              );
-            }
-          })()
-        }
       </div>
     );
   }
@@ -249,18 +244,21 @@ class MyList extends React.Component {
 
     const movies = this.state.movies.slice() || [];
     const series = this.state.series.slice() || [];
+    let total = 0;
 
     let update = debounce(() => {
       this.setState({
         movies: movies,
-        series: series
+        series: series,
+        progress: (movies.length + series.length) / Math.max(total, 1)
       });
     }, 1000);
 
     let sse = ApiService.getAsyncBookmarks();
-    sse.onerror = (event) => {
-      console.log(event);
-    };
+
+    sse.addEventListener("total", (event) => {
+      total = Number(event.data);
+    });
 
     sse.addEventListener("movie", (event) => {
       movies.push(JSON.parse(event.data));

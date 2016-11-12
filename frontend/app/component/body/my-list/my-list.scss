@@ -17,7 +17,6 @@
     flex-wrap: wrap;
     align-items: flex-start;
     background: rgb(185, 160, 141);
-    margin-bottom: 20px;
 
     > div {
       flex: none;
@@ -34,6 +33,16 @@
       &.my-list-separator {
         width: 100px;
       }
+    }
+  }
+
+  .my-list-progress {
+    height: 2px;
+    width: 100%;
+
+    > div {
+      height: 100%;
+      background: #1d62a5;
     }
   }
 
@@ -71,14 +80,6 @@
       color: white;
       font-size: 2em;
     }
-  }
-
-  .my-list-loading {
-    position: fixed;
-    top: 50px;
-    right: 10px;
-
-    background: rgba(0,0,0,0.2);
   }
 }
 
