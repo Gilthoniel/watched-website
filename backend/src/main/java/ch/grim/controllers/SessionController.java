@@ -8,6 +8,7 @@ import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
 import ch.grim.services.BookmarkService;
 import ch.grim.services.MovieDBService;
+import info.movito.themoviedbapi.model.MovieDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.ServletRequest;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
  * Created by Gaylor on 31.07.2016.
- *
  */
 @RequestMapping("${spring.data.rest.base-path}/users")
 @RestController
@@ -35,6 +37,9 @@ class SessionController {
 
     private MovieDBService service;
     private BookmarkService bmService;
+
+    @Autowired
+    private ExecutorService executor;
 
     private AccountRepository accountsJpa;
 
@@ -92,13 +97,7 @@ class SessionController {
 
         SseEmitter emitter = new SseEmitter(0L);
 
-        // Get the movies
-        Collection<MovieBookmark> bookmarks = moviesBmJpa.findByAccountId(user.getId());
-
-        // Get the Series
-        Collection<SeriesBookmark> seriesBookmarks = seriesBmJpa.findByAccountId(user.getId());
-
-        bmService.loadBookmarks(emitter, bookmarks, seriesBookmarks, user, request);
+        bmService.loadBookmarks(emitter, user, request);
 
         return emitter;
     }
@@ -168,7 +167,7 @@ class SessionController {
 
     @RequestMapping(value = "/me/series/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> removeSeriesBookmark(@AuthenticationPrincipal User user, @PathVariable int id)
-        throws AccountNotFoundException {
+            throws AccountNotFoundException {
 
         SeriesBookmark bookmark = seriesBmJpa.findByAccountIdAndSeriesId(user.getId(), id)
                 .orElseThrow(BookmarkMissingException::new);

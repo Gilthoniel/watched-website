@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -20,8 +21,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
 
 /**
  * Created by Gaylor on 31.07.2016.
@@ -48,8 +50,13 @@ public class WatchedConfiguration extends WebMvcConfigurerAdapter implements Asy
         return new EhCacheCacheManager();
     }
 
+    @Bean
+    public ExecutorService executorService() {
+        return Executors.newFixedThreadPool(50);
+    }
+
     @Override
-    public Executor getAsyncExecutor() {
+    public AsyncTaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(1);
         executor.setMaxPoolSize(5);

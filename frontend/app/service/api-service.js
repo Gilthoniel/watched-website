@@ -134,7 +134,8 @@ class ApiService {
   }
 
   getAsyncBookmarks() {
-    return new EventSource(namespace + '/users/me/async/bookmarks?access_token=' + this.token, {
+
+    return new EventSource(namespace + `/users/me/async/bookmarks?access_token=${this.token}`, {
       withCredentials: true
     });
   }

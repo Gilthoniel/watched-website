@@ -274,6 +274,11 @@ class MyList extends React.Component {
       update();
     });
 
+    sse.addEventListener("RESET", () => {
+      movies.length = 0;
+      series.length = 0;
+    });
+
     sse.addEventListener("EOS", () => {
       this.setState({
         loading: false
