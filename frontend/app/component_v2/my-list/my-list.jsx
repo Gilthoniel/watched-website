@@ -169,6 +169,17 @@ export default class MyList extends React.Component {
   }
 
   render() {
+
+    if (!Session.isAuthenticated) {
+      return (
+        <div className="w-my-list container">
+          <p className="my-list-info">
+            Please sign in to use this functionality
+          </p>
+        </div>
+      );
+    }
+
     this.persistSettings();
 
     const order = this.state.container[this.state.order];
