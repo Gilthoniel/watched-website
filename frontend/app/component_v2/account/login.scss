@@ -1,0 +1,20 @@
+@import "../../style/variables";
+
+#w-login {
+
+  p {
+    max-width: 500px;
+    margin: 10% auto 0;
+    color: white;
+    font-size: 30px;
+  }
+
+  form {
+    max-width: 500px;
+    margin: 40px auto;
+
+    .col-submit-btn {
+      text-align: right;
+    }
+  }
+}

@@ -3,19 +3,19 @@ import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {render} from 'react-dom';
 import Toastr from 'toastr';
 
+import Home from './component_v2/home/home.jsx';
+import Body from './component_v2/body/body.jsx';
 
-import Body from './component/body/body.jsx';
-import Header from './component/header/header.jsx';
-import About from './component/body/about/about.jsx';
-import Discover from './component/body/discover/discover.jsx';
-import MovieDetails from './component/body/movie-details/movie-details.jsx';
-import SeriesDetails from './component/body/series-details/series-details.jsx';
-import MyList from './component/body/my-list/my-list.jsx';
-import Search from './component/body/search/search.jsx';
-import AccountConfirmation from './component/body/account/confirm-account.jsx';
-import Registration from './component/body/account/registration.jsx';
-import ResetPassword from './component/body/account/reset-password.jsx';
-import ConfirmResetPassword from './component/body/account/confirm-reset-password.jsx';
+import About from './component_v2/about/about.jsx';
+import MovieDetails from './component_v2/movie-details/movie-details.jsx';
+import SeriesDetails from './component_v2/series-details/series-details.jsx';
+import MyList from './component_v2/my-list/my-list.jsx';
+import Search from './component_v2/search/search.jsx';
+import Login from './component_v2/account/login.jsx';
+import AccountConfirmation from './component_v2/account/confirm-account.jsx';
+import Register from './component_v2/account/register.jsx';
+import ResetPassword from './component_v2/account/reset-password.jsx';
+import ConfirmResetPassword from './component_v2/account/confirm-reset-password.jsx';
 
 require('./style/app.scss');
 require("jquery-mousewheel")($);
@@ -35,29 +35,22 @@ class App extends React.Component {
   }
 
   render() {
-    return (
-      <div id="watched-wrapper">
-        <Header/>
-
-        <Body>{this.props.children}</Body>
-      </div>
-    );
+    return <Body>{this.props.children}</Body>;
   }
 }
 
 render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
-      <Route path="/" />
-      <IndexRoute component={Discover}/>
+      <IndexRoute component={Home}/>
       <Route path="/about" component={About} />
-      <Route path="/discover" component={Discover}/>
       <Route path="/movie/:id" component={MovieDetails}/>
       <Route path="/series/:id" component={SeriesDetails}/>
       <Route path="/my-list" component={MyList}/>
       <Route path="/search/:query" component={Search}/>
+      <Route path="/account/login" component={Login} />
       <Route path="/account/confirm" component={AccountConfirmation} />
-      <Route path="/account/registration" component={Registration} />
+      <Route path="/account/register" component={Register} />
       <Route path="/account/reset" component={ResetPassword} />
       <Route path="/account/confirm-reset" component={ConfirmResetPassword} />
     </Route>

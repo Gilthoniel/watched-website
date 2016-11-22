@@ -87,7 +87,8 @@ public class BookmarkService {
                     }
                 } catch (InterruptedException | CancellationException e) {
                     isNotComplete = true;
-                }
+                } catch (Exception ignored) {} // likely due to bad media request
+                // TODO: remove bookmark when the media is not anymore valid
             }
 
             Collection<Future<Series>> fSeries = executor.invokeAll(seriesBm.stream()
@@ -107,7 +108,7 @@ public class BookmarkService {
                     }
                 } catch (InterruptedException | CancellationException e) {
                     isNotComplete = true;
-                }
+                } catch (Exception ignored) {}
             }
 
             if (isNotComplete) {

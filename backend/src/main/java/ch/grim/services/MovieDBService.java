@@ -42,6 +42,7 @@ public class MovieDBService {
         Discover params = new Discover();
         params.page(page);
         params.language(lang);
+        params.includeAdult(false);
 
         return discover.getDiscover(params);
     }

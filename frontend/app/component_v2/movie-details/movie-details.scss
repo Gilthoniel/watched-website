@@ -1,0 +1,73 @@
+@import "../../style/variables";
+
+.w-movie-details {
+  .movie-details-backdrop {
+    width: 100%;
+    height: 300px;
+    margin-top: 20px;
+
+    background: black center center;
+    background-size: cover;
+    border-bottom: 2px solid $homeColor;
+  }
+
+  .movie-details-header {
+    display: flex;
+    align-items: flex-end;
+
+    margin: -180px 0 50px;
+
+    color: white;
+
+    .poster {
+      flex: none;
+      width: 200px;
+      padding: 0 10px;
+
+      img { width: 100%; }
+    }
+
+    .movie-details-pin {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      margin: 10px 0;
+    }
+
+    .title {
+      padding: 10px;
+      font-size: 30px;
+    }
+  }
+
+  .movie-details-body {
+    display: flex;
+    flex-wrap: wrap;
+
+    color: white;
+    font-size: 14px;
+
+    .w-box {
+      margin: 10px;
+
+      h6 {
+        color: $homeColor;
+        font-size: 16px;
+        text-transform: uppercase;
+      }
+
+      > div {
+
+        text-align: justify;
+
+        .movie-details-label {
+          display: inline-block;
+          margin: 5px 10px 5px 0;
+          padding: 5px 10px;
+          border: 2px solid white;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+}

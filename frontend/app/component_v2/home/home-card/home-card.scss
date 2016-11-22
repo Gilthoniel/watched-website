@@ -1,0 +1,90 @@
+@import "../../../style/variables";
+
+.home-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  background: #232323 center center;
+  background-size: cover;
+
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 10px transparentize(black, 0.4);
+  }
+
+  .home-card-bg {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 50%;
+    left: 0;
+    right: 0;
+
+    background: $homeColor center center;
+    background-size: cover;
+
+    transform: skewY(-2deg);
+    transform-origin: 0 0;
+  }
+
+  .home-card-pin {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    z-index: 20;
+    top: 10px;
+    right: 10px;
+  }
+
+  .home-card-wrapper {
+    position: relative;
+    z-index: 10;
+
+    .home-card-poster {
+      display: inline-block;
+      width: 35%;
+      img {
+        display: block;
+        width: 70%;
+        margin: 150px auto 0;
+      }
+    }
+
+    .home-card-title {
+      display: inline-block;
+      width: 65%;
+      vertical-align: top;
+      padding-right: 10px;
+
+      color: white;
+
+      .title {
+        margin-top: 50%;
+
+        text-shadow: 2px 2px 2px black;
+        font-size: 30px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .date {
+        margin-top: 30px;
+        font-size: 10px;
+      }
+
+      .overview {
+        margin-top: 10px;
+        font-style: italic;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+
+}

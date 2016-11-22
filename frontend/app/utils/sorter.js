@@ -1,5 +1,4 @@
 import React from 'react';
-import BookmarkCard from '../component/body/my-list/bookmark-card/bookmark-card.jsx'
 
 export const ORDERS = {
   ALPHANUMERIC: 'Title',
@@ -7,33 +6,31 @@ export const ORDERS = {
   SCORE: 'Score'
 };
 
-export function sort(container, medias, order, isSeries) {
-  medias.forEach(function(media) {
+export function createContainer() {
+  const container = {};
+
+  Object.keys(ORDERS).forEach((order) => container[order] = {});
+  return container;
+}
+
+export function addMedia(container, media) {
+  Object.keys(ORDERS).forEach((order) => {
+    const wrapper = container[order];
     let keys = [];
-    if (order === ORDERS.ALPHANUMERIC) {
+    if (ORDERS[order] === ORDERS.ALPHANUMERIC) {
       keys = getAlphaKey(media);
-    } else if (order === ORDERS.GENRE) {
+    } else if (ORDERS[order] === ORDERS.GENRE) {
       keys = getGenreKey(media);
-    } else if (order === ORDERS.SCORE) {
+    } else if (ORDERS[order] === ORDERS.SCORE) {
       keys = getScoreKey(media);
     }
 
     keys.forEach(function(key) {
-      if (!container.hasOwnProperty(key)) {
-        container[key] = [];
+      if (!wrapper.hasOwnProperty(key)) {
+        wrapper[key] = [];
       }
 
-      container[`${key}`].push(
-        <div className="my-list-item" key={media.id}>
-          {
-            (() => {
-              if (isSeries) return <BookmarkCard series={media}/>
-              else return <BookmarkCard movie={media}/>
-            })()
-          }
-
-        </div>
-      );
+      wrapper[`${key}`].push(media);
     });
   });
 }

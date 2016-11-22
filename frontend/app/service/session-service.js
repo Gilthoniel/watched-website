@@ -67,6 +67,13 @@ export class Session {
     }
   }
 
+  unsubscribe(component) {
+    const index = this.observers.indexOf(component);
+    if (index > -1) {
+      this.observers.splice(index, 1);
+    }
+  }
+
   triggerObservers(event, params) {
     this.observers.forEach((observer) => {
       if (typeof observer[event] === 'function') {
