@@ -37,6 +37,7 @@
     .h-menu {
       height: 100px;
       display: flex;
+      flex-wrap: wrap;
       align-items: flex-end;
 
       > a.h-menu-item {
@@ -134,5 +135,23 @@
 
   #w-body {
     padding-top: 100px;
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  #w-header {
+    .h-menu-item {
+      order: 2;
+    }
+
+    .h-menu-search {
+      flex: none !important;
+      order: 1;
+      width: 100%;
+
+      .w-search-bar {
+        display: none !important;
+      }
+    }
   }
 }

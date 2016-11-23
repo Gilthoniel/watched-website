@@ -71,3 +71,15 @@
     }
   }
 }
+
+@media screen and (max-width: $screen-sm) {
+  .w-my-list {
+    .my-list-bloc {
+      .my-list-sub-bloc {
+        .my-list-item {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
