@@ -1,6 +1,7 @@
 import React from 'react';
 
 import * as MediaApi from '../../utils/media';
+import Dates from '../../utils/dates';
 import Messages from '../../constants/messages';
 
 import BookmarkPin from '../bookmark-pin/bookmark-pin.jsx';
@@ -71,7 +72,8 @@ export default class EpisodesBox extends React.Component {
           </div>
 
           <div className="episode-body">
-            <p>{episode.overview || Messages('no_overview')}</p>
+            <p>{Dates.format(episode.air_date)}</p>
+            <p className="overview">{episode.overview || Messages('no_overview')}</p>
           </div>
 
           <div className="episode-still">
