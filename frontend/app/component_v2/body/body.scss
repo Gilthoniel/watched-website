@@ -123,6 +123,11 @@
           border-radius: 15px;
           margin-left: 10px;
         }
+
+        span:hover {
+          cursor: pointer;
+          color: darkred;
+        }
       }
     }
   }

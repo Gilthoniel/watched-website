@@ -1,6 +1,7 @@
 import React from 'react';
 
 import * as MediaApi from '../../utils/media';
+import Messages from '../../constants/messages';
 
 import BookmarkPin from '../bookmark-pin/bookmark-pin.jsx';
 
@@ -70,11 +71,19 @@ export default class EpisodesBox extends React.Component {
           </div>
 
           <div className="episode-body">
-            <p>{episode.overview}</p>
+            <p>{episode.overview || Messages('no_overview')}</p>
           </div>
 
           <div className="episode-still">
-            <img src={still} alt="" />
+            {
+              (() => {
+                if (episode.still_path) {
+                  return <img src={still} alt="" />;
+                } else {
+                  return <div className="episode-missing-img"><span className="glyphicon glyphicon-remove"/></div>
+                }
+              })()
+            }
           </div>
         </div>
       );
