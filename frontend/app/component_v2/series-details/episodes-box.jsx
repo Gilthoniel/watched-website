@@ -67,7 +67,7 @@ export default class EpisodesBox extends React.Component {
         <div key={episode.id}>
           <div className="episode-title">
             <BookmarkPin blockClassName="episode-pin" media={episode} onchange={this.handleEpisodeBookmark}/>
-            <h6>{episode.name}</h6>
+            <h6>Episode {episode.episode_number} - {episode.name}</h6>
           </div>
 
           <div className="episode-body">
