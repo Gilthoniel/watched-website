@@ -52,6 +52,7 @@ export default class EpisodesBox extends React.Component {
 
       return (
         <li key={season.id} className={state} onClick={() => this.handleSeasonClick(key)}>
+          <BookmarkPin blockClassName="season-pin" season={season} onchange={this.handleEpisodeBookmark} />
           Season {season.season_number}
         </li>
       );

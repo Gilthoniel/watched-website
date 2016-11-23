@@ -27,6 +27,15 @@
             font-weight: bold;
             border-right: 5px solid $homeColor;
           }
+
+          .season-pin {
+            width: 30px;
+            height: 30px;
+            float: left;
+            margin-right: 10px;
+
+            font-size: 14px;
+          }
         }
       }
     }

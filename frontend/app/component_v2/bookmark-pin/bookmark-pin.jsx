@@ -12,34 +12,36 @@ export default class BookmarkPin extends React.Component {
   constructor(props) {
     super(props);
 
-    if (!props.media) {
+    if (!props.media && !props.season) {
       return;
     }
 
-    const bookmark = props.media.bookmark;
     let selected = false;
     let watched = false;
 
-    switch (props.media.media_type) {
-      case MediaType.MOVIE:
-        selected = bookmark !== null;
-        watched = bookmark ? bookmark.watched : false;
-        break;
-      case MediaType.TV_SERIES:
-        selected = bookmark !== null;
+    if (this.props.season) {
+      watched = this.props.season.episodes.every((e) => e.bookmark);
+      selected = watched;
+    } else {
+      const bookmark = props.media.bookmark;
 
-        // Check the episodes
-        let episodes = [];
-        const series = props.media;
-        Object.keys(series.seasons).forEach((key) => episodes = episodes.concat(series.seasons[key].episodes));
+      switch (props.media.media_type) {
+        case MediaType.MOVIE:
+          selected = bookmark !== null;
+          watched = bookmark ? bookmark.watched : false;
+          break;
+        case MediaType.TV_SERIES:
+          selected = bookmark !== null;
 
-        watched = !episodes.some((episode) => typeof episode.bookmark === 'undefined');
+          // Check the episodes
+          watched = isSeriesWatched(props.media);
 
-        break;
-      default:
-        selected = typeof bookmark !== 'undefined';
-        watched = typeof bookmark !== 'undefined';
-        break;
+          break;
+        default:
+          selected = typeof bookmark !== 'undefined';
+          watched = typeof bookmark !== 'undefined';
+          break;
+      }
     }
 
     this.state = {
@@ -55,6 +57,11 @@ export default class BookmarkPin extends React.Component {
 
     if (!Session.isAuthenticated) {
       Toastr.info('Create an account or sign in to have access to this functionality.', 'Session required');
+      return;
+    }
+
+    if (this.props.season) {
+      manageSeasonBookmark.call(this, this.props.season);
       return;
     }
 
@@ -76,33 +83,70 @@ export default class BookmarkPin extends React.Component {
   componentWillReceiveProps(props) {
     const media = props.media;
 
-    if (media.media_type === MediaType.TV_SERIES) {
-      console.log(media.seasons['1'].episodes[0].bookmark);
+    if (typeof media !== 'undefined') {
+      if (media.media_type === MediaType.TV_SERIES && this.state.selected) {
+        this.setState({
+          watched: isSeriesWatched(media)
+        });
+      } else if (!media.media_type) {
+        this.setState({
+          watched: typeof media.bookmark !== 'undefined',
+          selected: typeof media.bookmark !== 'undefined'
+        });
+      }
+    }
+
+    const season = props.season;
+    if (typeof season !== 'undefined') {
+      let watched = season.episodes.every((e) => e.bookmark);
+
       this.setState({
-        watched: isSeriesWatched(media)
+        watched: watched,
+        selected: watched
       });
     }
   }
 
-  addBookmark(movie, type, watched) {
-    ApiService.setBookmark(movie.id, type, watched).then(
+  addBookmark(media, type, watched, callback) {
+    ApiService.setBookmark(media.season_number || media.id, type, watched).then(
       (bookmark) => {
-        movie.bookmark = bookmark;
+        if (media.media_type === MediaType.MOVIE) {
+          media.bookmark = bookmark;
+        } else if (typeof media.media_type === 'undefined') {
+          media.episodes.forEach((e) => e.bookmark = {});
+        }
+
+        if (typeof callback === 'function') {
+          callback();
+        }
+
         this.setState({
           selected: true,
           watched: watched
-        })
+        });
       },
       () => Toastr.error('The server is overloaded. Please try later...')
     );
   }
 
-  removeBookmark(movieId, type) {
-    ApiService.removeBookmark(movieId, type).then(
-      () => this.setState({
-        selected: false,
-        watched: false
-      }),
+  removeBookmark(media, type, callback) {
+    ApiService.removeBookmark(media.season_number || media.id, type).then(
+      () => {
+        if (media.media_type === MediaType.MOVIE) {
+          delete media.bookmark;
+        } else if (typeof media.media_type === 'undefined') {
+          media.episodes.forEach((e) => delete e.bookmark);
+        }
+
+        if (typeof callback === 'function') {
+          callback();
+        }
+
+        this.setState({
+          selected: false,
+          watched: false
+        });
+      },
       () => Toastr.error('The server is overloaded. Please try later...')
     );
   }
@@ -140,25 +184,25 @@ export default class BookmarkPin extends React.Component {
   }
 
   render() {
-    if (!this.props.media) {
-      return <div className={this.props.blockClassName}><div className="bookmark-pin"/></div>;
+    if (!this.props.media && !this.props.season) {
+      return <div className={this.props.blockClassName}>
+        <div className="bookmark-pin"/>
+      </div>;
     }
 
-    const pinClassName = 'bookmark-pin' + (this.state.selected ? ' active': '') + (this.state.watched ? ' watched' : '');
+    const pinClassName = 'bookmark-pin' + (this.state.selected ? ' active' : '') + (this.state.watched ? ' watched' : '');
 
     return (
       <div className={this.props.blockClassName} onClick={this.handleSelect}>
-        <div className={pinClassName} />
+        <div className={pinClassName}/>
       </div>
     );
   }
 }
 
 function manageMovieBookmark(movie) {
-  const id = movie.id;
-
   if (this.state.selected && this.state.watched) {
-    this.removeBookmark(id, 'movies');
+    this.removeBookmark(movie, 'movies');
   } else if (this.state.selected && !this.state.watched) {
     this.addBookmark(movie, 'movies', true);
   } else {
@@ -168,9 +212,24 @@ function manageMovieBookmark(movie) {
 
 function manageSeriesBookmark(series) {
   if (this.state.selected) {
-    this.removeBookmark(series.id, 'series');
+    this.removeBookmark(series, 'series');
   } else {
-    this.addBookmark(series, 'series');
+    this.addBookmark(series, 'series', isSeriesWatched(series));
+  }
+}
+
+function manageSeasonBookmark(season) {
+  function trigger() {
+    const func = this.props.onchange;
+    if (typeof func === 'function') {
+      func();
+    }
+  }
+
+  if (this.state.watched) {
+    this.removeBookmark(season, `season/${season.series_id}`, trigger.bind(this));
+  } else {
+    this.addBookmark(season, `season/${season.series_id}`, true, trigger.bind(this));
   }
 }
 
