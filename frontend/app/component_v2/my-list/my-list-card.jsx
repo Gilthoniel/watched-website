@@ -5,8 +5,11 @@ import Toastr from 'toastr';
 import * as MediaApi from '../../utils/media';
 import ApiService from '../../service/api-service';
 import MediaType from '../../constants/media-type';
+import Dates from '../../utils/dates';
 
 require('./my-list-card.scss');
+
+const MAXIMUM_OVERVIEW_LENGTH = 100;
 
 export default class MyListCard extends React.Component {
 
@@ -57,11 +60,16 @@ export default class MyListCard extends React.Component {
       };
     }
 
+    const overview = media.overview.length <= MAXIMUM_OVERVIEW_LENGTH ?
+      media.overview : media.overview.substr(0, MAXIMUM_OVERVIEW_LENGTH) + '...';
+
     return (
       <div className="my-list-card" onClick={this.handleClick}>
         <div className="my-list-card-poster" style={poster}></div>
         <div className="my-list-card-body">
           <div className="title">{media.title}</div>
+          <div className="date">{Dates.format(media.release_date)}</div>
+          <div className="overview">{overview}</div>
         </div>
       </div>
     );

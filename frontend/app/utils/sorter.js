@@ -36,7 +36,15 @@ export function addMedia(container, media) {
 }
 
 function getAlphaKey(media) {
-  return [(media.title || '0').toLowerCase().charAt(0)];
+  let letter = media.title.match(/[a-zA-Z0-9]/)[0];
+
+  if (typeof letter === 'undefined' || letter.match(/[0-9]/)) {
+    letter = '0-9';
+  } else {
+    letter = letter.toUpperCase();
+  }
+
+  return [letter];
 }
 
 function getGenreKey(media) {
