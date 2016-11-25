@@ -49,7 +49,7 @@ public class MovieDBService {
 
     @Cacheable(value = "movie-db", key = "'getMovie-' + #id + #lang")
     public MovieDb getMovie(int id, String lang) {
-        return api.getMovies().getMovie(id, lang, TmdbMovies.MovieMethod.keywords);
+        return api.getMovies().getMovie(id, lang, TmdbMovies.MovieMethod.keywords, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.videos);
     }
 
     @Cacheable(value = "movie-db", key = "'getTV-' + #id + #lang")

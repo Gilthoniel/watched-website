@@ -20,3 +20,14 @@ export function backdrop(media, conf) {
 
   return backdrop;
 }
+
+export function profile(person, conf) {
+  let profile = '';
+  if (conf && person.profile_path) {
+    profile = conf.secure_base_url;
+    profile += conf.profile_sizes[1];
+    profile += person.profile_path;
+  }
+
+  return profile;
+}

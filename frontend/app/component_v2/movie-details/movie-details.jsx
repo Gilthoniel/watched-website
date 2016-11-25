@@ -68,16 +68,29 @@ export default class MovieDetails extends React.Component {
       return <span className="movie-details-label" key={genre}>{genre}</span>
     });
 
+    const cast = movie['cast'].slice(0, 5).map((person) => {
+      const profile = {
+        backgroundImage: `url(${MediaApi.profile(person, this.state.configuration)})`
+      };
+
+      return (
+        <div className="profile">
+          <div className="profile-picture" style={profile}/>
+          {person.name}
+        </div>
+      );
+    });
+
     return (
       <div className="w-movie-details container">
         <div className="movie-details-backdrop" style={backdropStyle}></div>
 
         <div className="movie-details-header">
           <div className="poster">
-            <img src={poster} alt="" />
+            <img src={poster} alt=""/>
           </div>
 
-          <BookmarkPin blockClassName="movie-details-pin" media={movie} />
+          <BookmarkPin blockClassName="movie-details-pin" media={movie}/>
 
           <div className="title">
             {movie.title}
@@ -85,20 +98,34 @@ export default class MovieDetails extends React.Component {
         </div>
 
         <div className="movie-details-body">
-          <MovieDetailsBox title="Overview" flex="3">
-            {movie['overview']}
+          <MovieDetailsBox flex="2" className="w-box-overview">
+            <MovieDetailsBox title="Overview">
+              {movie['overview']}
+            </MovieDetailsBox>
           </MovieDetailsBox>
 
-          <MovieDetailsBox title="Genres" flex="2">
-            {genres}
+          <MovieDetailsBox title="" flex="1">
+            <MovieDetailsBox title="Genres">
+              {genres}
+            </MovieDetailsBox>
+
+            <MovieDetailsBox title="Release Date">
+              {Dates.format(movie.release_date)}
+            </MovieDetailsBox>
+
+            <MovieDetailsBox title="Score">
+              {movie.score_average} ({movie.score_total})
+            </MovieDetailsBox>
+
+            <MovieDetailsBox title="Runtime">
+              {movie.runtime} Minutes
+            </MovieDetailsBox>
           </MovieDetailsBox>
 
-          <MovieDetailsBox title="Release Date">
-            {Dates.format(movie.release_date)}
-          </MovieDetailsBox>
-
-          <MovieDetailsBox title="Score">
-            {movie.score_average} ({movie.score_total})
+          <MovieDetailsBox width="100%" title="Cast" className="w-box-cast">
+            <div className="movie-details-cast">
+              {cast}
+            </div>
           </MovieDetailsBox>
         </div>
       </div>

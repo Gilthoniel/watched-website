@@ -14,28 +14,30 @@
   .movie-details-header {
     display: flex;
     align-items: flex-end;
-
-    margin: -180px 0 50px;
+    margin: -210px 0 20px 0;
 
     color: white;
 
     .poster {
       flex: none;
-      width: 200px;
-      padding: 0 10px;
+      width: auto;
+      height: 270px;
+      margin-left: 20px;
 
-      img { width: 100%; }
+      img {
+        height: 100%;
+      }
     }
 
     .movie-details-pin {
       flex: none;
       width: 40px;
       height: 40px;
-      margin: 10px 0;
+      margin: 10px 20px;
     }
 
     .title {
-      padding: 10px;
+      padding: 10px 10px 10px 0;
       font-size: 30px;
     }
   }
@@ -50,10 +52,46 @@
     .w-box {
       margin: 10px;
 
+      &.w-box-overview {
+        padding-right: 50px;
+        border-right: 2px solid $homeColor;
+      }
+
+      &.w-box-cast {
+        padding: 20px 0;
+
+        h6 {
+          text-align: center;
+          font-size: 30px;
+          margin-bottom: 20px;
+        }
+      }
+
       h6 {
         color: $homeColor;
         font-size: 16px;
         text-transform: uppercase;
+      }
+
+      .movie-details-cast {
+        display: flex;
+        flex-wrap: wrap;
+
+        .profile {
+          flex: 1;
+          text-align: center;
+          font-size: 20px;
+          font-weight: bold;
+
+          .profile-picture {
+            width: 150px;
+            height: 150px;
+            margin:  0 auto 10px;
+            background: $cardBackground center center;
+            background-size: cover;
+            border-radius: 100px;
+          }
+        }
       }
 
       > div {
@@ -64,7 +102,7 @@
           display: inline-block;
           margin: 5px 10px 5px 0;
           padding: 5px 10px;
-          border: 2px solid white;
+          background: $cardBackground;
           border-radius: 10px;
         }
       }

@@ -9,8 +9,10 @@ export default class MovieDetailsBox extends React.Component {
       width: this.props.width
     };
 
+    const names = "w-box " + (this.props.className || '');
+
     return (
-      <div className="w-box" style={style}>
+      <div className={names} style={style}>
         <h6>{this.props.title}</h6>
         <div>
           {this.props.children}
