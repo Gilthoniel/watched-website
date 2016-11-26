@@ -30,7 +30,7 @@ export default class Body extends React.Component {
           <div className="container">
             <div className="h-title">
               Watched
-              <img src={require('../../images/movie_db_attribution.png')} alt="TheMovieDB" />
+              <img src={require('../../images/moviedb_attribution_square.png')} alt="TheMovieDB" />
             </div>
 
             <div className="h-menu">

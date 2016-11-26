@@ -40,7 +40,8 @@ export default class Login extends React.Component {
   }
 
   onLoginSuccess() {
-    browserHistory.push("/");
+    //browserHistory.push("/");
+    browserHistory.goBack();
   }
 
   onLoginFailure(xhr) {

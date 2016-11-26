@@ -99,7 +99,7 @@ function setupSession(token) {
       this.triggerObservers('onLoginSuccess');
     },
     (xhr) => {
-      if (xhr.status === 401) {
+      if (xhr.status === 401 || xhr.status === 403) {
         localStorage.removeItem(KEY_TOKEN);
         ApiService.destroyToken();
 

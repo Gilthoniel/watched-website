@@ -37,11 +37,15 @@ export default class Home extends React.Component {
     this._scrollElement = $("#w-html");
     window.addEventListener('scroll', this.handleScroll);
 
-    this.loadData();
+    // Data will be loaded after authentication
+    if (!Session.isAuthenticating) {
+      this.loadData();
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
+
     Session.unsubscribe(this);
   }
 
@@ -51,10 +55,6 @@ export default class Home extends React.Component {
   }
 
   onLoginFailure() {
-    this.setState({
-      error: false
-    });
-
     this._page = 1;
 
     // Reload the data, this time without the session

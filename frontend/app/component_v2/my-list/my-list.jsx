@@ -1,4 +1,5 @@
 import React from 'react';
+import {browserHistory} from 'react-router';
 import Cookies from 'react-cookie';
 
 import ApiService from '../../service/api-service';
@@ -32,7 +33,6 @@ export default class MyList extends React.Component {
     }
 
     this.state = {
-      isAuthenticated: Session.isAuthenticated,
       container: createContainer(),
       order: Object.keys(ORDERS)[0],
       reverse: false,
@@ -57,6 +57,20 @@ export default class MyList extends React.Component {
         reverse: false
       });
     }
+  }
+
+  onLoginSuccess() {
+    this.loadData();
+  }
+
+  onLogoutSuccess() {
+    // Redirect the user at the Home if he logs out
+    browserHistory.push("/");
+  }
+
+  onLoginFailure() {
+    // The user needs to refresh the session
+    browserHistory.push("/account/login");
   }
 
   filterMedia(media) {
@@ -91,20 +105,23 @@ export default class MyList extends React.Component {
   }
 
   componentWillMount() {
-    if (this.state.isAuthenticated) {
-      this.loadData();
+    if (!Session.isAuthenticated) {
+      if (!Session.isAuthenticating) {
+        browserHistory.push("/account/login");
+      }
+
+      return;
     }
+
+    this.loadData();
   }
 
   componentDidMount() {
     Session.subscribe(this);
   }
 
-  onLoginSuccess() {
-    this.setState({
-      isAuthenticated: true
-    });
-    this.loadData();
+  componentWillUnmount() {
+    Session.unsubscribe(this);
   }
 
   loadData() {
@@ -169,16 +186,6 @@ export default class MyList extends React.Component {
   }
 
   render() {
-
-    if (!Session.isAuthenticated) {
-      return (
-        <div className="w-my-list container">
-          <p className="my-list-info">
-            Please sign in to use this functionality
-          </p>
-        </div>
-      );
-    }
 
     this.persistSettings();
 

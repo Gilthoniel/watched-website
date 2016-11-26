@@ -18,8 +18,6 @@ export default class SeriesDetails extends React.Component {
   constructor(props) {
     super(props);
 
-    Session.subscribe(this);
-
     this.state = {
       series: undefined,
       configuration: undefined
@@ -36,8 +34,28 @@ export default class SeriesDetails extends React.Component {
     }
   }
 
-  componentDidMount() {
+  onLoginSuccess() {
     this.loadData();
+  }
+
+  onLogoutSuccess() {
+    this.loadData();
+  }
+
+  onLoginFailure() {
+    this.loadData();
+  }
+
+  componentDidMount() {
+    Session.subscribe(this);
+
+    if (!Session.isAuthenticating) {
+      this.loadData();
+    }
+  }
+
+  componentWillUnmount() {
+    Session.unsubscribe(this);
   }
 
   loadData() {
@@ -127,13 +145,21 @@ export default class SeriesDetails extends React.Component {
               {series['overview']}
             </SeriesDetailsBox>
 
-            <SeriesDetailsBox title="Cast" className="w-box-cast">
-              {cast}
-            </SeriesDetailsBox>
+            {
+              (() => {
+                if (cast.length > 0) {
+                  return (
+                    <SeriesDetailsBox title="Cast" className="w-box-cast">
+                      {cast}
+                    </SeriesDetailsBox>
+                  );
+                }
+              })()
+            }
 
             {
               (() => {
-                if (typeof nextEpisode !== 'undefined') {
+                if (Session.isAuthenticated && typeof nextEpisode !== 'undefined') {
                   return (
                     <SeriesDetailsBox title="Next Episode" className="w-box-next">
                       <div className="episode-card">

@@ -17,16 +17,34 @@ export default class MovieDetails extends React.Component {
   constructor(props) {
     super(props);
 
-    Session.subscribe(this);
-
     this.state = {
       movie: undefined,
       configuration: undefined
     };
   }
 
-  componentDidMount() {
+  onLoginSuccess() {
     this.loadData();
+  }
+
+  onLoginFailure() {
+    this.loadData();
+  }
+
+  onLogoutSuccess() {
+    this.loadData();
+  }
+
+  componentDidMount() {
+    Session.subscribe(this);
+
+    if (!Session.isAuthenticating) {
+      this.loadData();
+    }
+  }
+
+  componentWillUnmount() {
+    Session.unsubscribe(this);
   }
 
   loadData() {
