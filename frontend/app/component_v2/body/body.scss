@@ -25,12 +25,31 @@
     background: $homeColor;
     box-shadow: 0 0 15px black;
 
+    .container {
+      position: relative;
+    }
+
     a, a:link, a:focus {
       color: white;
 
       &:hover {
         color: darkred;
         text-decoration: none;
+      }
+    }
+
+    .h-title {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      color: white;
+      font-size: 40px;
+      font-family: 'Bungee', sans-serif;
+
+      img {
+        height: 30px;
+        margin-left: 20px;
       }
     }
 

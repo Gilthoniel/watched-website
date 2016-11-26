@@ -54,7 +54,7 @@ public class MovieDBService {
 
     @Cacheable(value = "movie-db", key = "'getTV-' + #id + #lang")
     public TvSeries getTvShow(int id, String lang) {
-        return api.getTvSeries().getSeries(id, lang);
+        return api.getTvSeries().getSeries(id, lang, TmdbTV.TvMethod.credits);
     }
 
     @Cacheable(value = "movie-db", key = "'getSeries-' + #serieId + '-' + #season + #lang")

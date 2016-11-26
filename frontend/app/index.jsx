@@ -1,5 +1,6 @@
 import React from 'react';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import Helmet from 'react-helmet';
 import {render} from 'react-dom';
 import Toastr from 'toastr';
 
@@ -35,7 +36,17 @@ class App extends React.Component {
   }
 
   render() {
-    return <Body>{this.props.children}</Body>;
+    return (
+      <Body>
+        <Helmet
+          title="GrimSoft | Watched"
+          link={[
+            {"rel": "icon", "type": "image/png", "href": require('./images/favicon.png')}
+          ]} />
+
+        {this.props.children}
+      </Body>
+    );
   }
 }
 
@@ -43,16 +54,16 @@ render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
-      <Route path="/about" component={About} />
+      <Route path="/about" component={About}/>
       <Route path="/movie/:id" component={MovieDetails}/>
       <Route path="/series/:id" component={SeriesDetails}/>
       <Route path="/my-list" component={MyList}/>
       <Route path="/search/:query" component={Search}/>
-      <Route path="/account/login" component={Login} />
-      <Route path="/account/confirm" component={AccountConfirmation} />
-      <Route path="/account/register" component={Register} />
-      <Route path="/account/reset" component={ResetPassword} />
-      <Route path="/account/confirm-reset" component={ConfirmResetPassword} />
+      <Route path="/account/login" component={Login}/>
+      <Route path="/account/confirm" component={AccountConfirmation}/>
+      <Route path="/account/register" component={Register}/>
+      <Route path="/account/reset" component={ResetPassword}/>
+      <Route path="/account/confirm-reset" component={ConfirmResetPassword}/>
     </Route>
   </Router>
 ), document.getElementById('app'));

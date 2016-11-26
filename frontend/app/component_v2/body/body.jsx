@@ -28,6 +28,11 @@ export default class Body extends React.Component {
       <div id="w-html">
         <div id="w-header">
           <div className="container">
+            <div className="h-title">
+              Watched
+              <img src={require('../../images/movie_db_attribution.png')} alt="TheMovieDB" />
+            </div>
+
             <div className="h-menu">
               <IndexLink to="/" className="h-menu-item" activeClassName="active">Home</IndexLink>
               <Link to="/my-list" className="h-menu-item" activeClassName="active">My List</Link>

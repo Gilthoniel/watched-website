@@ -25,9 +25,7 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeObjectField("bookmark", tv.getBookmark());
         json.writeStringField("media_type", tv.getMediaType().name());
         json.writeNumberField("total_episodes_watched", tv.getTotalEpisodesWatched());
-        if (tv.getSeasons() != null) {
-            json.writeObjectField("seasons", tv.getSeasons());
-        }
+        json.writeObjectField("seasons", tv.getSeasons());
 
         json.writeNumberField("id", series.getId());
         json.writeStringField("title", series.getName());
@@ -37,11 +35,11 @@ public class SeriesSerializer extends JsonSerializer<Series> {
         json.writeStringField("backdrop", series.getBackdropPath());
         json.writeNumberField("score_average", series.getVoteAverage());
         json.writeNumberField("score_total", series.getVoteCount());
+        json.writeObjectField("runtime", series.getEpisodeRuntime());
+        json.writeObjectField("credits", series.getCredits());
         json.writeNumberField("number_of_episodes", series.getNumberOfEpisodes());
         json.writeNumberField("number_of_seasons", series.getNumberOfSeasons());
-        if (series.getSeasons() != null) {
-            json.writeObjectField("resume_seasons", series.getSeasons());
-        }
+        json.writeObjectField("resume_seasons", series.getSeasons());
 
         if (null != series.getGenres()) {
             json.writeArrayFieldStart("genres");
