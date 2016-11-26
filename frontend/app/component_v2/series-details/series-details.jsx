@@ -138,7 +138,7 @@ export default class SeriesDetails extends React.Component {
                     <SeriesDetailsBox title="Next Episode" className="w-box-next">
                       <div className="episode-card">
                         <BookmarkPin blockClassName="episode-pin" media={nextEpisode} onchange={() => this.handleEpisodeBookmark(true)} />
-                        <div className="episode-number">{nextEpisode.season_number} - {nextEpisode.episode_number}</div>
+                        <div className="episode-number">S{nextEpisode.season_number}E{nextEpisode.episode_number}</div>
                         <div>{nextEpisode.name}</div>
                         <div className="episode-date">{Dates.format(nextEpisode.air_date)}</div>
                       </div>
