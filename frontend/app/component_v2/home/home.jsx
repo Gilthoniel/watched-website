@@ -49,15 +49,16 @@ export default class Home extends React.Component {
     Session.unsubscribe(this);
   }
 
+  onLoginSuccess() {
+    this.loadData();
+  }
+
   onLogoutSuccess() {
     this._page = 1;
     this.loadData();
   }
 
   onLoginFailure() {
-    this._page = 1;
-
-    // Reload the data, this time without the session
     this.loadData();
   }
 

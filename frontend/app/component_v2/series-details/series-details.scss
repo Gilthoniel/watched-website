@@ -128,3 +128,84 @@
     }
   }
 }
+
+@media screen and (max-width: $screen-sm) {
+  .w-series-details {
+    .series-details-backdrop {}
+
+    .series-details-header {
+      margin: 0;
+      align-items: center;
+
+      .poster {
+        display: none;
+      }
+
+      .series-details-pin {
+      }
+
+      .title {
+        font-size: 20px;
+      }
+    }
+
+    .series-details-body {
+
+      .w-box {
+        margin: 0 10px;
+
+        &.w-box-overview {
+          flex: none !important;
+          width: 100%;
+          padding-right: 10px;
+          border: none;
+        }
+
+        &.w-box-cast > div {
+
+          .profile {
+            &:nth-child(4) {
+              display: none;
+            }
+
+            .profile-picture {
+            }
+          }
+        }
+
+        &.w-box-next {
+          .episode-card {
+            flex-wrap: wrap;
+
+            > div {
+
+              &.episode-pin {
+                margin-bottom: 10px;
+              }
+
+              &.episode-number {
+                margin-bottom: 10px;
+              }
+
+              &.episode-name {
+                margin-bottom: 10px;
+              }
+
+              &.episode-date {
+              }
+            }
+          }
+        }
+
+        h6 {
+        }
+
+        > div {
+
+          .series-details-label {
+          }
+        }
+      }
+    }
+  }
+}

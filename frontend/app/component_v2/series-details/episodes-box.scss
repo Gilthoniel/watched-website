@@ -117,3 +117,49 @@
     }
   }
 }
+
+@media screen and (max-width: $screen-sm) {
+  .episodes-box {
+
+    > div {
+
+      &.episodes-box-seasons {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      &.episodes-box-episodes {
+        width: 100%;
+
+        > div {
+
+          .episode-title {
+
+            .episode-pin {
+            }
+
+            h6 {
+            }
+          }
+
+          .episode-body {
+            width: 100%;
+
+            .overview {  }
+          }
+
+          .episode-still {
+            display: none;
+          }
+
+          .episode-missing-img {
+            display: none;
+
+            &:before {
+            }
+          }
+        }
+      }
+    }
+  }
+}

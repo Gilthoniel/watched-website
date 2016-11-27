@@ -159,6 +159,10 @@
 
 @media screen and (max-width: $screen-sm) {
   #w-header {
+    .h-title {
+      margin-left: 10px;
+    }
+
     .h-menu-item {
       order: 2;
     }

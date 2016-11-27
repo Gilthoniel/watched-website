@@ -109,3 +109,56 @@
     }
   }
 }
+
+@media screen and (max-width: $screen-sm) {
+  .w-movie-details {
+    .movie-details-backdrop {
+    }
+
+    .movie-details-header {
+      align-items: center;
+      margin: 0;
+
+      .poster {
+        display: none;
+      }
+
+      .movie-details-pin {
+
+      }
+
+      .title {
+        font-size: 20px;
+      }
+    }
+
+    .movie-details-body {
+      .w-box {
+        &.w-box-overview {
+          flex: none !important;
+          width: 100%;
+          border: none;
+          padding: 0;
+        }
+
+        &.w-box-cast {
+          padding: 0;
+
+          h6 {  }
+        }
+
+        h6 {  }
+
+        .movie-details-cast {
+          .profile {
+            .profile-picture {  }
+          }
+        }
+
+        > div {
+          .movie-details-label {  }
+        }
+      }
+    }
+  }
+}
