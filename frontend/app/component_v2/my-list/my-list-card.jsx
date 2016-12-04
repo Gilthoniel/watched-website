@@ -7,6 +7,8 @@ import ApiService from '../../service/api-service';
 import MediaType from '../../constants/media-type';
 import Dates from '../../utils/dates';
 
+import ScoreStar from '../score-star/score-star.jsx';
+
 require('./my-list-card.scss');
 
 const MAXIMUM_OVERVIEW_LENGTH = 100;
@@ -68,7 +70,13 @@ export default class MyListCard extends React.Component {
         <div className="my-list-card-poster" style={poster}></div>
         <div className="my-list-card-body">
           <div className="title">{media.title}</div>
-          <div className="date">{Dates.format(media.release_date)}</div>
+          <div className="date">
+            <div className="score">
+              <ScoreStar score={media.score_average}/>
+            </div>
+
+            {Dates.format(media.release_date)}
+          </div>
           <div className="overview">{overview}</div>
         </div>
       </div>

@@ -1,0 +1,34 @@
+@import "../../style/variables";
+
+.score-star-box {
+  position: relative;
+
+  > div {
+    display: flex;
+
+    &:first-child {
+      .star {
+        background: yellowgreen;
+      }
+    }
+
+    &:last-child {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      .star {
+        background: $homeColor;
+      }
+    }
+  }
+
+  .star {
+    flex: none;
+    width: 15px;
+    height: 15px;
+
+    -webkit-clip-path: polygon(50% 0%, 68% 27%, 98% 35%, 76% 60%, 79% 91%, 49% 77%, 21% 91%, 25% 57%, 2% 35%, 32% 26%);
+    clip-path: polygon(50% 0%, 68% 27%, 98% 35%, 76% 60%, 79% 91%, 49% 77%, 21% 91%, 25% 57%, 2% 35%, 32% 26%);
+  }
+}

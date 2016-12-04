@@ -5,8 +5,8 @@ import Toastr from 'toastr';
 import * as MediaApi from '../../../utils/media';
 import ApiService from '../../../service/api-service';
 import Dates from '../../../utils/dates';
-import MediaType from '../../../constants/media-type.js';
 
+import ScoreStar from '../../score-star/score-star.jsx';
 import BookmarkPin from '../../bookmark-pin/bookmark-pin.jsx';
 
 require('./home-card.scss');
@@ -81,6 +81,10 @@ export default class MovieCard extends React.Component {
 
             <div className="title">{media.title}</div>
             <div className="date">
+              <div className="score">
+                <ScoreStar score={media.score_average} />
+              </div>
+
               {Dates.format(media.release_date)}
             </div>
             <div className="overview">

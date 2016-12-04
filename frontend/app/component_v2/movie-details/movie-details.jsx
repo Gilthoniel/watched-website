@@ -92,7 +92,7 @@ export default class MovieDetails extends React.Component {
       };
 
       return (
-        <div className="profile">
+        <div className="profile" key={person.id}>
           <div className="profile-picture" style={profile}/>
           {person.name}
         </div>

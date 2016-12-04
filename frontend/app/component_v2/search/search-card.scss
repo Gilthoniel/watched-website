@@ -30,5 +30,17 @@
     .title {
       font-size: 14px;
     }
+
+    .date {
+      margin-top: 10px;
+
+      .score {
+        float: right;
+      }
+    }
+
+    .overview {
+      margin-top: 10px;
+    }
   }
 }
