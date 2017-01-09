@@ -4,14 +4,19 @@ import ch.grim.models.*;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
+import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.ServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +31,6 @@ public class BookmarkService {
     private static final int RECONNECT_TIME_IN_MILLIS = 1000;
 
     private MovieDBService service;
-
     private ExecutorService executor;
 
     private EpisodeBookmarkRepository repository;
@@ -45,15 +49,15 @@ public class BookmarkService {
 
     /**
      * Send to the client the bookmarks that are accessible in less than one second
-     *
+     * <p>
      * Events:
-     *   RESET: because we re-send again all the data, the client has to clean the arrays
-     *   EOS: End of Stream, the client can close the EventSource
-     *   movie: the data is a movie
-     *   series: the data is a series
+     * RESET: because we re-send again all the data, the client has to clean the arrays
+     * EOS: End of Stream, the client can close the EventSource
+     * movie: the data is a movie
+     * series: the data is a series
      *
      * @param emitter Server sent events emitter
-     * @param user current user
+     * @param user    current user
      * @param request current request
      */
     @Async
@@ -73,42 +77,27 @@ public class BookmarkService {
             int totalBm = movieBm.size() + seriesBm.size();
             emitter.send(SseEmitter.event().name("total").data(totalBm));
 
-            Collection<Future<Movie>> fMovies = executor.invokeAll(movieBm.stream()
-                            .map(bm -> (Callable<Movie>) () -> new Movie(service.getMovie(bm.getMovieId(), request.getLocale().getLanguage()), bm))
-                            .collect(Collectors.toList()),
-                    MAX_LOADING_IN_SECONDS, TimeUnit.SECONDS);
-
-            for (Future<Movie> future : fMovies) {
-                try {
-                    future.get(); // Wait for completion or timeout
-
-                    if (future.isDone()) {
-                        emitter.send(SseEmitter.event().name("movie").data(future.get()));
-                    }
-                } catch (InterruptedException | CancellationException e) {
+            for (MovieBookmark bm : movieBm) {
+                // Get if available or launch a api request
+                MovieDb record = service.getMovieOrNull(bm.getMovieId(), request.getLocale().getLanguage());
+                if (record != null) {
+                    try {
+                        emitter.send(SseEmitter.event().name("movie").data(new Movie(record, bm)));
+                    } catch (IOException ignored) {}
+                } else {
                     isNotComplete = true;
-                } catch (Exception ignored) {} // likely due to bad media request
-                // TODO: remove bookmark when the media is not anymore valid
+                }
             }
 
-            Collection<Future<Series>> fSeries = executor.invokeAll(seriesBm.stream()
-                    .map(bm -> (Callable<Series>) () -> {
+            for (SeriesBookmark bm : seriesBm) {
+                TvSeries series = service.getTvShowOrNull(bm.getSeriesId(), request.getLocale().getLanguage());
+                if (series != null) {
+                    try {
                         int total = repository.findByAccountIdAndSerieId(user.getId(), bm.getSeriesId()).size();
 
-                        return new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm, total);
-                    })
-                    .collect(Collectors.toList()), MAX_LOADING_IN_SECONDS, TimeUnit.SECONDS);
-
-            for (Future<Series> future : fSeries) {
-                try {
-                    future.get(); // Wait for completion or timeout
-
-                    if (future.isDone()) {
-                        emitter.send(SseEmitter.event().name("series").data(future.get()));
-                    }
-                } catch (InterruptedException | CancellationException e) {
-                    isNotComplete = true;
-                } catch (Exception ignored) {}
+                        emitter.send(SseEmitter.event().name("series").data(new Series(series, bm, total)));
+                    } catch (IOException ignored) {}
+                }
             }
 
             if (isNotComplete) {
@@ -119,10 +108,8 @@ public class BookmarkService {
 
             emitter.complete();
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             emitter.completeWithError(e);
         } catch (Exception ignored) {}
-
     }
-
 }

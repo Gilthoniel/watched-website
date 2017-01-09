@@ -46,7 +46,7 @@ public class WatchedConfiguration extends WebMvcConfigurerAdapter implements Asy
     }
 
     @Bean
-    public CacheManager cacheManager() {
+    public EhCacheCacheManager cacheManager() {
         return new EhCacheCacheManager();
     }
 
@@ -68,6 +68,12 @@ public class WatchedConfiguration extends WebMvcConfigurerAdapter implements Asy
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new SimpleAsyncUncaughtExceptionHandler();
+        return new SimpleAsyncUncaughtExceptionHandler() {
+            @Override
+            public void handleUncaughtException(Throwable ex, Method method, Object... params) {
+                System.out.println("Method Name::"+method.getName());
+                System.out.println("Exception occurred::"+ ex);
+            }
+        };
     }
 }
