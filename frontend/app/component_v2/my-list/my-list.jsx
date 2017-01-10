@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {browserHistory} from 'react-router';
 import Cookies from 'react-cookie';
 
@@ -237,7 +238,13 @@ export default class MyList extends React.Component {
         </div>
 
         <div className="my-list-container">
-          {items}
+          <ReactCSSTransitionGroup
+            transitionName="my-list"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}>
+
+            {items}
+          </ReactCSSTransitionGroup>
         </div>
       </div>
     );

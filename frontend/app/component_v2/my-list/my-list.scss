@@ -59,6 +59,24 @@
       }
     }
   }
+
+  .my-list-enter {
+    opacity: 0.01;
+
+    &.my-list-enter-active {
+      opacity: 1;
+      transition: opacity 500ms ease-in-out;
+    }
+  }
+
+  .my-list-leave {
+    opacity: 1;
+
+    &.my-list-leave-active {
+      opacity: 0.01;
+      transition: opacity 300ms ease-in-out;
+    }
+  }
 }
 
 @media screen and (max-width: $screen-sm) {
