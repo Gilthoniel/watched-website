@@ -1,4 +1,4 @@
-package ch.grim.config;
+package ch.grim.websockets;
 
 import ch.grim.models.User;
 import ch.grim.services.BookmarkService;

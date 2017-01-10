@@ -110,16 +110,6 @@ class SessionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping("/me/series")
-    public List<Series> getSeries(ServletRequest request, @AuthenticationPrincipal User user) {
-
-        Collection<SeriesBookmark> bookmarks = seriesBmJpa.findByAccountId(user.getId());
-
-        return bookmarks.stream()
-                .map(bm -> new Series(service.getTvShow(bm.getSeriesId(), request.getLocale().getLanguage()), bm))
-                .collect(Collectors.toList());
-    }
-
     @RequestMapping(value = "/me/series/{id}", method = RequestMethod.POST)
     public SeriesBookmark setSeriesBookmark(
             @AuthenticationPrincipal User user,

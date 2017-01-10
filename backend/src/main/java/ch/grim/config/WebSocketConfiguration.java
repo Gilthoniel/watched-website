@@ -1,6 +1,7 @@
 package ch.grim.config;
 
 import ch.grim.services.BookmarkService;
+import ch.grim.websockets.WebSocketBookmarksHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

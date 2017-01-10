@@ -3,6 +3,7 @@ package ch.grim.models;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.services.MovieDBService;
 import info.movito.themoviedbapi.TmdbSearch;
+import info.movito.themoviedbapi.TmdbTV;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.Multi;
 import info.movito.themoviedbapi.model.tv.TvSeries;
@@ -63,7 +64,7 @@ public class SearchPage {
                 media.setTotalEpisodesWatched(total);
 
                 // Get more details about the series
-                TvSeries more = service.getTvShow(media.getData().getId(), lang);
+                TvSeries more = service.getTvShow(media.getData().getId(), lang, TmdbTV.TvMethod.credits);
                 media.setData(more);
             }
         });

@@ -190,26 +190,6 @@ class ApiService {
     }));
   }
 
-  searchMovie(query) {
-    return $.ajax(this.generateCredentials({
-      method: 'get',
-      url: namespace + '/media/search/movie',
-      data: {
-        query: query
-      }
-    }));
-  }
-
-  searchTv(query) {
-    return $.ajax(this.generateCredentials({
-      method: 'get',
-      url: namespace + '/media/search/tv',
-      data: {
-        query: query
-      }
-    }));
-  }
-
   getDiscover(page) {
     return $.ajax(this.generateCredentials({
       method: 'get',
