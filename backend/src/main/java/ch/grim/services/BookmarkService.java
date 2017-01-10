@@ -4,21 +4,26 @@ import ch.grim.models.*;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvSeries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
-import javax.servlet.ServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Created by Gaylor on 11.11.2016.
@@ -27,8 +32,9 @@ import java.util.stream.Collectors;
 @Service
 public class BookmarkService {
 
-    private static final int MAX_LOADING_IN_SECONDS = 1;
-    private static final int RECONNECT_TIME_IN_MILLIS = 1000;
+    private static final Logger LOG = LoggerFactory.getLogger(BookmarkService.class);
+
+    private ObjectMapper mapper;
 
     private MovieDBService service;
     private ExecutorService executor;
@@ -39,77 +45,94 @@ public class BookmarkService {
 
     @Autowired
     BookmarkService(MovieDBService service, EpisodeBookmarkRepository repository, ExecutorService executor,
-                    MovieBookmarkRepository repo2, SeriesBookmarkRepository repo3) {
+                    MovieBookmarkRepository repo2, SeriesBookmarkRepository repo3,
+                    @Qualifier("jsonObjectMapper") ObjectMapper mapper) {
         this.service = service;
         this.repository = repository;
         this.movieRepo = repo2;
         this.seriesRepo = repo3;
         this.executor = executor;
+        this.mapper = mapper;
     }
 
     /**
-     * Send to the client the bookmarks that are accessible in less than one second
-     * <p>
-     * Events:
-     * RESET: because we re-send again all the data, the client has to clean the arrays
-     * EOS: End of Stream, the client can close the EventSource
-     * movie: the data is a movie
-     * series: the data is a series
+     * Send list details over websocket
      *
-     * @param emitter Server sent events emitter
+     * @param session WebSocket session
      * @param user    current user
-     * @param request current request
+     * @param lang    language
      */
     @Async
-    public void loadBookmarks(SseEmitter emitter, User user, ServletRequest request) {
+    public void loadBookmarks(WebSocketSession session, User user, String lang) {
 
         // Get the movies
         Collection<MovieBookmark> movieBm = movieRepo.findByAccountId(user.getId());
         // Get the Series
         Collection<SeriesBookmark> seriesBm = seriesRepo.findByAccountId(user.getId());
 
-        boolean isNotComplete = false;
+        // Send the total number of bookmarks
+        int totalBm = movieBm.size() + seriesBm.size();
+        new EventMessage<>("TOTAL", totalBm).send(session);
+
+        List<Future<?>> futures = new LinkedList<>();
+        for (MovieBookmark bm : movieBm) {
+            // Get if available or launch a api request
+            MovieDb record = service.getMovie(bm.getMovieId(), lang);
+
+            futures.add(executor.submit(() -> {
+                synchronized (session) {
+                    new EventMessage<>("MOVIE", new Movie(record, bm)).send(session);
+                }
+            }));
+        }
+
+        for (SeriesBookmark bm : seriesBm) {
+            TvSeries series = service.getTvShow(bm.getSeriesId(), lang);
+            int total = repository.findByAccountIdAndSerieId(user.getId(), bm.getSeriesId()).size();
+
+            futures.add(executor.submit(() -> {
+                synchronized (session) {
+                    new EventMessage<>("SERIES", new Series(series, bm, total)).send(session);
+                }
+            }));
+        }
+
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                LOG.error("BookmarkService | Future", e.getMessage());
+            }
+        }
 
         try {
-            emitter.send(SseEmitter.event().name("RESET").data("Start a new stream"));
+            session.close();
+        } catch (IOException ignored) {}
+    }
 
-            // Send the total number of bookmarks
-            int totalBm = movieBm.size() + seriesBm.size();
-            emitter.send(SseEmitter.event().name("total").data(totalBm));
+    /**
+     * Object to parse to JSON to send over web socket
+     *
+     * @param <T>
+     */
+    private class EventMessage<T> {
 
-            for (MovieBookmark bm : movieBm) {
-                // Get if available or launch a api request
-                MovieDb record = service.getMovieOrNull(bm.getMovieId(), request.getLocale().getLanguage());
-                if (record != null) {
-                    try {
-                        emitter.send(SseEmitter.event().name("movie").data(new Movie(record, bm)));
-                    } catch (IOException ignored) {}
-                } else {
-                    isNotComplete = true;
-                }
+        @JsonProperty
+        String event;
+        @JsonProperty
+        T payload;
+
+        EventMessage(String event, T payload) {
+            this.event = event;
+            this.payload = payload;
+        }
+
+        void send(WebSocketSession session) {
+            try {
+                session.sendMessage(new TextMessage(mapper.writeValueAsString(this)));
+            } catch (IOException e) {
+                LOG.error(e.getMessage());
             }
-
-            for (SeriesBookmark bm : seriesBm) {
-                TvSeries series = service.getTvShowOrNull(bm.getSeriesId(), request.getLocale().getLanguage());
-                if (series != null) {
-                    try {
-                        int total = repository.findByAccountIdAndSerieId(user.getId(), bm.getSeriesId()).size();
-
-                        emitter.send(SseEmitter.event().name("series").data(new Series(series, bm, total)));
-                    } catch (IOException ignored) {}
-                }
-            }
-
-            if (isNotComplete) {
-                emitter.send(SseEmitter.event().reconnectTime(RECONNECT_TIME_IN_MILLIS).data("Reconnect Time Configuration"));
-            } else {
-                emitter.send(SseEmitter.event().name("EOS").data("End of Stream"));
-            }
-
-            emitter.complete();
-
-        } catch (IOException e) {
-            emitter.completeWithError(e);
-        } catch (Exception ignored) {}
+        }
     }
 }

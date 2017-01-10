@@ -2,10 +2,12 @@
  * Created by Gaylor on 31.07.2016.
  *
  */
+import SockJS from 'sockjs-client';
 
 const $ = require('jquery');
 const url = process.env.NODE_ENV === 'production' ? 'https://grimsoft.ch' : 'http://localhost:9000';
 const namespace = url + '/api';
+const websocket = url + '/websocket';
 const cache = {
   data: {},
 
@@ -133,11 +135,8 @@ class ApiService {
     }));
   }
 
-  getAsyncBookmarks() {
-
-    return new EventSource(namespace + `/users/me/async/bookmarks?access_token=${this.token}`, {
-      withCredentials: true
-    });
+  getWebSocketBookmarks() {
+    return new SockJS(websocket + '/bookmarks');
   }
 
   setBookmark(id, type, watched) {

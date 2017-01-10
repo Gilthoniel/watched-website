@@ -4,14 +4,16 @@ import ch.grim.models.Movie;
 import ch.grim.models.Series;
 import ch.grim.serializers.MovieSerializer;
 import ch.grim.serializers.SeriesSerializer;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -23,7 +25,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Gaylor on 31.07.2016.
@@ -43,6 +46,19 @@ public class WatchedConfiguration extends WebMvcConfigurerAdapter implements Asy
 
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().modules(m);
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper jsonObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        SimpleModule m = new SimpleModule();
+        m.addSerializer(Movie.class, new MovieSerializer());
+        m.addSerializer(Series.class, new SeriesSerializer());
+        mapper.registerModule(m);
+
+        return mapper;
     }
 
     @Bean

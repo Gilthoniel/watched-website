@@ -23,7 +23,7 @@ export default class MyList extends React.Component {
     let settings;
     try {
       settings = JSON.parse(Cookies.select(/GSW-/)['GSW-my-list']);
-    } catch(e) {
+    } catch (e) {
       console.warn('Cannot parse the cookie');
       settings = {
         show_movie: true,
@@ -125,64 +125,38 @@ export default class MyList extends React.Component {
   }
 
   loadData() {
-    /*
-     ApiService.getBookmarks().then(
-     (response) => this.setState({
-     movies: response.movies,
-     series: response.series
-     }),
-     () => {
-     this.setState({
-     error: true
-     });
-     Toastr.error('The server is overloaded', 'Oops')
-     }
-     );
-     */
-
     let container = createContainer();
     let total = 0;
     let current = 0;
 
-    let update = debounce(() => {
+    let update = () => {
       this.setState({
         container: container,
         progress: current / Math.max(total, 1)
       });
-    }, 1000);
+    };
 
-    let sse = ApiService.getAsyncBookmarks();
+    const sock = ApiService.getWebSocketBookmarks();
+    sock.onopen = function () {
+      // send message
+      sock.send(Session.getToken());
+    };
 
-    sse.addEventListener("total", (event) => {
-      total = Number(event.data);
-    });
+    sock.onmessage = function (e) {
+      const data = JSON.parse(e.data);
 
-    sse.addEventListener("movie", (event) => {
-      addMedia(container, JSON.parse(event.data));
+      if (data.event === "TOTAL") {
+        total = Number(data.payload);
+      } else if (data.event === "MOVIE") {
+        addMedia(container, data.payload);
+        current++;
+      } else if (data.event === "SERIES") {
+        addMedia(container, data.payload);
+        current++;
+      }
 
-      current++;
       update();
-    });
-
-    sse.addEventListener("series", (event) => {
-      addMedia(container, JSON.parse(event.data));
-
-      current++;
-      update();
-    });
-
-    sse.addEventListener("RESET", () => {
-      current = 0;
-      container = createContainer();
-    });
-
-    sse.addEventListener("EOS", () => {
-      this.setState({
-        loading: false
-      });
-
-      sse.close();
-    });
+    };
   }
 
   render() {
@@ -203,7 +177,7 @@ export default class MyList extends React.Component {
 
       return (
         <li key={key} onClick={() => this.handleOrderClick(key)}>
-          <span className={state} /> {ORDERS[key]}
+          <span className={state}/> {ORDERS[key]}
         </li>
       );
     });
@@ -213,7 +187,7 @@ export default class MyList extends React.Component {
       const medias = order[key].filter(this.filterMedia).map((media) => {
         return (
           <div key={media.id} className="my-list-item">
-            <MyListCard media={media} />
+            <MyListCard media={media}/>
           </div>
         );
       });
@@ -242,14 +216,14 @@ export default class MyList extends React.Component {
       <div className="w-my-list container">
         <div className="my-list-options">
           <ul className="my-list-switches">
-            <li onClick={() => this.setState({ show_movie: !this.state.show_movie })}>
-              <SwitchButton active={this.state.show_movie} /> Movies
+            <li onClick={() => this.setState({show_movie: !this.state.show_movie})}>
+              <SwitchButton active={this.state.show_movie}/> Movies
             </li>
-            <li onClick={() => this.setState({ show_series: !this.state.show_series })}>
-              <SwitchButton active={this.state.show_series} /> TV Shows
+            <li onClick={() => this.setState({show_series: !this.state.show_series})}>
+              <SwitchButton active={this.state.show_series}/> TV Shows
             </li>
-            <li onClick={() => this.setState({ show_watched: !this.state.show_watched })}>
-              <SwitchButton active={this.state.show_watched} /> Watched
+            <li onClick={() => this.setState({show_watched: !this.state.show_watched})}>
+              <SwitchButton active={this.state.show_watched}/> Watched
             </li>
           </ul>
 
@@ -272,9 +246,9 @@ export default class MyList extends React.Component {
 
 function debounce(func, wait, immediate) {
   let timeout;
-  return function() {
+  return function () {
     let context = this, args = arguments;
-    let later = function() {
+    let later = function () {
       timeout = null;
       if (!immediate) func.apply(context, args);
     };

@@ -6,40 +6,27 @@ import ch.grim.repositories.AccountRepository;
 import ch.grim.repositories.EpisodeBookmarkRepository;
 import ch.grim.repositories.MovieBookmarkRepository;
 import ch.grim.repositories.SeriesBookmarkRepository;
-import ch.grim.services.BookmarkService;
 import ch.grim.services.MovieDBService;
-import info.movito.themoviedbapi.model.MovieDb;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.ServletRequest;
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
  * Created by Gaylor on 31.07.2016.
+ *
  */
 @RequestMapping("${spring.data.rest.base-path}/users")
 @RestController
 class SessionController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SessionController.class);
-
     private MovieDBService service;
-    private BookmarkService bmService;
-
-    @Autowired
-    private ExecutorService executor;
 
     private AccountRepository accountsJpa;
 
@@ -48,14 +35,13 @@ class SessionController {
     private EpisodeBookmarkRepository episodesBmJpa;
 
     @Autowired
-    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks, BookmarkService bmService,
+    public SessionController(AccountRepository accounts, MovieBookmarkRepository bookmarks,
                              SeriesBookmarkRepository repo, EpisodeBookmarkRepository repo2, MovieDBService service) {
         this.accountsJpa = accounts;
         this.moviesBmJpa = bookmarks;
         this.seriesBmJpa = repo;
         this.episodesBmJpa = repo2;
         this.service = service;
-        this.bmService = bmService;
     }
 
 
@@ -88,18 +74,6 @@ class SessionController {
                 .collect(Collectors.toList()));
 
         return map;
-    }
-
-    @RequestMapping("/me/async/bookmarks")
-    public SseEmitter getAsyncBookmarks(
-            ServletRequest request,
-            @AuthenticationPrincipal User user) {
-
-        SseEmitter emitter = new SseEmitter(0L);
-
-        bmService.loadBookmarks(emitter, user, request);
-
-        return emitter;
     }
 
     @RequestMapping(value = "/me/movies/{id}", method = RequestMethod.POST)

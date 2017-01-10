@@ -98,7 +98,7 @@ export default class Registration extends React.Component {
 
     if (this.state.registered) {
       return (
-        <div className="account-registration">
+        <div className="account-register container">
           <p>
             You're close ! You will receive soon a link by email to validate that you own
             this address.
