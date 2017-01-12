@@ -43,8 +43,7 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
                 .withClient("watched-website")
                 .secret("secret")
                 .authorizedGrantTypes("password","authorization_code", "refresh_token")
-                .scopes("read")
-                .accessTokenValiditySeconds(60 * 60 * 24 * 7);
+                .scopes("read");
     }
 
     @Override
@@ -59,6 +58,7 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     public DefaultTokenServices tokenServices() {
         DefaultTokenServices services = new DefaultTokenServices();
         services.setTokenStore(new InMemoryTokenStore());
+        services.setAccessTokenValiditySeconds(60 * 60 * 24 * 7);
 
         return services;
     }
