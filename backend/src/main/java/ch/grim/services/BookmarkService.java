@@ -76,10 +76,10 @@ public class BookmarkService {
 
         List<Future<?>> futures = new LinkedList<>();
         for (MovieBookmark bm : movieBm) {
-            // Get if available or launch a api request
-            MovieDb record = service.getMovie(bm.getMovieId(), lang);
-
             futures.add(executor.submit(() -> {
+                // Get if available or launch a api request
+                MovieDb record = service.getMovie(bm.getMovieId(), lang);
+
                 synchronized (session) {
                     new EventMessage<>("MOVIE", new Movie(record, bm)).send(session);
                 }
@@ -87,10 +87,11 @@ public class BookmarkService {
         }
 
         for (SeriesBookmark bm : seriesBm) {
-            TvSeries series = service.getTvShow(bm.getSeriesId(), lang);
             int total = repository.findByAccountIdAndSerieId(user.getId(), bm.getSeriesId()).size();
 
             futures.add(executor.submit(() -> {
+                TvSeries series = service.getTvShow(bm.getSeriesId(), lang);
+
                 synchronized (session) {
                     new EventMessage<>("SERIES", new Series(series, bm, total)).send(session);
                 }
